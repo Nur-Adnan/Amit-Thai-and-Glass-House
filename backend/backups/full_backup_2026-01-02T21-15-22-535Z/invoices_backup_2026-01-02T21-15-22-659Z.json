@@ -1,0 +1,236 @@
+{
+  "exportType": "invoices",
+  "totalRecords": 5,
+  "filters": {},
+  "exportDate": "2026-01-02T21:15:22.659Z",
+  "data": [
+    {
+      "_id": "695832e71950892fd8bd9e39",
+      "invoiceNo": "INV-202601-0005",
+      "customer": {
+        "_id": "69582ee62be2b4494c75bbe1",
+        "customerId": "CUST-0011",
+        "name": "Test Customer",
+        "phone": "+1-555-9999",
+        "email": "test@example.com"
+      },
+      "customerName": "Test Customer",
+      "customerPhone": "+1-555-9999",
+      "customerAddress": "123 Test St, Houston, TX, 77001",
+      "customerType": "regular",
+      "items": [
+        {
+          "product": {
+            "_id": "695813babd478dfae1dd4fc5",
+            "name": "Premium Thai Marble - White",
+            "category": "Thai",
+            "unit": "sqft"
+          },
+          "productName": "Premium Thai Marble - White",
+          "quantity": 3,
+          "unit": "sqft",
+          "unitPrice": 200,
+          "totalPrice": 600,
+          "_id": "695832e71950892fd8bd9e3a"
+        }
+      ],
+      "subtotal": 600,
+      "discount": 0,
+      "discountType": "amount",
+      "grandTotal": 600,
+      "paidAmount": 300,
+      "dueAmount": 300,
+      "status": "partial",
+      "paymentMethod": "cash",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T21:04:39.186Z",
+      "updatedAt": "2026-01-02T21:04:39.186Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582efc2be2b4494c75bbef",
+      "invoiceNo": "INV-202601-0004",
+      "customer": {
+        "_id": "69582ee62be2b4494c75bbe1",
+        "customerId": "CUST-0011",
+        "name": "Test Customer",
+        "phone": "+1-555-9999",
+        "email": "test@example.com"
+      },
+      "customerName": "Test Customer",
+      "customerPhone": "+1-555-9999",
+      "customerAddress": "123 Test St, Houston, TX, 77001",
+      "customerType": "regular",
+      "items": [
+        {
+          "product": {
+            "_id": "695813babd478dfae1dd4fc5",
+            "name": "Premium Thai Marble - White",
+            "category": "Thai",
+            "unit": "sqft"
+          },
+          "productName": "Premium Thai Marble - White",
+          "quantity": 10,
+          "unit": "sqft",
+          "unitPrice": 200,
+          "totalPrice": 2000,
+          "_id": "69582efc2be2b4494c75bbf0"
+        }
+      ],
+      "subtotal": 2000,
+      "discount": 0,
+      "discountType": "amount",
+      "grandTotal": 2000,
+      "paidAmount": 1500,
+      "dueAmount": 500,
+      "status": "partial",
+      "paymentMethod": "mixed",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:47:56.234Z",
+      "updatedAt": "2026-01-02T20:50:40.914Z",
+      "__v": 0,
+      "updatedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      }
+    },
+    {
+      "_id": "69581a9cebc053428d62000a",
+      "invoiceNo": "INV-202601-0003",
+      "customerName": "Payment Test Customer",
+      "customerPhone": "555-0123",
+      "items": [
+        {
+          "product": {
+            "_id": "695813babd478dfae1dd4fc6",
+            "name": "Thai Granite - Black",
+            "category": "Thai",
+            "unit": "sqft"
+          },
+          "productName": "Thai Granite - Black",
+          "quantity": 20,
+          "unit": "sqft",
+          "unitPrice": 160,
+          "totalPrice": 3200,
+          "_id": "69581a9cebc053428d62000b"
+        }
+      ],
+      "subtotal": 3200,
+      "discount": 200,
+      "discountType": "amount",
+      "grandTotal": 3000,
+      "paidAmount": 2000,
+      "dueAmount": 1000,
+      "status": "partial",
+      "paymentMethod": "bank_transfer",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T19:21:00.232Z",
+      "updatedAt": "2026-01-02T19:22:40.534Z",
+      "__v": 0,
+      "updatedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      }
+    },
+    {
+      "_id": "695819965656b42be97a4fbf",
+      "invoiceNo": "INV-202601-0002",
+      "customerName": "Partial Payment Customer",
+      "customerPhone": "987-654-3210",
+      "items": [
+        {
+          "product": {
+            "_id": "695813babd478dfae1dd4fc6",
+            "name": "Thai Granite - Black",
+            "category": "Thai",
+            "unit": "sqft"
+          },
+          "productName": "Thai Granite - Black",
+          "quantity": 10,
+          "unit": "sqft",
+          "unitPrice": 160,
+          "totalPrice": 1600,
+          "_id": "695819965656b42be97a4fc0"
+        }
+      ],
+      "subtotal": 1600,
+      "discount": 100,
+      "discountType": "amount",
+      "grandTotal": 1500,
+      "paidAmount": 500,
+      "dueAmount": 1000,
+      "status": "partial",
+      "paymentMethod": "cash",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T19:16:38.342Z",
+      "updatedAt": "2026-01-02T19:16:38.342Z",
+      "__v": 0
+    },
+    {
+      "_id": "695819445656b42be97a4f9c",
+      "invoiceNo": "INV-202601-0001",
+      "customerName": "Test Customer",
+      "customerPhone": "123-456-7890",
+      "items": [
+        {
+          "product": {
+            "_id": "695813babd478dfae1dd4fc5",
+            "name": "Premium Thai Marble - White",
+            "category": "Thai",
+            "unit": "sqft"
+          },
+          "productName": "Premium Thai Marble - White",
+          "quantity": 5,
+          "unit": "sqft",
+          "unitPrice": 200,
+          "totalPrice": 1000,
+          "_id": "695819445656b42be97a4f9d"
+        }
+      ],
+      "subtotal": 1000,
+      "discount": 50,
+      "discountType": "amount",
+      "grandTotal": 950,
+      "paidAmount": 950,
+      "dueAmount": 0,
+      "status": "paid",
+      "paymentMethod": "card",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T19:15:16.249Z",
+      "updatedAt": "2026-01-02T19:15:38.387Z",
+      "__v": 0,
+      "updatedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      }
+    }
+  ]
+}

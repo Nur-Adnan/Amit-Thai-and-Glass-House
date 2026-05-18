@@ -1,0 +1,15 @@
+// Basic test to verify Jest setup
+describe('Basic Test Suite', () => {
+  test('should pass basic test', () => {
+    expect(1 + 1).toBe(2);
+  });
+
+  test('should handle async operations', async () => {
+    const result = await Promise.resolve('test');
+    expect(result).toBe('test');
+  });
+
+  test('should verify test environment', () => {
+    expect(process.env.NODE_ENV).toBe('test');
+  });
+});

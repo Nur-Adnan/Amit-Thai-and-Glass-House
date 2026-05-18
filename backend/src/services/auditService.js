@@ -1,0 +1,612 @@
+import AuditLog from '../models/AuditLog.js';
+
+/**
+ * Audit Service - Centralized logging for all business operations
+ */
+class AuditService {
+  
+  /**
+   * Create an audit log entry
+   * @param {Object} logData - Audit log data
+   * @param {Object} req - Express request object (optional)
+   * @returns {Promise<Object|null>} Created audit log or null if failed
+   */
+  static async log(logData, req = null) {
+    try {
+      // Extract metadata from request if available
+      const metadata = {};
+      if (req) {
+        metadata.ipAddress = req.ip || req.connection.remoteAddress;
+        metadata.userAgent = req.get('User-Agent');
+        metadata.sessionId = req.sessionID;
+      }
+      
+      // Merge metadata
+      const finalLogData = {
+        ...logData,
+        metadata: {
+          ...metadata,
+          ...logData.metadata
+        }
+      };
+      
+      return await AuditLog.createLog(finalLogData);
+    } catch (error) {
+      console.error('Audit Service Error:', error.message);
+      return null;
+    }
+  }
+  
+  // Invoice-related audit logs
+  static async logInvoiceCreate(invoice, user, req = null) {
+    return await this.log({
+      action: 'invoice_create',
+      entityType: 'Invoice',
+      entityId: invoice._id,
+      entityName: invoice.invoiceNo,
+      performedBy: user._id,
+      description: `Created invoice ${invoice.invoiceNo} for ${invoice.customerName} - Amount: ${invoice.grandTotal}`,
+      changes: {
+        created: {
+          invoiceNo: invoice.invoiceNo,
+          customerName: invoice.customerName,
+          grandTotal: invoice.grandTotal,
+          status: invoice.status
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+  
+  static async logInvoiceUpdate(oldInvoice, newInvoice, user, req = null) {
+    const changes = this.getChanges(oldInvoice.toObject(), newInvoice.toObject());
+    
+    return await this.log({
+      action: 'invoice_update',
+      entityType: 'Invoice',
+      entityId: newInvoice._id,
+      entityName: newInvoice.invoiceNo,
+      performedBy: user._id,
+      description: `Updated invoice ${newInvoice.invoiceNo}`,
+      changes,
+      severity: 'medium'
+    }, req);
+  }
+  
+  static async logInvoiceCancel(invoice, user, req = null) {
+    return await this.log({
+      action: 'invoice_cancel',
+      entityType: 'Invoice',
+      entityId: invoice._id,
+      entityName: invoice.invoiceNo,
+      performedBy: user._id,
+      description: `Cancelled invoice ${invoice.invoiceNo} - Amount: ${invoice.grandTotal}`,
+      changes: {
+        cancelled: {
+          previousStatus: 'active',
+          newStatus: 'cancelled',
+          grandTotal: invoice.grandTotal
+        }
+      },
+      severity: 'critical'
+    }, req);
+  }
+  
+  static async logInvoicePayment(payment, invoice, user, req = null) {
+    return await this.log({
+      action: 'invoice_payment_add',
+      entityType: 'InvoicePayment',
+      entityId: payment._id,
+      entityName: `Payment for ${invoice.invoiceNo}`,
+      performedBy: user._id,
+      description: `Added payment of ${payment.paymentAmount} to invoice ${invoice.invoiceNo} via ${payment.paymentMethod}`,
+      changes: {
+        payment: {
+          amount: payment.paymentAmount,
+          method: payment.paymentMethod,
+          previousStatus: payment.previousStatus,
+          newStatus: payment.newStatus,
+          remainingDue: payment.remainingDueAmount
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+  
+  static async logPaymentReverse(payment, invoice, user, reason, req = null) {
+    return await this.log({
+      action: 'invoice_payment_reverse',
+      entityType: 'InvoicePayment',
+      entityId: payment._id,
+      entityName: `Payment reversal for ${invoice.invoiceNo}`,
+      performedBy: user._id,
+      description: `Reversed payment of ${payment.paymentAmount} for invoice ${invoice.invoiceNo}. Reason: ${reason}`,
+      changes: {
+        reversal: {
+          amount: payment.paymentAmount,
+          reason: reason,
+          reversedAt: new Date()
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+  
+  // Product-related audit logs
+  static async logProductCreate(product, user, req = null) {
+    return await this.log({
+      action: 'product_create',
+      entityType: 'Product',
+      entityId: product._id,
+      entityName: product.name,
+      performedBy: user._id,
+      description: `Created product ${product.name} - Category: ${product.category}, Price: ${product.sellingPrice}`,
+      changes: {
+        created: {
+          name: product.name,
+          category: product.category,
+          purchasePrice: product.purchasePrice,
+          sellingPrice: product.sellingPrice,
+          stockQuantity: product.stockQuantity
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+  
+  static async logProductUpdate(oldProduct, newProduct, user, req = null) {
+    // Handle both Mongoose documents and plain objects
+    const oldObj = oldProduct.toObject ? oldProduct.toObject() : oldProduct;
+    const newObj = newProduct.toObject ? newProduct.toObject() : newProduct;
+    
+    const changes = this.getChanges(oldObj, newObj);
+    
+    return await this.log({
+      action: 'product_update',
+      entityType: 'Product',
+      entityId: newProduct._id,
+      entityName: newProduct.name,
+      performedBy: user._id,
+      description: `Updated product ${newProduct.name}`,
+      changes,
+      severity: 'medium'
+    }, req);
+  }
+  
+  static async logStockAdjustment(product, adjustment, user, reason, req = null) {
+    const action = adjustment > 0 ? 'product_stock_add' : 'product_stock_subtract';
+    const actionText = adjustment > 0 ? 'Added' : 'Subtracted';
+    
+    return await this.log({
+      action,
+      entityType: 'Product',
+      entityId: product._id,
+      entityName: product.name,
+      performedBy: user._id,
+      description: `${actionText} ${Math.abs(adjustment)} units of ${product.name}. Reason: ${reason}`,
+      changes: {
+        stockAdjustment: {
+          previousStock: product.stockQuantity - adjustment,
+          adjustment: adjustment,
+          newStock: product.stockQuantity,
+          reason: reason
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+  
+  static async logPriceChange(product, oldPrice, newPrice, user, req = null) {
+    return await this.log({
+      action: 'product_price_change',
+      entityType: 'Product',
+      entityId: product._id,
+      entityName: product.name,
+      performedBy: user._id,
+      description: `Changed price of ${product.name} from ${oldPrice} to ${newPrice}`,
+      changes: {
+        priceChange: {
+          oldPrice: oldPrice,
+          newPrice: newPrice
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+
+  // Brand-related audit logs
+  static async logBrandCreate(brand, user, req = null) {
+    return await this.log({
+      action: 'brand_create',
+      entityType: 'Brand',
+      entityId: brand._id,
+      entityName: brand.name,
+      performedBy: user._id,
+      description: `Created brand ${brand.name} for ${brand.materialType} material type`,
+      changes: {
+        created: {
+          name: brand.name,
+          materialType: brand.materialType,
+          country: brand.country,
+          notes: brand.notes
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logBrandUpdate(oldBrand, newBrand, user, req = null) {
+    const changes = this.getChanges(oldBrand, newBrand.toObject());
+    
+    return await this.log({
+      action: 'brand_update',
+      entityType: 'Brand',
+      entityId: newBrand._id,
+      entityName: newBrand.name,
+      performedBy: user._id,
+      description: `Updated brand ${newBrand.name}`,
+      changes,
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logBrandActivate(brand, user, req = null) {
+    return await this.log({
+      action: 'brand_activate',
+      entityType: 'Brand',
+      entityId: brand._id,
+      entityName: brand.name,
+      performedBy: user._id,
+      description: `Activated brand ${brand.name}`,
+      changes: {
+        statusChange: {
+          from: 'inactive',
+          to: 'active'
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logBrandDeactivate(brand, user, req = null, reason = null) {
+    return await this.log({
+      action: 'brand_deactivate',
+      entityType: 'Brand',
+      entityId: brand._id,
+      entityName: brand.name,
+      performedBy: user._id,
+      description: `Deactivated brand ${brand.name}${reason ? `. Reason: ${reason}` : ''}`,
+      changes: {
+        statusChange: {
+          from: 'active',
+          to: 'inactive',
+          reason: reason
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logBrandDelete(brand, user, req = null, reason = null) {
+    return await this.log({
+      action: 'brand_delete',
+      entityType: 'Brand',
+      entityId: brand._id,
+      entityName: brand.name,
+      performedBy: user._id,
+      description: `Deleted brand ${brand.name}${reason ? `. Reason: ${reason}` : ''}`,
+      changes: {
+        deleted: {
+          name: brand.name,
+          materialType: brand.materialType,
+          country: brand.country,
+          reason: reason
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+
+  static async logBrandRestore(brand, user, req = null) {
+    return await this.log({
+      action: 'brand_restore',
+      entityType: 'Brand',
+      entityId: brand._id,
+      entityName: brand.name,
+      performedBy: user._id,
+      description: `Restored brand ${brand.name}`,
+      changes: {
+        restored: {
+          name: brand.name,
+          materialType: brand.materialType
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+  
+  // MaterialSpec-related audit logs
+  static async logMaterialSpecCreate(materialSpec, user, req = null) {
+    return await this.log({
+      action: 'material_spec_create',
+      entityType: 'MaterialSpec',
+      entityId: materialSpec._id,
+      entityName: materialSpec.displayName,
+      performedBy: user._id,
+      description: `Created material specification: ${materialSpec.displayName}`,
+      changes: {
+        created: {
+          materialType: materialSpec.materialType,
+          thicknessMM: materialSpec.thicknessMM,
+          quality: materialSpec.quality,
+          defaultUnit: materialSpec.defaultUnit,
+          description: materialSpec.description
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logMaterialSpecUpdate(oldSpec, newSpec, user, req = null) {
+    const changes = this.getChanges(oldSpec, newSpec.toObject());
+    
+    return await this.log({
+      action: 'material_spec_update',
+      entityType: 'MaterialSpec',
+      entityId: newSpec._id,
+      entityName: newSpec.displayName,
+      performedBy: user._id,
+      description: `Updated material specification: ${newSpec.displayName}`,
+      changes,
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logMaterialSpecActivate(materialSpec, user, req = null) {
+    return await this.log({
+      action: 'material_spec_activate',
+      entityType: 'MaterialSpec',
+      entityId: materialSpec._id,
+      entityName: materialSpec.displayName,
+      performedBy: user._id,
+      description: `Activated material specification: ${materialSpec.displayName}`,
+      changes: {
+        status: {
+          before: { isActive: false },
+          after: { isActive: true }
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logMaterialSpecDeactivate(materialSpec, user, req = null, reason = null) {
+    return await this.log({
+      action: 'material_spec_deactivate',
+      entityType: 'MaterialSpec',
+      entityId: materialSpec._id,
+      entityName: materialSpec.displayName,
+      performedBy: user._id,
+      description: `Deactivated material specification: ${materialSpec.displayName}${reason ? ` - Reason: ${reason}` : ''}`,
+      changes: {
+        status: {
+          before: { isActive: true },
+          after: { isActive: false, reason }
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+
+  static async logMaterialSpecDelete(materialSpec, user, req = null, reason = null) {
+    return await this.log({
+      action: 'material_spec_delete',
+      entityType: 'MaterialSpec',
+      entityId: materialSpec._id,
+      entityName: materialSpec.displayName,
+      performedBy: user._id,
+      description: `Deleted material specification: ${materialSpec.displayName}${reason ? ` - Reason: ${reason}` : ''}`,
+      changes: {
+        deletion: {
+          isDeleted: true,
+          deletedAt: new Date(),
+          reason
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+
+  static async logMaterialSpecRestore(materialSpec, user, req = null) {
+    return await this.log({
+      action: 'material_spec_restore',
+      entityType: 'MaterialSpec',
+      entityId: materialSpec._id,
+      entityName: materialSpec.displayName,
+      performedBy: user._id,
+      description: `Restored material specification: ${materialSpec.displayName}`,
+      changes: {
+        restoration: {
+          isDeleted: false,
+          restoredAt: new Date()
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+  
+  // Customer-related audit logs
+  static async logCustomerCreate(customer, user, req = null) {
+    return await this.log({
+      action: 'customer_create',
+      entityType: 'Customer',
+      entityId: customer._id,
+      entityName: `${customer.customerId} - ${customer.name}`,
+      performedBy: user._id,
+      description: `Created customer ${customer.customerId} - ${customer.name} (${customer.customerType})`,
+      changes: {
+        created: {
+          customerId: customer.customerId,
+          name: customer.name,
+          phone: customer.phone,
+          customerType: customer.customerType
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+  
+  static async logCustomerUpdate(oldCustomer, newCustomer, user, req = null) {
+    const changes = this.getChanges(oldCustomer.toObject(), newCustomer.toObject());
+    
+    return await this.log({
+      action: 'customer_update',
+      entityType: 'Customer',
+      entityId: newCustomer._id,
+      entityName: `${newCustomer.customerId} - ${newCustomer.name}`,
+      performedBy: user._id,
+      description: `Updated customer ${newCustomer.customerId} - ${newCustomer.name}`,
+      changes,
+      severity: 'medium'
+    }, req);
+  }
+  
+  // Employee and Salary-related audit logs
+  static async logEmployeeCreate(employee, user, req = null) {
+    return await this.log({
+      action: 'employee_create',
+      entityType: 'Employee',
+      entityId: employee._id,
+      entityName: `${employee.employeeId} - ${employee.name}`,
+      performedBy: user._id,
+      description: `Created employee ${employee.employeeId} - ${employee.name} (${employee.position})`,
+      changes: {
+        created: {
+          employeeId: employee.employeeId,
+          name: employee.name,
+          position: employee.position,
+          baseSalary: employee.baseSalary
+        }
+      },
+      severity: 'medium'
+    }, req);
+  }
+  
+  static async logSalaryPayment(salaryPayment, employee, user, req = null) {
+    return await this.log({
+      action: 'salary_payment',
+      entityType: 'SalaryPayment',
+      entityId: salaryPayment._id,
+      entityName: `Salary for ${employee.name} (${salaryPayment.paymentMonth}/${salaryPayment.paymentYear})`,
+      performedBy: user._id,
+      description: `Processed salary payment for ${employee.name} - Amount: ${salaryPayment.netSalary} for ${salaryPayment.paymentMonth}/${salaryPayment.paymentYear}`,
+      changes: {
+        salaryPayment: {
+          employeeId: employee.employeeId,
+          employeeName: employee.name,
+          month: salaryPayment.paymentMonth,
+          year: salaryPayment.paymentYear,
+          grossSalary: salaryPayment.grossSalary,
+          netSalary: salaryPayment.netSalary,
+          status: salaryPayment.status
+        }
+      },
+      severity: 'high'
+    }, req);
+  }
+  
+  // Configuration-related audit logs
+  static async logConfigUpdate(configType, oldConfig, newConfig, user, req = null) {
+    const changes = this.getChanges(oldConfig, newConfig);
+    
+    return await this.log({
+      action: 'config_update',
+      entityType: 'CalculatorConfig',
+      entityId: newConfig._id || 'system',
+      entityName: `${configType} Configuration`,
+      performedBy: user._id,
+      description: `Updated ${configType} configuration`,
+      changes,
+      severity: 'high'
+    }, req);
+  }
+  
+  // User-related audit logs
+  static async logUserLogin(user, req = null) {
+    return await this.log({
+      action: 'user_login',
+      entityType: 'User',
+      entityId: user._id,
+      entityName: `${user.name} (${user.email})`,
+      performedBy: user._id,
+      description: `User ${user.name} logged in`,
+      changes: {
+        login: {
+          email: user.email,
+          role: user.role,
+          loginTime: new Date()
+        }
+      },
+      severity: 'low'
+    }, req);
+  }
+  
+  static async logUserLogout(user, req = null) {
+    return await this.log({
+      action: 'user_logout',
+      entityType: 'User',
+      entityId: user._id,
+      entityName: `${user.name} (${user.email})`,
+      performedBy: user._id,
+      description: `User ${user.name} logged out`,
+      changes: {
+        logout: {
+          logoutTime: new Date()
+        }
+      },
+      severity: 'low'
+    }, req);
+  }
+  
+  // Utility method to get changes between objects
+  static getChanges(oldObj, newObj, excludeFields = ['updatedAt', '__v', 'updatedBy']) {
+    const changes = { before: {}, after: {} };
+    
+    // Get all unique keys from both objects
+    const allKeys = new Set([...Object.keys(oldObj), ...Object.keys(newObj)]);
+    
+    for (const key of allKeys) {
+      if (excludeFields.includes(key)) continue;
+      
+      const oldValue = oldObj[key];
+      const newValue = newObj[key];
+      
+      // Skip if values are the same
+      if (JSON.stringify(oldValue) === JSON.stringify(newValue)) continue;
+      
+      changes.before[key] = oldValue;
+      changes.after[key] = newValue;
+    }
+    
+    // Return null if no changes
+    return Object.keys(changes.before).length > 0 ? changes : null;
+  }
+  
+  // Bulk logging for multiple operations
+  static async logBulkOperation(operations, user, req = null) {
+    const logs = [];
+    
+    for (const operation of operations) {
+      const log = await this.log({
+        ...operation,
+        performedBy: user._id
+      }, req);
+      
+      if (log) logs.push(log);
+    }
+    
+    return logs;
+  }
+}
+
+export default AuditService;

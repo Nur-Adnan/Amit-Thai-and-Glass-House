@@ -1,0 +1,323 @@
+{
+  "exportType": "audit_logs",
+  "totalRecords": 12,
+  "exportDate": "2026-01-02T21:15:23.300Z",
+  "dateRange": {
+    "from": "2025-12-03T21:15:23.183Z",
+    "to": "2026-01-02T21:15:23.300Z"
+  },
+  "data": [
+    {
+      "_id": "69583284f27d396535038e2f",
+      "action": "system_backup",
+      "entityType": "System",
+      "entityId": "69583284f27d396535038e2e",
+      "entityName": "System Backup Test",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Testing audit log creation",
+      "severity": "critical",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:00.552Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583285f27d396535038e47",
+      "action": "product_create",
+      "entityType": "Product",
+      "entityId": "69583285f27d396535038e42",
+      "entityName": "Audit Test Product",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Created product Audit Test Product - Category: Glass, Price: $150",
+      "changes": {
+        "created": {
+          "name": "Audit Test Product",
+          "category": "Glass",
+          "purchasePrice": 100,
+          "sellingPrice": 150,
+          "stockQuantity": 50
+        }
+      },
+      "severity": "medium",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:01.189Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583285f27d396535038e4a",
+      "action": "product_stock_add",
+      "entityType": "Product",
+      "entityId": "69583285f27d396535038e42",
+      "entityName": "Audit Test Product",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Added 10 units of Audit Test Product. Reason: Testing stock adjustment audit",
+      "changes": {
+        "stockAdjustment": {
+          "previousStock": 40,
+          "adjustment": 10,
+          "newStock": 50,
+          "reason": "Testing stock adjustment audit"
+        }
+      },
+      "severity": "high",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:01.251Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583285f27d396535038e4f",
+      "action": "product_price_change",
+      "entityType": "Product",
+      "entityId": "69583285f27d396535038e42",
+      "entityName": "Audit Test Product",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Changed price of Audit Test Product from $150 to $175",
+      "changes": {
+        "priceChange": {
+          "oldPrice": 150,
+          "newPrice": 175,
+          "changeAmount": 25,
+          "changePercentage": "16.67"
+        }
+      },
+      "severity": "high",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:01.317Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583285f27d396535038e59",
+      "action": "customer_create",
+      "entityType": "Customer",
+      "entityId": "69583285f27d396535038e56",
+      "entityName": "CUST-0012 - Audit Test Customer",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Created customer CUST-0012 - Audit Test Customer (regular)",
+      "changes": {
+        "created": {
+          "customerId": "CUST-0012",
+          "name": "Audit Test Customer",
+          "phone": "+1-555-AUDIT",
+          "customerType": "regular"
+        }
+      },
+      "severity": "medium",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:01.499Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583285f27d396535038e60",
+      "action": "invoice_create",
+      "entityType": "Invoice",
+      "entityId": "69583285f27d396535038e5d",
+      "entityName": "INV-202601-0005",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Created invoice INV-202601-0005 for Audit Test Customer - Amount: $750",
+      "changes": {
+        "created": {
+          "invoiceNo": "INV-202601-0005",
+          "customerName": "Audit Test Customer",
+          "grandTotal": 750,
+          "status": "due"
+        }
+      },
+      "severity": "medium",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:01.685Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583285f27d396535038e62",
+      "action": "user_login",
+      "entityType": "User",
+      "entityId": "6958121f1b0e0015d7cfd256",
+      "entityName": "System Owner (owner@company.com)",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "User System Owner logged in",
+      "changes": {
+        "login": {
+          "email": "owner@company.com",
+          "role": "owner",
+          "loginTime": "2026-01-02T21:03:01.746Z"
+        }
+      },
+      "severity": "low",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:01.746Z",
+      "__v": 0
+    },
+    {
+      "_id": "695832a91950892fd8bd9e26",
+      "action": "user_login",
+      "entityType": "User",
+      "entityId": "6958121f1b0e0015d7cfd256",
+      "entityName": "System Owner (owner@company.com)",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "User System Owner logged in",
+      "changes": {
+        "login": {
+          "email": "owner@company.com",
+          "role": "owner",
+          "loginTime": "2026-01-02T21:03:37.269Z"
+        }
+      },
+      "metadata": {
+        "ipAddress": "::1",
+        "userAgent": "curl/8.7.1"
+      },
+      "severity": "low",
+      "status": "success",
+      "timestamp": "2026-01-02T21:03:37.272Z",
+      "__v": 0
+    },
+    {
+      "_id": "695832e71950892fd8bd9e43",
+      "action": "invoice_create",
+      "entityType": "Invoice",
+      "entityId": "695832e71950892fd8bd9e39",
+      "entityName": "INV-202601-0005",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Created invoice INV-202601-0005 for Test Customer - Amount: $600",
+      "changes": {
+        "created": {
+          "invoiceNo": "INV-202601-0005",
+          "customerName": "Test Customer",
+          "grandTotal": 600,
+          "status": "partial"
+        }
+      },
+      "metadata": {
+        "ipAddress": "::1",
+        "userAgent": "curl/8.7.1"
+      },
+      "severity": "medium",
+      "status": "success",
+      "timestamp": "2026-01-02T21:04:39.638Z",
+      "__v": 0
+    },
+    {
+      "_id": "695833011950892fd8bd9e4c",
+      "action": "product_stock_add",
+      "entityType": "Product",
+      "entityId": "695813babd478dfae1dd4fc5",
+      "entityName": "Premium Thai Marble - White",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Added 20 units of Premium Thai Marble - White. Reason: New stock delivery",
+      "changes": {
+        "stockAdjustment": {
+          "previousStock": 32,
+          "adjustment": 20,
+          "newStock": 52,
+          "reason": "New stock delivery"
+        }
+      },
+      "metadata": {
+        "ipAddress": "::1",
+        "userAgent": "curl/8.7.1"
+      },
+      "severity": "high",
+      "status": "success",
+      "timestamp": "2026-01-02T21:05:05.826Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583539c560b8566ca94a8b",
+      "action": "system_backup",
+      "entityType": "System",
+      "entityId": "69583539c560b8566ca94a8a",
+      "entityName": "Full Database Backup - 2026-01-02T21-14-32-727Z",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "Created full database backup with 37 total records",
+      "changes": {
+        "backup": {
+          "backupId": "2026-01-02T21-14-32-727Z",
+          "modules": [
+            "invoices",
+            "customers",
+            "products",
+            "expenses",
+            "employees"
+          ],
+          "totalRecords": 37,
+          "totalSize": 35253
+        }
+      },
+      "severity": "critical",
+      "status": "success",
+      "timestamp": "2026-01-02T21:14:33.511Z",
+      "__v": 0
+    },
+    {
+      "_id": "69583544dcc2c293817a6308",
+      "action": "user_login",
+      "entityType": "User",
+      "entityId": "6958121f1b0e0015d7cfd256",
+      "entityName": "System Owner (owner@company.com)",
+      "performedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "description": "User System Owner logged in",
+      "changes": {
+        "login": {
+          "email": "owner@company.com",
+          "role": "owner",
+          "loginTime": "2026-01-02T21:14:44.558Z"
+        }
+      },
+      "metadata": {
+        "ipAddress": "::1",
+        "userAgent": "curl/8.7.1"
+      },
+      "severity": "low",
+      "status": "success",
+      "timestamp": "2026-01-02T21:14:44.561Z",
+      "__v": 0
+    }
+  ]
+}

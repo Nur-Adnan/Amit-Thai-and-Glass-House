@@ -1,0 +1,488 @@
+import Expense from '../models/Expense.js';
+import SalaryPayment from '../models/SalaryPayment.js';
+import mongoose from 'mongoose';
+
+// @desc    Get all expenses
+// @route   GET /api/expenses
+// @access  Private (All authenticated users)
+export const getExpenses = async (req, res, next) => {
+  try {
+    const {
+      category,
+      sourceType,
+      status,
+      startDate,
+      endDate,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'desc',
+      page = 1,
+      limit = 10
+    } = req.query;
+
+    // Build filter object
+    const filter = {};
+
+    if (category) filter.category = category;
+    if (sourceType) filter.sourceType = sourceType;
+    if (status) filter.status = status;
+
+    // Date range filter
+    if (startDate || endDate) {
+      filter.expenseDate = {};
+      if (startDate) filter.expenseDate.$gte = new Date(startDate);
+      if (endDate) filter.expenseDate.$lte = new Date(endDate);
+    }
+
+    // Search filter
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { expenseId: { $regex: search, $options: 'i' } },
+        { description: { $regex: search, $options: 'i' } },
+        { 'vendor.name': { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Sort configuration
+    const sortConfig = {};
+    sortConfig[sortBy] = sortOrder === 'asc' ? 1 : -1;
+
+    // Pagination
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    // Execute query
+    const expenses = await Expense.find(filter)
+      .populate('createdBy', 'name email')
+      .populate('updatedBy', 'name email')
+      .populate('approvedBy', 'name email')
+      .sort(sortConfig)
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Get total count for pagination
+    const total = await Expense.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        expenses,
+        pagination: {
+          current: parseInt(page),
+          pages: Math.ceil(total / parseInt(limit)),
+          total,
+          limit: parseInt(limit)
+        }
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get single expense
+// @route   GET /api/expenses/:id
+// @access  Private (All authenticated users)
+export const getExpense = async (req, res, next) => {
+  try {
+    const expense = await Expense.findById(req.params.id)
+      .populate('createdBy', 'name email')
+      .populate('updatedBy', 'name email')
+      .populate('approvedBy', 'name email')
+      .populate('sourceId');
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: 'Expense not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: expense
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Create expense
+// @route   POST /api/expenses
+// @access  Private (Manager and above)
+export const createExpense = async (req, res, next) => {
+  try {
+    // Generate expense ID
+    const expenseId = await Expense.generateExpenseId();
+
+    // Create expense with generated ID
+    const expense = await Expense.create({
+      ...req.body,
+      expenseId,
+      createdBy: req.user.id
+    });
+
+    // Populate the created expense
+    await expense.populate('createdBy', 'name email');
+
+    res.status(201).json({
+      success: true,
+      message: 'Expense created successfully',
+      data: expense
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update expense
+// @route   PUT /api/expenses/:id
+// @access  Private (Manager and above)
+export const updateExpense = async (req, res, next) => {
+  try {
+    let expense = await Expense.findById(req.params.id);
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: 'Expense not found'
+      });
+    }
+
+    // Check if expense is approved and user is not owner
+    if (expense.status === 'approved' && req.user.role !== 'owner') {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot update approved expense'
+      });
+    }
+
+    // Update expense
+    expense = await Expense.findByIdAndUpdate(
+      req.params.id,
+      {
+        ...req.body,
+        updatedBy: req.user.id
+      },
+      {
+        new: true,
+        runValidators: true
+      }
+    ).populate('createdBy updatedBy approvedBy', 'name email');
+
+    res.status(200).json({
+      success: true,
+      message: 'Expense updated successfully',
+      data: expense
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete expense
+// @route   DELETE /api/expenses/:id
+// @access  Private (Manager and above)
+export const deleteExpense = async (req, res, next) => {
+  try {
+    const expense = await Expense.findById(req.params.id);
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: 'Expense not found'
+      });
+    }
+
+    // Check if expense is auto-generated
+    if (expense.isAutoGenerated) {
+      return res.status(403).json({
+        success: false,
+        message: 'Cannot delete auto-generated expense'
+      });
+    }
+
+    await expense.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      message: 'Expense deleted successfully'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Approve expense
+// @route   PUT /api/expenses/:id/approve
+// @access  Private (Manager and above)
+export const approveExpense = async (req, res, next) => {
+  try {
+    const expense = await Expense.findById(req.params.id);
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: 'Expense not found'
+      });
+    }
+
+    if (expense.status === 'approved') {
+      return res.status(400).json({
+        success: false,
+        message: 'Expense is already approved'
+      });
+    }
+
+    expense.status = 'approved';
+    expense.approvedBy = req.user.id;
+    expense.approvedAt = new Date();
+    expense.updatedBy = req.user.id;
+
+    await expense.save();
+    await expense.populate('createdBy updatedBy approvedBy', 'name email');
+
+    res.status(200).json({
+      success: true,
+      message: 'Expense approved successfully',
+      data: expense
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Reject expense
+// @route   PUT /api/expenses/:id/reject
+// @access  Private (Manager and above)
+export const rejectExpense = async (req, res, next) => {
+  try {
+    const { rejectionReason } = req.body;
+
+    if (!rejectionReason) {
+      return res.status(400).json({
+        success: false,
+        message: 'Rejection reason is required'
+      });
+    }
+
+    const expense = await Expense.findById(req.params.id);
+
+    if (!expense) {
+      return res.status(404).json({
+        success: false,
+        message: 'Expense not found'
+      });
+    }
+
+    if (expense.status === 'rejected') {
+      return res.status(400).json({
+        success: false,
+        message: 'Expense is already rejected'
+      });
+    }
+
+    expense.status = 'rejected';
+    expense.rejectionReason = rejectionReason;
+    expense.approvedBy = req.user.id;
+    expense.approvedAt = new Date();
+    expense.updatedBy = req.user.id;
+
+    await expense.save();
+    await expense.populate('createdBy updatedBy approvedBy', 'name email');
+
+    res.status(200).json({
+      success: true,
+      message: 'Expense rejected successfully',
+      data: expense
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get expense statistics
+// @route   GET /api/expenses/stats
+// @access  Private (Manager and above)
+export const getExpenseStats = async (req, res, next) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    // Build date filter
+    const dateFilter = {};
+    if (startDate || endDate) {
+      dateFilter.expenseDate = {};
+      if (startDate) dateFilter.expenseDate.$gte = new Date(startDate);
+      if (endDate) dateFilter.expenseDate.$lte = new Date(endDate);
+    }
+
+    // Overall statistics
+    const overallStats = await Expense.aggregate([
+      { $match: dateFilter },
+      {
+        $group: {
+          _id: null,
+          totalExpenses: { $sum: 1 },
+          totalAmount: { $sum: '$amount' },
+          totalTaxAmount: { $sum: '$taxDetails.taxAmount' },
+          avgExpenseAmount: { $avg: '$amount' },
+          minExpenseAmount: { $min: '$amount' },
+          maxExpenseAmount: { $max: '$amount' },
+          approvedExpenses: { $sum: { $cond: [{ $eq: ['$status', 'approved'] }, 1, 0] } },
+          pendingExpenses: { $sum: { $cond: [{ $eq: ['$status', 'pending'] }, 1, 0] } },
+          rejectedExpenses: { $sum: { $cond: [{ $eq: ['$status', 'rejected'] }, 1, 0] } },
+          manualExpenses: { $sum: { $cond: [{ $eq: ['$sourceType', 'manual'] }, 1, 0] } },
+          autoExpenses: { $sum: { $cond: [{ $ne: ['$sourceType', 'manual'] }, 1, 0] } }
+        }
+      }
+    ]);
+
+    // Category-wise breakdown
+    const categoryStats = await Expense.aggregate([
+      { $match: dateFilter },
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 },
+          totalAmount: { $sum: '$amount' },
+          avgAmount: { $avg: '$amount' }
+        }
+      },
+      { $sort: { totalAmount: -1 } }
+    ]);
+
+    // Monthly trends
+    const monthlyTrends = await Expense.aggregate([
+      { $match: dateFilter },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$expenseDate' },
+            month: { $month: '$expenseDate' }
+          },
+          count: { $sum: 1 },
+          totalAmount: { $sum: '$amount' }
+        }
+      },
+      { $sort: { '_id.year': 1, '_id.month': 1 } }
+    ]);
+
+    // Payment method breakdown
+    const paymentMethodStats = await Expense.aggregate([
+      { $match: dateFilter },
+      {
+        $group: {
+          _id: '$paymentMethod',
+          count: { $sum: 1 },
+          totalAmount: { $sum: '$amount' }
+        }
+      },
+      { $sort: { totalAmount: -1 } }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        overall: overallStats[0] || {
+          totalExpenses: 0,
+          totalAmount: 0,
+          totalTaxAmount: 0,
+          avgExpenseAmount: 0,
+          minExpenseAmount: 0,
+          maxExpenseAmount: 0,
+          approvedExpenses: 0,
+          pendingExpenses: 0,
+          rejectedExpenses: 0,
+          manualExpenses: 0,
+          autoExpenses: 0
+        },
+        byCategory: categoryStats,
+        monthlyTrends,
+        byPaymentMethod: paymentMethodStats
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Auto-generate expense from salary payment
+// @route   POST /api/expenses/auto-generate/salary/:salaryPaymentId
+// @access  Private (System/Manager and above)
+export const autoGenerateExpenseFromSalary = async (req, res, next) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const salaryPayment = await SalaryPayment.findById(req.params.salaryPaymentId)
+      .populate('employee', 'name employeeId')
+      .session(session);
+
+    if (!salaryPayment) {
+      await session.abortTransaction();
+      return res.status(404).json({
+        success: false,
+        message: 'Salary payment not found'
+      });
+    }
+
+    if (salaryPayment.status !== 'paid') {
+      await session.abortTransaction();
+      return res.status(400).json({
+        success: false,
+        message: 'Salary payment must be paid to generate expense'
+      });
+    }
+
+    if (salaryPayment.isExpenseRecorded) {
+      await session.abortTransaction();
+      return res.status(400).json({
+        success: false,
+        message: 'Expense already recorded for this salary payment'
+      });
+    }
+
+    // Generate expense ID
+    const expenseId = await Expense.generateExpenseId();
+
+    // Create expense
+    const expense = await Expense.create([{
+      expenseId,
+      title: `Salary Payment - ${salaryPayment.employee.name} (${salaryPayment.paymentMonth}/${salaryPayment.paymentYear})`,
+      description: `Auto-generated expense for salary payment of ${salaryPayment.employee.name} (${salaryPayment.employee.employeeId}) for ${salaryPayment.paymentMonth}/${salaryPayment.paymentYear}`,
+      amount: salaryPayment.netSalary,
+      category: 'Salary Expense',
+      expenseDate: salaryPayment.paymentDate || new Date(),
+      paymentMethod: salaryPayment.paymentMethod,
+      referenceNumber: salaryPayment.referenceNumber,
+      isAutoGenerated: true,
+      sourceType: 'salary',
+      sourceId: salaryPayment._id,
+      sourceModel: 'SalaryPayment',
+      status: 'approved',
+      approvedBy: req.user.id,
+      approvedAt: new Date(),
+      createdBy: req.user.id
+    }], { session });
+
+    // Mark salary payment as expense recorded
+    salaryPayment.isExpenseRecorded = true;
+    await salaryPayment.save({ session });
+
+    await session.commitTransaction();
+
+    // Populate the created expense
+    await expense[0].populate('createdBy approvedBy', 'name email');
+
+    res.status(201).json({
+      success: true,
+      message: 'Expense auto-generated from salary payment successfully',
+      data: expense[0]
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    next(error);
+  } finally {
+    session.endSession();
+  }
+};

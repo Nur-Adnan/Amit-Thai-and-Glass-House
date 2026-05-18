@@ -1,0 +1,143 @@
+{
+  "exportType": "employees",
+  "totalRecords": 5,
+  "filters": {},
+  "exportDate": "2026-01-02T21:15:23.125Z",
+  "data": [
+    {
+      "_id": "69581c39f7e4e982429b4d60",
+      "employeeId": "EMP-0005",
+      "name": "Tom Brown",
+      "email": "tom.brown@company.com",
+      "phone": "+1-555-0105",
+      "address": "654 Maple Ave, City, State 12345",
+      "position": "HR Assistant",
+      "department": "HR",
+      "monthlySalary": 28000,
+      "employmentType": "part-time",
+      "bankDetails": {
+        "accountNumber": "5678901234",
+        "bankName": "JKL Bank",
+        "ifscCode": "JKL0001234"
+      },
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "joiningDate": "2026-01-02T19:27:53.295Z",
+      "createdAt": "2026-01-02T19:27:53.295Z",
+      "updatedAt": "2026-01-02T19:27:53.295Z",
+      "__v": 0
+    },
+    {
+      "_id": "69581c39f7e4e982429b4d5d",
+      "employeeId": "EMP-0004",
+      "name": "Lisa Wilson",
+      "email": "lisa.wilson@company.com",
+      "phone": "+1-555-0104",
+      "address": "321 Elm St, City, State 12345",
+      "position": "Accountant",
+      "department": "Finance",
+      "monthlySalary": 35000,
+      "employmentType": "full-time",
+      "bankDetails": {
+        "accountNumber": "4567890123",
+        "bankName": "GHI Bank",
+        "ifscCode": "GHI0001234"
+      },
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "joiningDate": "2026-01-02T19:27:53.174Z",
+      "createdAt": "2026-01-02T19:27:53.175Z",
+      "updatedAt": "2026-01-02T19:27:53.175Z",
+      "__v": 0
+    },
+    {
+      "_id": "69581c39f7e4e982429b4d5a",
+      "employeeId": "EMP-0003",
+      "name": "Mike Davis",
+      "email": "mike.davis@company.com",
+      "phone": "+1-555-0103",
+      "address": "789 Pine St, City, State 12345",
+      "position": "Warehouse Assistant",
+      "department": "Warehouse",
+      "monthlySalary": 25000,
+      "employmentType": "full-time",
+      "bankDetails": {
+        "accountNumber": "3456789012",
+        "bankName": "DEF Bank",
+        "ifscCode": "DEF0001234"
+      },
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "joiningDate": "2026-01-02T19:27:53.057Z",
+      "createdAt": "2026-01-02T19:27:53.057Z",
+      "updatedAt": "2026-01-02T19:27:53.057Z",
+      "__v": 0
+    },
+    {
+      "_id": "69581c38f7e4e982429b4d57",
+      "employeeId": "EMP-0002",
+      "name": "Sarah Johnson",
+      "email": "sarah.johnson@company.com",
+      "phone": "+1-555-0102",
+      "address": "456 Oak Ave, City, State 12345",
+      "position": "Production Supervisor",
+      "department": "Production",
+      "monthlySalary": 38000,
+      "employmentType": "full-time",
+      "bankDetails": {
+        "accountNumber": "2345678901",
+        "bankName": "XYZ Bank",
+        "ifscCode": "XYZ0001234"
+      },
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "joiningDate": "2026-01-02T19:27:52.912Z",
+      "createdAt": "2026-01-02T19:27:52.913Z",
+      "updatedAt": "2026-01-02T19:27:52.913Z",
+      "__v": 0
+    },
+    {
+      "_id": "69581c38f7e4e982429b4d54",
+      "employeeId": "EMP-0001",
+      "name": "John Smith",
+      "email": "john.smith@company.com",
+      "phone": "+1-555-0101",
+      "address": "123 Main St, City, State 12345",
+      "position": "Sales Manager",
+      "department": "Sales",
+      "monthlySalary": 45000,
+      "employmentType": "full-time",
+      "bankDetails": {
+        "accountNumber": "1234567890",
+        "bankName": "ABC Bank",
+        "ifscCode": "ABC0001234"
+      },
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "joiningDate": "2026-01-02T19:27:52.783Z",
+      "createdAt": "2026-01-02T19:27:52.786Z",
+      "updatedAt": "2026-01-02T19:27:52.786Z",
+      "__v": 0
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "simulationComplete": true,
+  "workflowMetrics": {
+    "startTime": "09:00 AM",
+    "endTime": "06:00 PM",
+    "totalDuration": "9 hours",
+    "tasksCompleted": {
+      "invoices": 18,
+      "duePayments": 5,
+      "returns": 1,
+      "salaryPayments": 1
+    },
+    "timeBreakdown": {
+      "invoiceCreation": "4.5 hours",
+      "duePaymentProcessing": "45 minutes",
+      "returnProcessing": "30 minutes",
+      "salaryPayment": "30 minutes",
+      "breaks": "1.5 hours",
+      "dailyReview": "30 minutes",
+      "confusion": "1.25 hours"
+    },
+    "efficiency": "67%"
+  },
+  "confusionPoints": [
+    {
+      "issue": "Product return process not intuitive",
+      "severity": "CRITICAL",
+      "timeWasted": "20 minutes per return",
+      "frequency": "100% of returns"
+    },
+    {
+      "issue": "Customer selection dropdown too long",
+      "severity": "HIGH",
+      "timeWasted": "2 minutes per invoice",
+      "frequency": "80% of invoices"
+    },
+    {
+      "issue": "Due payment management unclear",
+      "severity": "HIGH",
+      "timeWasted": "5 minutes per payment",
+      "frequency": "100% of payments"
+    },
+    {
+      "issue": "Salary payment location unclear",
+      "severity": "HIGH",
+      "timeWasted": "15 minutes per payment",
+      "frequency": "100% of salary payments"
+    },
+    {
+      "issue": "Dashboard information overload",
+      "severity": "MEDIUM",
+      "timeWasted": "3 minutes daily",
+      "frequency": "100% of daily starts"
+    }
+  ],
+  "errorProneSteps": [
+    {
+      "step": "Return stock update",
+      "errorRate": "90%",
+      "impact": "Incorrect inventory levels",
+      "prevention": "Automatic stock adjustment"
+    },
+    {
+      "step": "Salary payment category",
+      "errorRate": "60%",
+      "impact": "Incorrect financial reporting",
+      "prevention": "Pre-populate expense category"
+    },
+    {
+      "step": "Partial payment calculation",
+      "errorRate": "40%",
+      "impact": "Wrong due amounts",
+      "prevention": "Automatic calculation display"
+    },
+    {
+      "step": "Product selection",
+      "errorRate": "30%",
+      "impact": "Incorrect pricing",
+      "prevention": "Visual indicators with price preview"
+    },
+    {
+      "step": "Phone number format",
+      "errorRate": "20%",
+      "impact": "Communication failures",
+      "prevention": "Format validation and auto-formatting"
+    }
+  ],
+  "speedIssues": {
+    "invoiceCreation": {
+      "current": "13 minutes average",
+      "target": "8 minutes",
+      "improvement": "38% faster needed"
+    },
+    "duePaymentProcessing": {
+      "current": "9 minutes per payment",
+      "target": "3 minutes",
+      "improvement": "67% faster needed"
+    },
+    "productReturn": {
+      "current": "30 minutes",
+      "target": "10 minutes",
+      "improvement": "67% faster needed"
+    },
+    "salaryPayment": {
+      "current": "30 minutes",
+      "target": "5 minutes",
+      "improvement": "83% faster needed"
+    }
+  },
+  "uiRecommendations": [
+    {
+      "priority": 1,
+      "component": "Return Process",
+      "issue": "No visible return option",
+      "solution": "Add prominent \"Process Return\" button",
+      "impact": "Eliminates 30-minute confusion",
+      "effort": "Medium"
+    },
+    {
+      "priority": 2,
+      "component": "Customer Search",
+      "issue": "Long unsearchable dropdown",
+      "solution": "Add search with recent customers",
+      "impact": "Saves 2 minutes per invoice",
+      "effort": "Low"
+    },
+    {
+      "priority": 3,
+      "component": "Due Payments",
+      "issue": "No centralized dues view",
+      "solution": "Create \"Pending Dues\" dashboard",
+      "impact": "Saves 5 minutes per payment",
+      "effort": "Medium"
+    },
+    {
+      "priority": 4,
+      "component": "Product Selection",
+      "issue": "Similar names cause confusion",
+      "solution": "Add visual indicators and price preview",
+      "impact": "Reduces 30% of pricing errors",
+      "effort": "Medium"
+    },
+    {
+      "priority": 5,
+      "component": "Salary Management",
+      "issue": "Hard to find salary option",
+      "solution": "Add dedicated salary section",
+      "impact": "Saves 15 minutes per payment",
+      "effort": "High"
+    }
+  ],
+  "roiAnalysis": {
+    "improvements": [
+      {
+        "name": "Customer Search Dropdown",
+        "implementationHours": 16,
+        "annualTimeSavings": 156,
+        "roi": "975%",
+        "payback": "1.5 months"
+      },
+      {
+        "name": "Due Payments Dashboard",
+        "implementationHours": 32,
+        "annualTimeSavings": 108,
+        "roi": "339%",
+        "payback": "4.3 months"
+      },
+      {
+        "name": "Product Visual Indicators",
+        "implementationHours": 24,
+        "annualTimeSavings": 78,
+        "roi": "325%",
+        "payback": "4.5 months"
+      },
+      {
+        "name": "Return Process Workflow",
+        "implementationHours": 40,
+        "annualTimeSavings": 35,
+        "roi": "87%",
+        "payback": "14 months"
+      }
+    ],
+    "totalROI": "243%",
+    "totalImplementationHours": 112,
+    "totalAnnualSavings": 377
+  },
+  "userMetrics": {
+    "satisfaction": {
+      "overall": 6.5,
+      "easeOfUse": 5.8,
+      "speed": 6.2,
+      "reliability": 8.1,
+      "learnability": 5.5
+    },
+    "efficiency": {
+      "currentRate": "67%",
+      "targetRate": "85%",
+      "tasksPerHour": 12,
+      "targetTasksPerHour": 18
+    },
+    "errors": {
+      "overallErrorRate": "30%",
+      "targetErrorRate": "5%",
+      "criticalErrors": 2,
+      "majorErrors": 5
+    },
+    "learning": {
+      "timeToBasicProficiency": "2 days",
+      "trainingHoursRequired": 8,
+      "selfDiscoveryRate": "45%"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "exportType": "invoices",
+  "totalRecords": 0,
+  "filters": {
+    "invalidFilter": "test"
+  },
+  "exportDate": "2026-01-02T21:14:33.835Z",
+  "data": []
+}

@@ -1,0 +1,337 @@
+{
+  "exportType": "customers",
+  "totalRecords": 11,
+  "filters": {},
+  "exportDate": "2026-01-02T21:14:32.964Z",
+  "data": [
+    {
+      "_id": "69582ee62be2b4494c75bbe1",
+      "customerId": "CUST-0011",
+      "name": "Test Customer",
+      "phone": "+1-555-9999",
+      "email": "test@example.com",
+      "address": {
+        "street": "123 Test St",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77001",
+        "country": "USA"
+      },
+      "totalDue": 500,
+      "totalSales": 2000,
+      "totalPaid": 1500,
+      "invoiceCount": 1,
+      "customerType": "regular",
+      "creditLimit": 0,
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:47:34.158Z",
+      "updatedAt": "2026-01-02T20:51:54.741Z",
+      "__v": 0,
+      "lastInvoiceDate": "2026-01-02T20:47:56.234Z"
+    },
+    {
+      "_id": "69582ea083ece440494224ea",
+      "customerId": "CUST-0010",
+      "name": "David Chen",
+      "phone": "+1-555-0110",
+      "email": "david.chen@email.com",
+      "address": {
+        "street": "741 Modern Plaza",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77010",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "regular",
+      "creditLimit": 0,
+      "isActive": true,
+      "notes": "Restaurant renovation project",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:24.548Z",
+      "updatedAt": "2026-01-02T20:46:24.548Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582ea083ece440494224e7",
+      "customerId": "CUST-0009",
+      "name": "Metro Glass & Marble",
+      "phone": "+1-555-0109",
+      "email": "sales@metroglass.com",
+      "address": {
+        "street": "369 Trade Center",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77009",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "corporate",
+      "creditLimit": 150000,
+      "isActive": true,
+      "notes": "Wholesale distributor",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:24.422Z",
+      "updatedAt": "2026-01-02T20:46:24.422Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582ea083ece440494224e4",
+      "customerId": "CUST-0008",
+      "name": "Sarah Williams",
+      "phone": "+1-555-0108",
+      "email": "sarah.williams@email.com",
+      "address": {
+        "street": "258 Garden View",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77008",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "regular",
+      "creditLimit": 0,
+      "isActive": true,
+      "notes": "New home construction",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:24.301Z",
+      "updatedAt": "2026-01-02T20:46:24.301Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582ea083ece440494224e1",
+      "customerId": "CUST-0007",
+      "name": "Texas Builders Group",
+      "phone": "+1-555-0107",
+      "email": "procurement@texasbuilders.com",
+      "address": {
+        "street": "147 Construction Way",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77007",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "corporate",
+      "creditLimit": 200000,
+      "isActive": true,
+      "notes": "Major construction company, VIP customer",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:24.175Z",
+      "updatedAt": "2026-01-02T20:46:24.175Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582ea083ece440494224de",
+      "customerId": "CUST-0006",
+      "name": "Robert Johnson",
+      "phone": "+1-555-0106",
+      "address": {
+        "street": "987 Oak Avenue",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77006",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "regular",
+      "creditLimit": 0,
+      "isActive": true,
+      "notes": "Commercial property owner",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:24.055Z",
+      "updatedAt": "2026-01-02T20:46:24.055Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582e9f83ece440494224db",
+      "customerId": "CUST-0005",
+      "name": "Elite Interiors LLC",
+      "phone": "+1-555-0105",
+      "email": "projects@eliteinteriors.com",
+      "address": {
+        "street": "654 Design District",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77005",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "corporate",
+      "creditLimit": 100000,
+      "isActive": true,
+      "notes": "Interior design company, high-end projects",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:23.935Z",
+      "updatedAt": "2026-01-02T20:46:23.935Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582e9f83ece440494224d8",
+      "customerId": "CUST-0004",
+      "name": "Maria Rodriguez",
+      "phone": "+1-555-0104",
+      "email": "maria.rodriguez@email.com",
+      "address": {
+        "street": "321 Suburban Street",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77004",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "regular",
+      "creditLimit": 0,
+      "isActive": true,
+      "notes": "Bathroom renovation, repeat customer",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:23.810Z",
+      "updatedAt": "2026-01-02T20:46:23.810Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582e9f83ece440494224d5",
+      "customerId": "CUST-0003",
+      "name": "Premium Glass Solutions",
+      "phone": "+1-555-0103",
+      "email": "orders@premiumglass.com",
+      "address": {
+        "street": "789 Industrial Boulevard",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77003",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "corporate",
+      "creditLimit": 75000,
+      "isActive": true,
+      "notes": "Glass installation company, bulk orders",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:23.684Z",
+      "updatedAt": "2026-01-02T20:46:23.684Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582e9f83ece440494224d1",
+      "customerId": "CUST-0002",
+      "name": "John Smith",
+      "phone": "+1-555-0102",
+      "email": "john.smith@email.com",
+      "address": {
+        "street": "456 Residential Lane",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77002",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "regular",
+      "creditLimit": 0,
+      "isActive": true,
+      "notes": "Homeowner, kitchen renovation project",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:23.565Z",
+      "updatedAt": "2026-01-02T20:46:23.565Z",
+      "__v": 0
+    },
+    {
+      "_id": "69582e9f83ece440494224cc",
+      "customerId": "CUST-0001",
+      "name": "ABC Construction Company",
+      "phone": "+1-555-0101",
+      "email": "contact@abcconstruction.com",
+      "address": {
+        "street": "123 Business Park Drive",
+        "city": "Houston",
+        "state": "TX",
+        "zipCode": "77001",
+        "country": "USA"
+      },
+      "totalDue": 0,
+      "totalSales": 0,
+      "totalPaid": 0,
+      "invoiceCount": 0,
+      "customerType": "corporate",
+      "creditLimit": 50000,
+      "isActive": true,
+      "notes": "Large construction company, regular customer",
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T20:46:23.442Z",
+      "updatedAt": "2026-01-02T20:46:23.442Z",
+      "__v": 0
+    }
+  ]
+}

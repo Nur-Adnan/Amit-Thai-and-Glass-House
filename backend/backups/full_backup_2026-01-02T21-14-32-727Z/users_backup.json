@@ -1,0 +1,25 @@
+{
+  "exportType": "users",
+  "totalRecords": 2,
+  "exportDate": "2026-01-02T21:14:33.388Z",
+  "data": [
+    {
+      "_id": "6958121f1b0e0015d7cfd256",
+      "name": "System Owner",
+      "email": "owner@company.com",
+      "role": "owner",
+      "isActive": true,
+      "createdAt": "2026-01-02T18:44:47.220Z",
+      "__v": 0
+    },
+    {
+      "_id": "695812343958b4874c0c82df",
+      "name": "Test Manager",
+      "email": "manager@company.com",
+      "role": "manager",
+      "isActive": true,
+      "createdAt": "2026-01-02T18:45:08.522Z",
+      "__v": 0
+    }
+  ]
+}

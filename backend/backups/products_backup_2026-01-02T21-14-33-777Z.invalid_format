@@ -1,0 +1,156 @@
+{
+  "exportType": "products",
+  "totalRecords": 7,
+  "filters": {},
+  "exportDate": "2026-01-02T21:14:33.777Z",
+  "data": [
+    {
+      "_id": "695813e583067694710eeb34",
+      "name": "Mirror Glass - 4mm",
+      "category": "Glass",
+      "purchasePrice": 50,
+      "sellingPrice": 80,
+      "stockQuantity": 80,
+      "unit": "sqft",
+      "description": "High-quality mirror glass for decorative purposes",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:52:21.347Z",
+      "updatedAt": "2026-01-02T18:52:54.813Z",
+      "__v": 0,
+      "updatedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      }
+    },
+    {
+      "_id": "695813babd478dfae1dd4fc5",
+      "name": "Premium Thai Marble - White",
+      "category": "Thai",
+      "purchasePrice": 150,
+      "sellingPrice": 200,
+      "stockQuantity": 52,
+      "unit": "sqft",
+      "description": "High-quality white Thai marble for flooring and walls",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:51:38.464Z",
+      "updatedAt": "2026-01-02T21:05:05.762Z",
+      "__v": 0,
+      "updatedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      }
+    },
+    {
+      "_id": "695813babd478dfae1dd4fc6",
+      "name": "Thai Granite - Black",
+      "category": "Thai",
+      "purchasePrice": 120,
+      "sellingPrice": 160,
+      "stockQuantity": 45,
+      "unit": "sqft",
+      "description": "Durable black Thai granite for kitchen countertops",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:51:38.464Z",
+      "updatedAt": "2026-01-02T19:21:00.290Z",
+      "__v": 0,
+      "updatedBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      }
+    },
+    {
+      "_id": "695813babd478dfae1dd4fc7",
+      "name": "Tempered Glass Panel - 8mm",
+      "category": "Glass",
+      "purchasePrice": 80,
+      "sellingPrice": 120,
+      "stockQuantity": 30,
+      "unit": "sqft",
+      "description": "8mm tempered glass panels for windows and doors",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:51:38.464Z",
+      "updatedAt": "2026-01-02T18:51:38.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "695813babd478dfae1dd4fca",
+      "name": "Frosted Glass - 6mm",
+      "category": "Glass",
+      "purchasePrice": 60,
+      "sellingPrice": 90,
+      "stockQuantity": 40,
+      "unit": "sqft",
+      "description": "6mm frosted glass for privacy applications",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:51:38.464Z",
+      "updatedAt": "2026-01-02T18:51:38.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "695813babd478dfae1dd4fc8",
+      "name": "Laminated Glass - 10mm",
+      "category": "Glass",
+      "purchasePrice": 100,
+      "sellingPrice": 150,
+      "stockQuantity": 25,
+      "unit": "sqft",
+      "description": "10mm laminated safety glass for commercial use",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:51:38.464Z",
+      "updatedAt": "2026-01-02T18:51:38.464Z",
+      "__v": 0
+    },
+    {
+      "_id": "695813babd478dfae1dd4fc9",
+      "name": "Thai Limestone - Beige",
+      "category": "Thai",
+      "purchasePrice": 90,
+      "sellingPrice": 130,
+      "stockQuantity": 60,
+      "unit": "sqft",
+      "description": "Natural beige limestone from Thailand",
+      "isActive": true,
+      "createdBy": {
+        "_id": "6958121f1b0e0015d7cfd256",
+        "name": "System Owner",
+        "email": "owner@company.com"
+      },
+      "createdAt": "2026-01-02T18:51:38.464Z",
+      "updatedAt": "2026-01-02T18:51:38.464Z",
+      "__v": 0
+    }
+  ]
+}

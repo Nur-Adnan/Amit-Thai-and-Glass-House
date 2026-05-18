@@ -1,0 +1,43 @@
+{
+  "backupId": "2026-01-02T21-14-32-727Z",
+  "backupFolder": "/Users/adnan/Desktop/Amit Thai and Glass House/backend/backups/full_backup_2026-01-02T21-14-32-727Z",
+  "timestamp": "2026-01-02T21:14:32.728Z",
+  "modules": {
+    "invoices": {
+      "filename": "invoices_backup_2026-01-02T21-14-32-844Z.json",
+      "recordCount": 5,
+      "fileSize": 6669
+    },
+    "customers": {
+      "filename": "customers_backup_2026-01-02T21-14-32-964Z.json",
+      "recordCount": 11,
+      "fileSize": 9369
+    },
+    "products": {
+      "filename": "products_backup_2026-01-02T21-14-33-093Z.json",
+      "recordCount": 7,
+      "fileSize": 4544
+    },
+    "expenses": {
+      "filename": "expenses_backup_2026-01-02T21-14-33-210Z.json",
+      "recordCount": 9,
+      "fileSize": 10382
+    },
+    "employees": {
+      "filename": "employees_backup_2026-01-02T21-14-33-328Z.json",
+      "recordCount": 5,
+      "fileSize": 4289
+    }
+  },
+  "totalRecords": 37,
+  "totalSize": 35253,
+  "version": "1.0",
+  "databaseName": "test",
+  "nodeVersion": "v22.19.0",
+  "backupType": "full",
+  "createdBy": {
+    "id": "6958121f1b0e0015d7cfd256",
+    "name": "System Owner",
+    "email": "owner@company.com"
+  }
+}
