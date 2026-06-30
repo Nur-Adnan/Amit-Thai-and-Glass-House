@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -113,7 +114,7 @@ export default function InvoicesPage() {
     
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/invoices', {
+      const response = await fetch(`${API_BASE}/api/invoices`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -221,7 +222,7 @@ export default function StockAwareCalculatorPage() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/calculator/calculate-stock-aware', {
+      const response = await fetch(`${API_BASE}/api/calculator/calculate-stock-aware`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

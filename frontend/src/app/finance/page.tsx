@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -131,12 +132,12 @@ export default function FinancePage() {
       const token = localStorage.getItem('token')
 
       // Fetch expenses
-      const expensesResponse = await fetch('http://localhost:3001/api/expenses?limit=50', {
+      const expensesResponse = await fetch(`${API_BASE}/api/expenses?limit=50`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 
       // Fetch salary payments
-      const salariesResponse = await fetch('http://localhost:3001/api/salary-payments?limit=50', {
+      const salariesResponse = await fetch(`${API_BASE}/api/salary-payments?limit=50`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 
@@ -213,7 +214,7 @@ export default function FinancePage() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/expenses', {
+      const response = await fetch(`${API_BASE}/api/expenses`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -249,7 +250,7 @@ export default function FinancePage() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/salary-payments', {
+      const response = await fetch(`${API_BASE}/api/salary-payments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,

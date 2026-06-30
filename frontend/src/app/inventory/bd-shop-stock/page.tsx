@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -141,7 +142,7 @@ export default function BDShopStockPage() {
       try {
         const token = localStorage.getItem('token')
         const response = await fetch(
-          `http://localhost:3001/api/bd-shop-inventory/search-companies?q=${encodeURIComponent(query)}&materialType=${formData.materialType}`,
+          `${API_BASE}/api/bd-shop-inventory/search-companies?q=${encodeURIComponent(query)}&materialType=${formData.materialType}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -173,7 +174,7 @@ export default function BDShopStockPage() {
     
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/bd-shop-inventory/form-data', {
+      const response = await fetch(`${API_BASE}/api/bd-shop-inventory/form-data`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -216,7 +217,7 @@ export default function BDShopStockPage() {
     try {
       const token = localStorage.getItem('token')
       // Use the existing brands API instead of the problematic bd-shop-inventory endpoint
-      const response = await fetch('http://localhost:3001/api/brands', {
+      const response = await fetch(`${API_BASE}/api/brands`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -289,7 +290,7 @@ export default function BDShopStockPage() {
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/bd-shop-inventory/add-stock', {
+      const response = await fetch(`${API_BASE}/api/bd-shop-inventory/add-stock`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

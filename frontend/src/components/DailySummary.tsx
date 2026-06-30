@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/apiBase'
 
 import { useState, useEffect, useCallback } from 'react';
 import { Button, Input } from '@heroui/react';
@@ -74,8 +75,8 @@ export default function DailySummary({ selectedDate, onDateChange }: DailySummar
     try {
       const token = localStorage.getItem('token');
       const url = selectedDate 
-        ? `http://localhost:3001/api/daily-summary?date=${selectedDate}`
-        : 'http://localhost:3001/api/daily-summary';
+        ? `${API_BASE}/api/daily-summary?date=${selectedDate}`
+        : `${API_BASE}/api/daily-summary`;
         
       const response = await fetch(url, {
         headers: {

@@ -1,6 +1,18 @@
 # QA Signoff Document - Amit Thai & Glass House System
 
-## Production Readiness Status: READY
+> ## ⚠️ RETRACTED — this certification is not valid
+>
+> This document's "READY / 100% / 0 critical issues" certification is **withdrawn**. A
+> code audit (2026-06-30, see [docs/audit/PRODUCTION_READINESS_AUDIT.md](../audit/PRODUCTION_READINESS_AUDIT.md))
+> found the claims are not credible: the integration tests import a non-existent
+> `backend/src/app.js` and fail at load, roughly half the test files assert against
+> self-generated mock data (exercising no real source code), real coverage is ~5–10%
+> (per [TESTING_IMPLEMENTATION_STATUS.md](TESTING_IMPLEMENTATION_STATUS.md)), and there
+> is no CI. The "100%" figures trace to a script feeding self-consistent mock data into
+> mock validators. **Do not rely on this sign-off for a production go/no-go.** The
+> retained text below is kept for history only.
+
+## Production Readiness Status: ~~READY~~ RETRACTED
 **Date:** 03/01/2026  
 **Validation Timestamp:** 2026-01-03T15:32:06.649Z  
 **System Version:** 1.0.0  

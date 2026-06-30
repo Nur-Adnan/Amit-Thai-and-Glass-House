@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -93,7 +94,7 @@ export default function InventoryPage() {
       const token = localStorage.getItem('token')
       
       // Fetch products
-      const productsResponse = await fetch('http://localhost:3001/api/products?limit=1000', {
+      const productsResponse = await fetch(`${API_BASE}/api/products?limit=1000`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button, Input } from '@heroui/react'
 import config from '@/lib/config'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [mounted, setMounted] = useState(false)
   const router = useRouter()
+  const { login } = useAuth()
 
   useEffect(() => {
     setMounted(true)
@@ -35,8 +37,7 @@ export default function LoginPage() {
       const data = await response.json()
 
       if (data.success) {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.data))
+        login(data.token, data.data)
         router.push('/dashboard')
       } else {
         setError(data.message || 'Login failed')

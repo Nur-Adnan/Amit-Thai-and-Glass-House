@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import {
   Button,
@@ -97,7 +98,7 @@ export default function PayrollPage() {
   const fetchSalaryPayments = useCallback(async () => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:3001/api/salary-payments?month=${currentMonth}&year=${currentYear}`, {
+      const response = await fetch(`${API_BASE}/api/salary-payments?month=${currentMonth}&year=${currentYear}`, {
         headers: { 'Authorization': `Bearer ${token}` },
       })
       const data = await response.json()
@@ -113,7 +114,7 @@ export default function PayrollPage() {
     const fetchEmployees = async () => {
       try {
         const token = localStorage.getItem('token')
-        const response = await fetch('http://localhost:3001/api/employees?isActive=true', {
+        const response = await fetch(`${API_BASE}/api/employees?isActive=true`, {
           headers: { 'Authorization': `Bearer ${token}` },
         })
         const data = await response.json()
@@ -158,7 +159,7 @@ export default function PayrollPage() {
     try {
       const employee = employees.find(e => e._id === selectedEmployee)
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/salary-payments', {
+      const response = await fetch(`${API_BASE}/api/salary-payments`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -198,7 +199,7 @@ export default function PayrollPage() {
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:3001/api/salary-payments/${paymentId}/pay`, {
+      const response = await fetch(`${API_BASE}/api/salary-payments/${paymentId}/pay`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -234,11 +235,11 @@ export default function PayrollPage() {
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
+    // BDT (৳) — matches the rest of the app (CurrencyDisplay / lib/utils).
+    return `৳${(amount || 0).toLocaleString('en-US', {
       minimumFractionDigits: 2,
-    }).format(amount)
+      maximumFractionDigits: 2,
+    })}`
   }
 
   const getStatusColor = (status: string) => {

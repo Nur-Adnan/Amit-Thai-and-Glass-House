@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/apiBase'
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, AlertTriangle, Package } from 'lucide-react';
@@ -52,7 +53,7 @@ export default function BusinessSummaryCards() {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/business-summary', {
+      const response = await fetch(`${API_BASE}/api/business-summary`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

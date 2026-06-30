@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -133,10 +134,10 @@ export default function StockPurchasePage() {
       
       // Fetch suppliers and form data in parallel
       const [suppliersResponse, formDataResponse] = await Promise.all([
-        fetch('http://localhost:3001/api/suppliers', {
+        fetch(`${API_BASE}/api/suppliers`, {
           headers: { 'Authorization': `Bearer ${token}` }
         }),
-        fetch('http://localhost:3001/api/bd-shop-inventory/form-data', {
+        fetch(`${API_BASE}/api/bd-shop-inventory/form-data`, {
           headers: { 'Authorization': `Bearer ${token}` }
         })
       ])
@@ -220,7 +221,7 @@ export default function StockPurchasePage() {
         }
       })
 
-      const productSearchResponse = await fetch(`http://localhost:3001/api/products?${searchParams.toString()}`, {
+      const productSearchResponse = await fetch(`${API_BASE}/api/products?${searchParams.toString()}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 
@@ -255,7 +256,7 @@ export default function StockPurchasePage() {
           }
         }
 
-        const createResponse = await fetch('http://localhost:3001/api/bd-shop-inventory/add-stock', {
+        const createResponse = await fetch(`${API_BASE}/api/bd-shop-inventory/add-stock`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -306,7 +307,7 @@ export default function StockPurchasePage() {
           notes: formData.notes.trim() || `Stock purchase - ${formData.materialType} ${formData.company}`
         }
 
-        const response = await fetch('http://localhost:3001/api/stock-purchases', {
+        const response = await fetch(`${API_BASE}/api/stock-purchases`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

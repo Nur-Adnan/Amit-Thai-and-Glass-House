@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@heroui/react'
@@ -90,7 +91,7 @@ const InvoiceDisplay: React.FC<InvoiceDisplayProps> = ({
 
   const fetchShopConfig = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/shop-config')
+      const response = await fetch(`${API_BASE}/api/shop-config`)
       const data = await response.json()
       if (data.success) {
         setConfig(data.data)

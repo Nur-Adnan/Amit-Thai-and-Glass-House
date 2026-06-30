@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/apiBase'
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
@@ -104,7 +105,7 @@ export default function PrintableInvoice({ invoice, onClose }: PrintableInvoiceP
 
   const fetchShopConfig = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/shop-config');
+      const response = await fetch(`${API_BASE}/api/shop-config`);
       if (response.ok) {
         const data = await response.json();
         setShopConfig(data.data);

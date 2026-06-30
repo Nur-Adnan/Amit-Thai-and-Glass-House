@@ -37,7 +37,16 @@ export const getUser = asyncHandler(async (req, res) => {
 // @route   PUT /api/users/:id
 // @access  Private (Owner only)
 export const updateUser = asyncHandler(async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+  // Whitelist updatable fields — never trust req.body directly (mass-assignment).
+  // Password is intentionally excluded: findByIdAndUpdate bypasses the pre-save
+  // hash hook, so a password set here would be stored in plaintext.
+  const allowed = ['name', 'email', 'role', 'isActive'];
+  const updates = {};
+  for (const key of allowed) {
+    if (req.body[key] !== undefined) updates[key] = req.body[key];
+  }
+
+  const user = await User.findByIdAndUpdate(req.params.id, updates, {
     new: true,
     runValidators: true
   });

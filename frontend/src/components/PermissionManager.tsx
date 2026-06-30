@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/apiBase'
 
 import React, { useState, useEffect } from 'react';
 import { Button, Select, SelectItem } from '@heroui/react';
@@ -77,7 +78,7 @@ const PermissionManager: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/permissions/matrix', {
+      const response = await fetch(`${API_BASE}/api/permissions/matrix`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -122,7 +123,7 @@ const PermissionManager: React.FC = () => {
         return; // Silently fail for stats, as it's not critical
       }
 
-      const response = await fetch('http://localhost:3001/api/permissions/stats', {
+      const response = await fetch(`${API_BASE}/api/permissions/stats`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -151,7 +152,7 @@ const PermissionManager: React.FC = () => {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/permissions/initialize', {
+      const response = await fetch(`${API_BASE}/api/permissions/initialize`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -201,7 +202,7 @@ const PermissionManager: React.FC = () => {
       setLoading(true);
       const permissions = pendingChanges[role] || [];
       
-      const response = await fetch(`http://localhost:3001/api/permissions/role/${role}/bulk`, {
+      const response = await fetch(`${API_BASE}/api/permissions/role/${role}/bulk`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

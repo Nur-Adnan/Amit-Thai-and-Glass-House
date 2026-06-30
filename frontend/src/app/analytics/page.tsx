@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -168,7 +169,7 @@ export default function AnalyticsPage() {
           endpoint = 'stock-by-company'
       }
 
-      const response = await fetch(`http://localhost:3001/api/business-analytics/${endpoint}?${queryParams}`, {
+      const response = await fetch(`${API_BASE}/api/business-analytics/${endpoint}?${queryParams}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
 

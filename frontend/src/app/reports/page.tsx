@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
 import { Card, CardBody, CardHeader, Button, Input } from '@heroui/react'
@@ -95,16 +96,16 @@ export default function ReportsPage() {
         }
         
         const [salesRes, profitRes, expensesRes, invoicesRes] = await Promise.all([
-          fetch(`http://localhost:3001/api/dashboard/todays-sales`, {
+          fetch(`${API_BASE}/api/dashboard/todays-sales`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
-          fetch(`http://localhost:3001/api/profit/dashboard`, {
+          fetch(`${API_BASE}/api/profit/dashboard`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
-          fetch(`http://localhost:3001/api/expenses/stats`, {
+          fetch(`${API_BASE}/api/expenses/stats`, {
             headers: { 'Authorization': `Bearer ${token}` }
           }),
-          fetch(`http://localhost:3001/api/invoices?${queryParams.toString()}`, {
+          fetch(`${API_BASE}/api/invoices?${queryParams.toString()}`, {
             headers: { 'Authorization': `Bearer ${token}` }
           })
         ])

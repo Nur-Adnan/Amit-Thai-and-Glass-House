@@ -8,7 +8,22 @@ const connectDB = async () => {
 
     logger.database(`MongoDB Connected: ${conn.connection.host}`);
     logger.database(`Database: ${conn.connection.name}`);
-    
+
+    // Money-path writes (invoices/payments/stock) use multi-document transactions,
+    // which require a replica set. Warn loudly if connected to a standalone mongod
+    // so the failure mode is obvious before users hit it.
+    try {
+      const hello = await conn.connection.db.admin().command({ hello: 1 });
+      if (!hello.setName && !hello.msg) {
+        logger.warn(
+          'MongoDB is running as a STANDALONE instance. Multi-document transactions ' +
+          '(invoice/payment/stock writes) will FAIL. Use a replica set or MongoDB Atlas.'
+        );
+      }
+    } catch {
+      // admin command may be unavailable (restricted user) — non-fatal.
+    }
+
     // Handle connection events
     mongoose.connection.on('error', (err) => {
       logger.error('MongoDB connection error:', { error: err.message });

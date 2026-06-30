@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import React, { useState, useEffect } from 'react'
 import { Button, Input, Textarea, Checkbox } from '@heroui/react'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -38,7 +39,7 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/shop-config/admin', {
+      const response = await fetch(`${API_BASE}/api/shop-config/admin`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       const data = await response.json()
@@ -60,7 +61,7 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
 
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch('http://localhost:3001/api/shop-config/trust-info', {
+      const response = await fetch(`${API_BASE}/api/shop-config/trust-info`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/apiBase'
 
 import React, { useState, useEffect } from 'react';
 import { Button, Input, Select, SelectItem } from '@heroui/react';
@@ -53,7 +54,7 @@ const SoftDeleteManager: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/soft-delete/stats', {
+      const response = await fetch(`${API_BASE}/api/soft-delete/stats`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
@@ -72,8 +73,8 @@ const SoftDeleteManager: React.FC = () => {
     try {
       setLoading(true);
       const url = modelType 
-        ? `http://localhost:3001/api/soft-delete/all?modelType=${modelType}`
-        : 'http://localhost:3001/api/soft-delete/all';
+        ? `${API_BASE}/api/soft-delete/all?modelType=${modelType}`
+        : `${API_BASE}/api/soft-delete/all`;
       
       const response = await fetch(url, {
         headers: {
@@ -94,7 +95,7 @@ const SoftDeleteManager: React.FC = () => {
 
   const handleRestore = async (modelType: string, itemId: string) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/${modelType}s/${itemId}/restore`, {
+      const response = await fetch(`${API_BASE}/api/${modelType}s/${itemId}/restore`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -134,7 +135,7 @@ const SoftDeleteManager: React.FC = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/api/soft-delete/bulk-restore', {
+      const response = await fetch(`${API_BASE}/api/soft-delete/bulk-restore`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '@heroui/react'
 import { useLanguage } from '@/contexts/LanguageContext'
@@ -81,7 +82,7 @@ const FinancialWarnings: React.FC<FinancialWarningsProps> = ({ className = '', p
     try {
       setError(null)
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:3001/api/financial-analytics/overview?period=${period}`, {
+      const response = await fetch(`${API_BASE}/api/financial-analytics/overview?period=${period}`, {
         headers: { 'Authorization': `Bearer ${token}` }
       })
       

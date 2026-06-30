@@ -40,13 +40,15 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-// Encrypt password using bcrypt
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
-  }
+// Encrypt password using bcrypt (only when it actually changed)
+userSchema.pre('save', async function() {
+  // Skip if password wasn't modified — otherwise a plain user.save()
+  // (e.g. updating name/role/lastLogin) would re-hash the already-hashed
+  // value and lock the user out.
+  if (!this.isModified('password')) return;
 
-  const salt = await bcrypt.genSalt(10);
+  const rounds = parseInt(process.env.BCRYPT_ROUNDS, 10) || 12;
+  const salt = await bcrypt.genSalt(rounds);
   this.password = await bcrypt.hash(this.password, salt);
 });
 

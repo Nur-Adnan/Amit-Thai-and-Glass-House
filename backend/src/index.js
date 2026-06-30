@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import mongoSanitize from 'express-mongo-sanitize';
 import config from './config/env.js';
 import logger from './utils/logger.js';
 import connectDB from './config/database.js';
@@ -51,6 +54,12 @@ connectDB();
 
 const app = express();
 
+// Security headers. crossOriginResourcePolicy is relaxed so the frontend
+// (different origin) can still load uploaded images from /uploads.
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
 // CORS Configuration
 const corsOptions = {
   origin: config.corsOrigins,
@@ -62,6 +71,31 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json({ limit: `${config.maxFileSize}b` }));
 app.use(express.urlencoded({ extended: true }));
+
+// Strip keys containing `$` or `.` from req.body/query/params
+// (NoSQL operator-injection defense-in-depth, on top of route validation).
+app.use(mongoSanitize());
+
+// Rate limiting. Auth endpoints get a strict limiter (brute-force / credential
+// stuffing); a general API limiter is opt-in via ENABLE_RATE_LIMITING since
+// dashboards are request-heavy.
+const authLimiter = rateLimit({
+  windowMs: config.rateLimitWindowMs,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many attempts. Please try again later.' },
+});
+const apiLimiter = rateLimit({
+  windowMs: config.rateLimitWindowMs,
+  max: config.rateLimitMaxRequests,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Too many requests. Please slow down.' },
+});
+if (config.enableRateLimiting) {
+  app.use('/api/', apiLimiter);
+}
 
 // Request logging middleware
 app.use(requestLogger);
@@ -83,7 +117,7 @@ app.use('/uploads', express.static(config.uploadPath));
 
 // Routes
 app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/customer-credit', customerCreditRoutes);

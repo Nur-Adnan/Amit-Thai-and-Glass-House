@@ -23,6 +23,7 @@ import {
   ChevronDown
 } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { useFormatting } from '@/hooks/useFormatting'
 import { AccessibilityProvider } from '@/components/AccessibilityProvider'
 import LanguageToggle from './LanguageToggle'
@@ -38,13 +39,6 @@ import {
   DrawerContent,
   DrawerBody,
 } from '@heroui/react'
-
-interface User {
-  id: string
-  name: string
-  email: string
-  role: string
-}
 
 interface LayoutProps {
   children: React.ReactNode
@@ -64,34 +58,21 @@ interface NavigationSection {
 }
 
 export default function Layout({ children }: LayoutProps) {
-  const [user, setUser] = useState<User | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const router = useRouter()
   const pathname = usePathname()
   const { t } = useLanguage()
   const { formatDateWithDay } = useFormatting()
+  const { user, isLoading, logout } = useAuth()
 
+  // Route guard: redirect to login once auth has loaded and there's no session.
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const userData = localStorage.getItem('user')
-    
-    if (!token || !userData) {
-      router.push('/login')
-      return
-    }
-
-    try {
-      setUser(JSON.parse(userData))
-    } catch (err) {
+    if (!isLoading && !user) {
       router.push('/login')
     }
-  }, [router])
+  }, [isLoading, user, router])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    router.push('/login')
-  }
+  const handleLogout = () => logout()
 
   // Navigation grouped into plain-language sections so non-technical staff
   // see a few labelled groups instead of a long flat list of icons.
@@ -150,7 +131,7 @@ export default function Layout({ children }: LayoutProps) {
 
   const allItems = navigation.flatMap((section) => section.items)
 
-  if (!user) {
+  if (isLoading || !user) {
     return (
       <AccessibilityProvider>
         <div className="min-h-screen bg-background flex items-center justify-center">

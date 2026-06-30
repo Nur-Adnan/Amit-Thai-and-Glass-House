@@ -189,16 +189,19 @@ A daily clerk's everyday surface drops from 14 icons to ~3 sections (Home, Sales
 
 ## Remediation roadmap
 
-**Phase 0 — Unblock deploy & stop the bleeding (days)**
-- FQ1/FQ5/UX-login: route every request through `lib/api.ts` (or at minimum a single `NEXT_PUBLIC_API_URL` base); delete the 34 hardcoded `localhost:3001`. Fix payroll currency.
-- S1/S2/S6: add `helmet` + `express-rate-limit` + `express-mongo-sanitize` + `express-validator` on auth.
-- S4: fix the password `return next()` bug (data-loss class).
-- C2/C3: move success responses to after commit; document + startup-check the replica-set requirement (see §2).
-- T3: retract/replace `QA_SIGNOFF.md`'s false certification.
+**Phase 0 — Unblock deploy & stop the bleeding (days) — ✅ DONE (2026-07-01)**
+- ✅ FQ1/FQ5/UX-login: all 55 hardcoded `localhost:3001` (23 files) now route through a single `API_BASE` (`lib/apiBase.ts` ← `NEXT_PUBLIC_API_URL`); payroll currency fixed USD→BDT.
+- ✅ S1/S2/S6: `helmet` + `express-rate-limit` (strict on `/api/auth`) + `express-mongo-sanitize` wired in `index.js`; `express-validator` chains on login/register (forces string email → blocks `{$gt}` injection). Verified live: injection payload → HTTP 400, security + rate-limit headers present.
+- ✅ S4: password pre-save hook fixed (early `return`, configured bcrypt rounds).
+- ✅ S3: `updateUser` now whitelists fields (no mass-assignment).
+- ✅ FQ2/FQ3/FC1 (pulled forward from Phase 1): added `AuthContext` + `useAuth` + route guard + a global `window.fetch` 401 interceptor (logout + redirect); adopted in Layout/login.
+- ✅ T3: retracted `QA_SIGNOFF.md`'s false certification.
+- ⏳ Still open: C2/C3 (move success responses after commit; document/startup-check the replica-set requirement) — deferred to Phase 1.
+- Verification: backend boots with middleware + injection blocked live; frontend `tsc` 0 errors + `next build` green (22 routes).
 
 **Phase 1 — Make it correct & trustworthy (1–2 weeks)**
-- FQ2/FQ3/FC1: one `AuthContext` + route guard + global 401 → redirect-to-login. Removes ~30 duplicated token reads at once.
-- S3/S5/S7: whitelist user updates, shorten/rotate tokens, validate uploads.
+- ✅ FQ2/FQ3/FC1 done in Phase 0 (AuthContext + guard + global 401). Remaining: migrate the ~30 per-page inline `localStorage.getItem('token')` reads to consume `useAuth()` for consistency (the global 401 net already covers them).
+- S5/S7: shorten/rotate tokens, validate uploads. (S3 done in Phase 0.)
 - D1/D2/D7: add the `Invoice.customer` index, fix the N+1, anchor search or add text indexes.
 - T1/T4/T5: export the Express app, fix jest ESM config, add a CI workflow that runs lint + typecheck + tests.
 

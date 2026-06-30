@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
 import {
@@ -158,7 +159,7 @@ export default function CustomersPage() {
       const token = localStorage.getItem('token')
       
       // Fetch due aging report which includes customer data and stats
-      const response = await fetch('http://localhost:3001/api/customer-credit/due-aging?includeZeroDue=true&limit=1000', {
+      const response = await fetch(`${API_BASE}/api/customer-credit/due-aging?includeZeroDue=true&limit=1000`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

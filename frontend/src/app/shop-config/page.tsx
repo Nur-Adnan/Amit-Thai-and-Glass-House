@@ -1,4 +1,5 @@
 'use client';
+import { API_BASE } from '@/lib/apiBase'
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image';
@@ -92,7 +93,7 @@ export default function ShopConfigPage() {
         return;
       }
 
-      const response = await fetch('http://localhost:3001/api/shop-config/admin', {
+      const response = await fetch(`${API_BASE}/api/shop-config/admin`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -135,7 +136,7 @@ export default function ShopConfigPage() {
   const initializeShopConfig = async (defaultConfig: ShopConfig) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/shop-config', {
+      const response = await fetch(`${API_BASE}/api/shop-config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +163,7 @@ export default function ShopConfigPage() {
     setSaving(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/shop-config', {
+      const response = await fetch(`${API_BASE}/api/shop-config`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -196,7 +197,7 @@ export default function ShopConfigPage() {
       const formData = new FormData();
       formData.append('logo', logoFile);
 
-      const response = await fetch('http://localhost:3001/api/shop-config/logo', {
+      const response = await fetch(`${API_BASE}/api/shop-config/logo`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -239,7 +240,7 @@ export default function ShopConfigPage() {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:3001/api/shop-config/logo', {
+      const response = await fetch(`${API_BASE}/api/shop-config/logo`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -1027,7 +1028,7 @@ export default function ShopConfigPage() {
 
                     try {
                       const token = localStorage.getItem('token');
-                      const response = await fetch('http://localhost:3001/api/shop-config/reset', {
+                      const response = await fetch(`${API_BASE}/api/shop-config/reset`, {
                         method: 'POST',
                         headers: {
                           'Authorization': `Bearer ${token}`

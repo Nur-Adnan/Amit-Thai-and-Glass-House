@@ -1,5 +1,6 @@
 'use client'
 
+import { API_BASE } from '@/lib/apiBase'
 import { useState } from 'react'
 
 interface DangerousEditValidation {
@@ -59,7 +60,7 @@ export function useDangerousEdit(options: UseDangerousEditOptions = {}) {
       setLoading(true)
       
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:3001/api/products/${productId}/validate-edit`, {
+      const response = await fetch(`${API_BASE}/api/products/${productId}/validate-edit`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +134,7 @@ export function useDangerousEdit(options: UseDangerousEditOptions = {}) {
         reasons: reasons || {}
       } : data
 
-      const response = await fetch(`http://localhost:3001/api/${endpoint}/${productId}`, {
+      const response = await fetch(`${API_BASE}/api/${endpoint}/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -219,7 +220,7 @@ export function useDangerousEdit(options: UseDangerousEditOptions = {}) {
       }
 
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:3001/api/products/${productId}/stock`, {
+      const response = await fetch(`${API_BASE}/api/products/${productId}/stock`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -256,7 +257,7 @@ export function useDangerousEdit(options: UseDangerousEditOptions = {}) {
   const getEditHistory = async (productId: string, page: number = 1, limit: number = 10) => {
     try {
       const token = localStorage.getItem('token')
-      const response = await fetch(`http://localhost:3001/api/products/${productId}/edit-history?page=${page}&limit=${limit}`, {
+      const response = await fetch(`${API_BASE}/api/products/${productId}/edit-history?page=${page}&limit=${limit}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
