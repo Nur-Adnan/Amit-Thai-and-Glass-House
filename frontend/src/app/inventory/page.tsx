@@ -2,10 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Input,
+  Chip,
+  Tooltip,
+  Select,
+  SelectItem,
+} from '@heroui/react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import {
@@ -18,19 +25,6 @@ import {
   TableHeader
 } from '@/components/ui/professional-table'
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { 
   Package, 
   Search, 
   AlertTriangle, 
@@ -217,47 +211,45 @@ export default function InventoryPage() {
 
     if (stockStatus === 'Out of Stock') {
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Badge className="bg-red-600 text-white border-red-700 animate-pulse font-bold text-xs px-3 py-1">
-                <XCircle className="h-3 w-3 mr-1" />
-                OUT OF STOCK
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
+        <Tooltip
+          content={
+            <div>
               <p className="font-semibold text-red-600">Critical: No stock available!</p>
               <p>Immediate restocking required</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          }
+        >
+          <Chip className="bg-red-600 text-white border-red-700 animate-pulse font-bold text-xs px-3 py-1">
+            <XCircle className="h-3 w-3 mr-1" />
+            OUT OF STOCK
+          </Chip>
+        </Tooltip>
       )
     }
 
     if (stockStatus === 'Low Stock') {
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Badge className="bg-orange-500 text-white border-orange-600 animate-pulse font-bold text-xs px-3 py-1">
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                LOW STOCK
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
+        <Tooltip
+          content={
+            <div>
               <p className="font-semibold text-orange-600">Warning: Only {stockQuantity} {product.unit} left!</p>
               <p>Consider restocking soon</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          }
+        >
+          <Chip className="bg-orange-500 text-white border-orange-600 animate-pulse font-bold text-xs px-3 py-1">
+            <AlertTriangle className="h-3 w-3 mr-1" />
+            LOW STOCK
+          </Chip>
+        </Tooltip>
       )
     }
 
     return (
-      <Badge className="bg-green-100 text-green-800 border-green-200">
+      <Chip className="bg-green-100 text-green-800 border-green-200">
         <CheckCircle className="h-3 w-3 mr-1" />
         In Stock
-      </Badge>
+      </Chip>
     )
   }
 
@@ -301,16 +293,16 @@ export default function InventoryPage() {
       <Layout>
         <div className="max-w-7xl mx-auto">
           <Card>
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="text-center text-destructive">
                 <AlertCircle className="h-12 w-12 mx-auto mb-4" />
                 <p className="font-medium">Error loading inventory</p>
                 <p className="text-sm text-muted-foreground mt-1">{error}</p>
-                <Button onClick={fetchInventoryData} className="mt-4">
+                <Button onPress={fetchInventoryData} color="primary" className="mt-4">
                   Try Again
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </Layout>
@@ -332,35 +324,35 @@ export default function InventoryPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              onClick={() => window.location.href = '/inventory/stock-overview'}
-              variant="outline"
+            <Button
+              onPress={() => window.location.href = '/inventory/stock-overview'}
+              variant="bordered"
               size="sm"
             >
               <Eye className="h-4 w-4 mr-2" />
               Stock Overview
             </Button>
-            <Button 
-              onClick={() => window.location.href = '/inventory/stock-purchase'}
-              variant="default"
+            <Button
+              onPress={() => window.location.href = '/inventory/stock-purchase'}
+              color="primary"
               size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
               Stock Purchase
             </Button>
-            <Button 
-              onClick={() => window.location.href = '/inventory/bd-shop-stock'}
-              variant="outline"
+            <Button
+              onPress={() => window.location.href = '/inventory/bd-shop-stock'}
+              variant="bordered"
               size="sm"
             >
               <Plus className="h-4 w-4 mr-2" />
               Add BD Shop Stock
             </Button>
-            <Button 
-              onClick={handleRefresh} 
-              variant="outline" 
+            <Button
+              onPress={handleRefresh}
+              variant="bordered"
               size="sm"
-              disabled={refreshing}
+              isDisabled={refreshing}
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
@@ -371,7 +363,7 @@ export default function InventoryPage() {
         {/* Critical Alerts */}
         {stats && (stats.lowStockCount > 0 || stats.outOfStockCount > 0) && (
           <Card className="border-red-200 bg-red-50">
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="flex items-center gap-3 mb-4">
                 <AlertTriangle className="h-6 w-6 text-red-600 animate-pulse" />
                 <h3 className="text-lg font-bold text-red-800">STOCK ALERTS</h3>
@@ -398,7 +390,7 @@ export default function InventoryPage() {
                   </div>
                 )}
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
@@ -406,7 +398,7 @@ export default function InventoryPage() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <Package2 className="h-8 w-8 text-blue-600" />
                   <div>
@@ -414,11 +406,11 @@ export default function InventoryPage() {
                     <p className="text-2xl font-bold">{stats.totalProducts}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <TrendingDown className="h-8 w-8 text-green-600" />
                   <div>
@@ -426,11 +418,11 @@ export default function InventoryPage() {
                     <p className="text-2xl font-bold">{formatCurrency(stats.totalStockValue)}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
                     <span className="text-blue-600 font-bold text-sm">T</span>
@@ -441,11 +433,11 @@ export default function InventoryPage() {
                     <p className="text-xs text-muted-foreground">{formatCurrency(stats.categories.Thai.stockValue)}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
                     <span className="text-purple-600 font-bold text-sm">G</span>
@@ -456,18 +448,18 @@ export default function InventoryPage() {
                     <p className="text-xs text-muted-foreground">{formatCurrency(stats.categories.Glass.stockValue)}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
         )}
 
         {/* Filters */}
         <Card>
-          <CardContent className="pt-6">
+          <CardBody className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Search */}
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
                 <Input
                   placeholder="Search products..."
                   value={searchTerm}
@@ -475,44 +467,46 @@ export default function InventoryPage() {
                   className="pl-10 h-12"
                 />
               </div>
-              
+
               {/* Category Filter */}
-              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-full sm:w-[180px] h-12">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="Thai">Thai</SelectItem>
-                  <SelectItem value="Glass">Glass</SelectItem>
-                </SelectContent>
+              <Select
+                selectedKeys={categoryFilter ? [categoryFilter] : []}
+                onSelectionChange={(keys) => setCategoryFilter(Array.from(keys)[0] as string)}
+                placeholder="Category"
+                aria-label="Category"
+                className="w-full sm:w-[180px]"
+              >
+                <SelectItem key="all">All Categories</SelectItem>
+                <SelectItem key="Thai">Thai</SelectItem>
+                <SelectItem key="Glass">Glass</SelectItem>
               </Select>
 
               {/* Stock Filter */}
-              <Select value={stockFilter} onValueChange={setStockFilter}>
-                <SelectTrigger className="w-full sm:w-[180px] h-12">
-                  <SelectValue placeholder="Stock Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Stock</SelectItem>
-                  <SelectItem value="critical">🚨 Critical Only</SelectItem>
-                  <SelectItem value="out">❌ Out of Stock</SelectItem>
-                  <SelectItem value="low">⚠️ Low Stock</SelectItem>
-                </SelectContent>
+              <Select
+                selectedKeys={stockFilter ? [stockFilter] : []}
+                onSelectionChange={(keys) => setStockFilter(Array.from(keys)[0] as string)}
+                placeholder="Stock Status"
+                aria-label="Stock Status"
+                className="w-full sm:w-[180px]"
+              >
+                <SelectItem key="all">All Stock</SelectItem>
+                <SelectItem key="critical">🚨 Critical Only</SelectItem>
+                <SelectItem key="out">❌ Out of Stock</SelectItem>
+                <SelectItem key="low">⚠️ Low Stock</SelectItem>
               </Select>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
 
         {/* Inventory Table */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
               <Package className="h-5 w-5" />
               Inventory List
-            </CardTitle>
+            </h3>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             {filteredProducts.length === 0 ? (
               <EmptyState
                 icon={Package}
@@ -555,9 +549,13 @@ export default function InventoryPage() {
                         </div>
                       </ProfessionalTableCell>
                       <ProfessionalTableCell>
-                        <Badge variant={product.category === 'Thai' ? 'default' : 'secondary'}>
+                        <Chip
+                          size="sm"
+                          color={product.category === 'Thai' ? 'primary' : 'default'}
+                          variant="flat"
+                        >
                           {product.category}
-                        </Badge>
+                        </Chip>
                       </ProfessionalTableCell>
                       <ProfessionalTableCell>
                         {getStockQuantityDisplay(product)}
@@ -590,7 +588,7 @@ export default function InventoryPage() {
                 </TableBody>
               </ProfessionalTable>
             )}
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </Layout>

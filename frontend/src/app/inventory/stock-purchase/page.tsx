@@ -2,27 +2,22 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Textarea } from '@/components/ui/textarea'
 import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Input,
+  Chip,
+  Textarea,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@heroui/react'
 import { 
   ShoppingCart, 
   AlertTriangle, 
@@ -393,16 +388,16 @@ export default function StockPurchasePage() {
       <Layout>
         <div className="max-w-4xl mx-auto">
           <Card>
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="text-center text-destructive">
                 <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
                 <p className="font-medium">Failed to load form data</p>
                 <p className="text-sm text-muted-foreground mt-1">{error}</p>
-                <Button onClick={fetchInitialData} className="mt-4">
+                <Button onPress={fetchInitialData} className="mt-4">
                   Try Again
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </Layout>
@@ -426,63 +421,61 @@ export default function StockPurchasePage() {
         {/* Success/Error Messages */}
         {success && (
           <Card className="border-green-200 bg-green-50">
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <p className="text-green-800 font-medium">{success}</p>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
         {error && (
           <Card className="border-red-200 bg-red-50">
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 text-red-600" />
                 <p className="text-red-800 font-medium">{error}</p>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
         {/* Main Form */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
               <Truck className="h-5 w-5" />
               Purchase Details
-            </CardTitle>
+            </h3>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardBody className="space-y-6">
             {/* Supplier Selection */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 Supplier *
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('supplier')})</span>}
-              </Label>
-              <Select 
-                value={formData.supplierId} 
-                onValueChange={handleSupplierChange}
+              </label>
+              <Select
+                aria-label="Supplier"
+                selectedKeys={formData.supplierId ? [formData.supplierId] : []}
+                onSelectionChange={(keys) => handleSupplierChange(Array.from(keys)[0] as string)}
+                placeholder="Select supplier"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select supplier" />
-                </SelectTrigger>
-                <SelectContent>
-                  {suppliers.map((supplier) => (
-                    <SelectItem key={supplier._id} value={supplier._id}>
-                      <div className="flex items-center justify-between w-full">
-                        <span>{supplier.name}</span>
-                        {supplier.dueAmount > 0 && (
-                          <Badge className="ml-2 bg-orange-100 text-orange-800">
-                            Due: {supplier.formattedDueAmount}
-                          </Badge>
-                        )}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {suppliers.map((supplier) => (
+                  <SelectItem key={supplier._id}>
+                    <div className="flex items-center justify-between w-full">
+                      <span>{supplier.name}</span>
+                      {supplier.dueAmount > 0 && (
+                        <Chip size="sm" className="ml-2 bg-orange-100 text-orange-800">
+                          Due: {supplier.formattedDueAmount}
+                        </Chip>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
               </Select>
               {selectedSupplier && selectedSupplier.dueAmount > 0 && (
                 <div className="flex items-center gap-2 p-3 bg-orange-50 border border-orange-200 rounded-md">
@@ -496,122 +489,114 @@ export default function StockPurchasePage() {
 
             {/* Material Type */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Layers className="h-4 w-4" />
                 Material Type *
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('material_type')})</span>}
-              </Label>
-              <Select 
-                value={formData.materialType} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, materialType: value, company: '', thicknessMM: undefined }))}
+              </label>
+              <Select
+                aria-label="Material Type"
+                selectedKeys={formData.materialType ? [formData.materialType] : []}
+                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, materialType: Array.from(keys)[0] as string, company: '', thicknessMM: undefined }))}
+                placeholder="Select material type"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select material type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {apiFormData.materialTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      <div className="flex items-center gap-2">
-                        <span>{type.label}</span>
-                        {language === 'bn' && <span className="text-muted-foreground">({type.bangla})</span>}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {apiFormData.materialTypes.map((type) => (
+                  <SelectItem key={type.value}>
+                    <div className="flex items-center gap-2">
+                      <span>{type.label}</span>
+                      {language === 'bn' && <span className="text-muted-foreground">({type.bangla})</span>}
+                    </div>
+                  </SelectItem>
+                ))}
               </Select>
             </div>
 
             {/* Company/Brand */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 Company / Brand *
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('company_brand')})</span>}
-              </Label>
-              <Select 
-                value={formData.company} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, company: value }))}
+              </label>
+              <Select
+                aria-label="Company / Brand"
+                selectedKeys={formData.company ? [formData.company] : []}
+                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, company: Array.from(keys)[0] as string }))}
+                placeholder="Select company"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select company" />
-                </SelectTrigger>
-                <SelectContent>
-                  {apiFormData.brands[formData.materialType as 'Thai' | 'Glass']?.map((brand) => (
-                    <SelectItem key={brand.id} value={brand.name}>
-                      <div className="flex items-center gap-2">
-                        <span>{brand.name}</span>
-                        {brand.country && <span className="text-muted-foreground">({brand.country})</span>}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {(apiFormData.brands[formData.materialType as 'Thai' | 'Glass']?.map((brand) => (
+                  <SelectItem key={brand.name}>
+                    <div className="flex items-center gap-2">
+                      <span>{brand.name}</span>
+                      {brand.country && <span className="text-muted-foreground">({brand.country})</span>}
+                    </div>
+                  </SelectItem>
+                )) ?? []) as never}
               </Select>
             </div>
 
             {/* Thickness (Glass only) */}
             {formData.materialType === 'Glass' && (
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <Layers className="h-4 w-4" />
                   Thickness *
                   {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('thickness')})</span>}
-                </Label>
-                <Select 
-                  value={formData.thicknessMM?.toString() || ''} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, thicknessMM: parseInt(value) }))}
+                </label>
+                <Select
+                  aria-label="Thickness"
+                  selectedKeys={formData.thicknessMM ? [formData.thicknessMM.toString()] : []}
+                  onSelectionChange={(keys) => setFormData(prev => ({ ...prev, thicknessMM: parseInt(Array.from(keys)[0] as string) }))}
+                  placeholder="Select thickness"
+                  className="h-12"
                 >
-                  <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Select thickness" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {apiFormData.thicknesses.Glass.map((thickness) => (
-                      <SelectItem key={thickness.value} value={thickness.value.toString()}>
-                        <div className="flex items-center gap-2">
-                          <span>{thickness.label}</span>
-                          {language === 'bn' && <span className="text-muted-foreground">({thickness.bangla})</span>}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                  {apiFormData.thicknesses.Glass.map((thickness) => (
+                    <SelectItem key={thickness.value.toString()}>
+                      <div className="flex items-center gap-2">
+                        <span>{thickness.label}</span>
+                        {language === 'bn' && <span className="text-muted-foreground">({thickness.bangla})</span>}
+                      </div>
+                    </SelectItem>
+                  ))}
                 </Select>
               </div>
             )}
 
             {/* Quality */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Star className="h-4 w-4" />
                 Quality *
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('quality')})</span>}
-              </Label>
-              <Select 
-                value={formData.quality} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, quality: value }))}
+              </label>
+              <Select
+                aria-label="Quality"
+                selectedKeys={formData.quality ? [formData.quality] : []}
+                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, quality: Array.from(keys)[0] as string }))}
+                placeholder="Select quality"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select quality" />
-                </SelectTrigger>
-                <SelectContent>
-                  {apiFormData.qualities.map((quality) => (
-                    <SelectItem key={quality.value} value={quality.value}>
-                      <div className="flex items-center gap-2">
-                        <span>{quality.label}</span>
-                        {language === 'bn' && <span className="text-muted-foreground">({quality.bangla})</span>}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {apiFormData.qualities.map((quality) => (
+                  <SelectItem key={quality.value}>
+                    <div className="flex items-center gap-2">
+                      <span>{quality.label}</span>
+                      {language === 'bn' && <span className="text-muted-foreground">({quality.bangla})</span>}
+                    </div>
+                  </SelectItem>
+                ))}
               </Select>
             </div>
 
             {/* Quantity and Purchase Price */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <Calculator className="h-4 w-4" />
                   Quantity (SFT) *
                   {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('quantity')})</span>}
-                </Label>
+                </label>
                 <Input
                   type="number"
                   step="0.01"
@@ -624,11 +609,11 @@ export default function StockPurchasePage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Purchase Price (৳ per SFT) *
                   {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('purchase_price')})</span>}
-                </Label>
+                </label>
                 <Input
                   type="number"
                   step="0.01"
@@ -644,27 +629,28 @@ export default function StockPurchasePage() {
             {/* Total Cost Display */}
             {totalCost > 0 && (
               <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-6">
+                <CardBody className="pt-6">
                   <div className="flex items-center justify-between">
                     <span className="text-lg font-medium text-blue-800">Total Purchase Cost:</span>
                     <span className="text-2xl font-bold text-blue-900">{formatCurrency(totalCost)}</span>
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
             {/* Payment Type */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
                 Payment Type *
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('payment')})</span>}
-              </Label>
+              </label>
               <div className="grid grid-cols-2 gap-4">
                 <Button
                   type="button"
-                  variant={formData.paymentType === 'paid' ? 'default' : 'outline'}
-                  onClick={() => setFormData(prev => ({ ...prev, paymentType: 'paid' }))}
+                  color={formData.paymentType === 'paid' ? 'primary' : 'default'}
+                  variant={formData.paymentType === 'paid' ? 'solid' : 'bordered'}
+                  onPress={() => setFormData(prev => ({ ...prev, paymentType: 'paid' }))}
                   className="h-12"
                 >
                   <Banknote className="h-4 w-4 mr-2" />
@@ -672,8 +658,9 @@ export default function StockPurchasePage() {
                 </Button>
                 <Button
                   type="button"
-                  variant={formData.paymentType === 'due' ? 'default' : 'outline'}
-                  onClick={() => setFormData(prev => ({ ...prev, paymentType: 'due' }))}
+                  color={formData.paymentType === 'due' ? 'primary' : 'default'}
+                  variant={formData.paymentType === 'due' ? 'solid' : 'bordered'}
+                  onPress={() => setFormData(prev => ({ ...prev, paymentType: 'due' }))}
                   className="h-12"
                 >
                   <CreditCard className="h-4 w-4 mr-2" />
@@ -685,7 +672,7 @@ export default function StockPurchasePage() {
             {/* Paid Amount (if partial payment) */}
             {formData.paymentType === 'paid' && (
               <div className="space-y-2">
-                <Label>Paid Amount (৳)</Label>
+                <label>Paid Amount (৳)</label>
                 <Input
                   type="number"
                   step="0.01"
@@ -706,10 +693,10 @@ export default function StockPurchasePage() {
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label>
+              <label>
                 Notes
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('notes')})</span>}
-              </Label>
+              </label>
               <Textarea
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -720,9 +707,9 @@ export default function StockPurchasePage() {
 
             {/* Save Button */}
             <div className="pt-4">
-              <Button 
-                onClick={handleSave} 
-                disabled={saving || !formData.supplierId || !formData.company || !formData.quantity || !formData.purchasePrice}
+              <Button
+                onPress={handleSave}
+                isDisabled={saving || !formData.supplierId || !formData.company || !formData.quantity || !formData.purchasePrice}
                 className="w-full h-12 text-lg"
                 size="lg"
               >
@@ -730,56 +717,62 @@ export default function StockPurchasePage() {
                 Create Stock Purchase
               </Button>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
 
         {/* Confirmation Dialog */}
-        <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Confirm Stock Purchase</DialogTitle>
-              <DialogDescription>
-                Please review the purchase details before confirming.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div><strong>Supplier:</strong> {formData.supplierName}</div>
-                <div><strong>Material:</strong> {formData.materialType}</div>
-                <div><strong>Company:</strong> {formData.company}</div>
-                <div><strong>Quality:</strong> {formData.quality}</div>
-                {formData.thicknessMM && (
-                  <div><strong>Thickness:</strong> {formData.thicknessMM}mm</div>
-                )}
-                <div><strong>Quantity:</strong> {formData.quantity} SFT</div>
-                <div><strong>Unit Price:</strong> {formatCurrency(parseFloat(formData.purchasePrice))}</div>
-                <div><strong>Total Cost:</strong> {formatCurrency(totalCost)}</div>
-                <div><strong>Payment:</strong> {formData.paymentType === 'paid' ? 'Paid' : 'Due'}</div>
-                <div><strong>Paid Amount:</strong> {formatCurrency(parseFloat(formData.paidAmount) || 0)}</div>
-              </div>
-              {totalCost - (parseFloat(formData.paidAmount) || 0) > 0 && (
-                <div className="p-3 bg-orange-50 border border-orange-200 rounded-md">
-                  <p className="text-sm text-orange-800">
-                    <strong>Due Amount:</strong> {formatCurrency(totalCost - (parseFloat(formData.paidAmount) || 0))}
-                  </p>
-                </div>
-              )}
-            </div>
-            <DialogFooter>
-              <Button 
-                variant="outline" 
-                onClick={() => setShowConfirmDialog(false)}
-                disabled={saving}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleConfirmSave} disabled={saving}>
-                {saving && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
-                Confirm Purchase
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <Modal isOpen={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Confirm Stock Purchase
+                  <span className="text-sm font-normal text-muted-foreground">
+                    Please review the purchase details before confirming.
+                  </span>
+                </ModalHeader>
+                <ModalBody>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div><strong>Supplier:</strong> {formData.supplierName}</div>
+                      <div><strong>Material:</strong> {formData.materialType}</div>
+                      <div><strong>Company:</strong> {formData.company}</div>
+                      <div><strong>Quality:</strong> {formData.quality}</div>
+                      {formData.thicknessMM && (
+                        <div><strong>Thickness:</strong> {formData.thicknessMM}mm</div>
+                      )}
+                      <div><strong>Quantity:</strong> {formData.quantity} SFT</div>
+                      <div><strong>Unit Price:</strong> {formatCurrency(parseFloat(formData.purchasePrice))}</div>
+                      <div><strong>Total Cost:</strong> {formatCurrency(totalCost)}</div>
+                      <div><strong>Payment:</strong> {formData.paymentType === 'paid' ? 'Paid' : 'Due'}</div>
+                      <div><strong>Paid Amount:</strong> {formatCurrency(parseFloat(formData.paidAmount) || 0)}</div>
+                    </div>
+                    {totalCost - (parseFloat(formData.paidAmount) || 0) > 0 && (
+                      <div className="p-3 bg-orange-50 border border-orange-200 rounded-md">
+                        <p className="text-sm text-orange-800">
+                          <strong>Due Amount:</strong> {formatCurrency(totalCost - (parseFloat(formData.paidAmount) || 0))}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    variant="bordered"
+                    onPress={onClose}
+                    isDisabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                  <Button color="primary" onPress={handleConfirmSave} isDisabled={saving}>
+                    {saving && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
+                    Confirm Purchase
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </Layout>
   )

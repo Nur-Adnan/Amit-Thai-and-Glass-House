@@ -2,10 +2,17 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Input,
+  Chip,
+  Tooltip,
+  Select,
+  SelectItem,
+} from '@heroui/react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import {
@@ -17,19 +24,6 @@ import {
   TableBody,
   TableHeader
 } from '@/components/ui/professional-table'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { 
   Users, 
   Search, 
@@ -200,98 +194,94 @@ export default function CustomersPage() {
 
     if (creditRisk === 'over-limit') {
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Badge className="bg-red-600 text-white border-red-700 animate-pulse font-bold text-xs px-3 py-1">
-                <XCircle className="h-3 w-3 mr-1" />
-                OVER LIMIT
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
+        <Tooltip
+          content={
+            <div>
               <p className="font-semibold text-red-600">Critical: Credit limit exceeded!</p>
               <p>Due: {customer.formattedTotalDue} | Limit: {customer.formattedCreditLimit}</p>
               <p>Invoice creation blocked</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          }
+        >
+          <Chip className="bg-red-600 text-white border-red-700 animate-pulse font-bold text-xs px-3 py-1">
+            <XCircle className="h-3 w-3 mr-1" />
+            OVER LIMIT
+          </Chip>
+        </Tooltip>
       )
     }
 
     if (creditRisk === 'overdue' || creditStatus === 'overdue') {
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Badge className="bg-red-500 text-white border-red-600 animate-pulse font-bold text-xs px-3 py-1">
-                <Clock className="h-3 w-3 mr-1" />
-                OVERDUE
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
+        <Tooltip
+          content={
+            <div>
               <p className="font-semibold text-red-600">Overdue payments detected!</p>
               <p>60+ days: {customer.formattedDueAging.days60plus}</p>
               <p>Immediate collection required</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          }
+        >
+          <Chip className="bg-red-500 text-white border-red-600 animate-pulse font-bold text-xs px-3 py-1">
+            <Clock className="h-3 w-3 mr-1" />
+            OVERDUE
+          </Chip>
+        </Tooltip>
       )
     }
 
     if (creditStatus === 'blocked') {
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Badge className="bg-red-700 text-white border-red-800 font-bold text-xs px-3 py-1">
-                <UserX className="h-3 w-3 mr-1" />
-                BLOCKED
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
+        <Tooltip
+          content={
+            <div>
               <p className="font-semibold text-red-600">Customer blocked!</p>
               <p>Reason: {customer.invoiceBlockReason}</p>
               <p>Contact management to unblock</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          }
+        >
+          <Chip className="bg-red-700 text-white border-red-800 font-bold text-xs px-3 py-1">
+            <UserX className="h-3 w-3 mr-1" />
+            BLOCKED
+          </Chip>
+        </Tooltip>
       )
     }
 
     if (creditRisk === 'high') {
       return (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <Badge className="bg-orange-500 text-white border-orange-600 font-bold text-xs px-3 py-1">
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                HIGH RISK
-              </Badge>
-            </TooltipTrigger>
-            <TooltipContent>
+        <Tooltip
+          content={
+            <div>
               <p className="font-semibold text-orange-600">High credit utilization!</p>
               <p>Utilization: {customer.creditUtilization}%</p>
               <p>Monitor closely</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+            </div>
+          }
+        >
+          <Chip className="bg-orange-500 text-white border-orange-600 font-bold text-xs px-3 py-1">
+            <AlertTriangle className="h-3 w-3 mr-1" />
+            HIGH RISK
+          </Chip>
+        </Tooltip>
       )
     }
 
     if (creditRisk === 'medium') {
       return (
-        <Badge className="bg-yellow-500 text-white border-yellow-600 text-xs px-3 py-1">
+        <Chip className="bg-yellow-500 text-white border-yellow-600 text-xs px-3 py-1">
           <AlertCircle className="h-3 w-3 mr-1" />
           Medium Risk
-        </Badge>
+        </Chip>
       )
     }
 
     return (
-      <Badge className="bg-green-100 text-green-800 border-green-200 text-xs px-3 py-1">
+      <Chip className="bg-green-100 text-green-800 border-green-200 text-xs px-3 py-1">
         <CheckCircle className="h-3 w-3 mr-1" />
         Low Risk
-      </Badge>
+      </Chip>
     )
   }
 
@@ -376,16 +366,16 @@ export default function CustomersPage() {
       <Layout>
         <div className="max-w-7xl mx-auto">
           <Card>
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="text-center text-destructive">
                 <AlertCircle className="h-12 w-12 mx-auto mb-4" />
                 <p className="font-medium">Error loading customers</p>
                 <p className="text-sm text-muted-foreground mt-1">{error}</p>
-                <Button onClick={fetchCustomerData} className="mt-4">
+                <Button onPress={fetchCustomerData} className="mt-4">
                   Try Again
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </Layout>
@@ -407,11 +397,11 @@ export default function CustomersPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              onClick={handleRefresh} 
-              variant="outline" 
+            <Button
+              onPress={handleRefresh}
+              variant="bordered"
               size="sm"
-              disabled={refreshing}
+              isDisabled={refreshing}
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
@@ -422,7 +412,7 @@ export default function CustomersPage() {
         {/* Critical Alerts */}
         {stats && (stats.blockedCustomers > 0 || stats.overdueCustomers > 0 || stats.overLimitCustomers > 0) && (
           <Card className="border-red-200 bg-red-50">
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="flex items-center gap-3 mb-4">
                 <AlertTriangle className="h-6 w-6 text-red-600 animate-pulse" />
                 <h3 className="text-lg font-bold text-red-800">CUSTOMER RISK ALERTS</h3>
@@ -459,7 +449,7 @@ export default function CustomersPage() {
                   </div>
                 )}
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
@@ -467,7 +457,7 @@ export default function CustomersPage() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <Users className="h-8 w-8 text-blue-600" />
                   <div>
@@ -475,11 +465,11 @@ export default function CustomersPage() {
                     <p className="text-2xl font-bold">{stats.totalCustomers}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <DollarSign className="h-8 w-8 text-red-600" />
                   <div>
@@ -487,11 +477,11 @@ export default function CustomersPage() {
                     <p className="text-2xl font-bold text-red-600">{stats.formattedTotalDueAmount}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <Clock className="h-8 w-8 text-orange-600" />
                   <div>
@@ -500,11 +490,11 @@ export default function CustomersPage() {
                     <p className="text-xs text-muted-foreground">{stats.agingPercentages.days60plus}% of total</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <Shield className="h-8 w-8 text-green-600" />
                   <div>
@@ -513,14 +503,14 @@ export default function CustomersPage() {
                     <p className="text-xs text-muted-foreground">{stats.agingPercentages.current}% of total</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
         )}
 
         {/* Filters */}
         <Card>
-          <CardContent className="pt-6">
+          <CardBody className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4">
               {/* Search */}
               <div className="flex-1 relative">
@@ -532,49 +522,51 @@ export default function CustomersPage() {
                   className="pl-10 h-12"
                 />
               </div>
-              
+
               {/* Risk Filter */}
-              <Select value={riskFilter} onValueChange={setRiskFilter}>
-                <SelectTrigger className="w-full sm:w-[180px] h-12">
-                  <SelectValue placeholder="Risk Level" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Risk Levels</SelectItem>
-                  <SelectItem value="critical">🚨 Critical Only</SelectItem>
-                  <SelectItem value="over-limit">❌ Over Limit</SelectItem>
-                  <SelectItem value="overdue">⏰ Overdue</SelectItem>
-                  <SelectItem value="high">⚠️ High Risk</SelectItem>
-                  <SelectItem value="medium">🟡 Medium Risk</SelectItem>
-                  <SelectItem value="low">✅ Low Risk</SelectItem>
-                </SelectContent>
+              <Select
+                selectedKeys={riskFilter ? [riskFilter] : []}
+                onSelectionChange={(keys) => setRiskFilter(Array.from(keys)[0] as string)}
+                placeholder="Risk Level"
+                aria-label="Risk Level"
+                className="w-full sm:w-[180px] h-12"
+              >
+                <SelectItem key="all">All Risk Levels</SelectItem>
+                <SelectItem key="critical">🚨 Critical Only</SelectItem>
+                <SelectItem key="over-limit">❌ Over Limit</SelectItem>
+                <SelectItem key="overdue">⏰ Overdue</SelectItem>
+                <SelectItem key="high">⚠️ High Risk</SelectItem>
+                <SelectItem key="medium">🟡 Medium Risk</SelectItem>
+                <SelectItem key="low">✅ Low Risk</SelectItem>
               </Select>
 
               {/* Status Filter */}
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-[180px] h-12">
-                  <SelectValue placeholder="Credit Status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="blocked">🚫 Blocked</SelectItem>
-                  <SelectItem value="overdue">⏰ Overdue</SelectItem>
-                  <SelectItem value="warning">⚠️ Warning</SelectItem>
-                  <SelectItem value="good">✅ Good</SelectItem>
-                </SelectContent>
+              <Select
+                selectedKeys={statusFilter ? [statusFilter] : []}
+                onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string)}
+                placeholder="Credit Status"
+                aria-label="Credit Status"
+                className="w-full sm:w-[180px] h-12"
+              >
+                <SelectItem key="all">All Status</SelectItem>
+                <SelectItem key="blocked">🚫 Blocked</SelectItem>
+                <SelectItem key="overdue">⏰ Overdue</SelectItem>
+                <SelectItem key="warning">⚠️ Warning</SelectItem>
+                <SelectItem key="good">✅ Good</SelectItem>
               </Select>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
 
         {/* Customer Table */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
               <Users className="h-5 w-5" />
               Customer List
-            </CardTitle>
+            </h3>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             {filteredCustomers.length === 0 ? (
               <EmptyState
                 icon={Users}
@@ -617,9 +609,14 @@ export default function CustomersPage() {
                           <div className="text-sm text-muted-foreground">
                             {customer.customerId}
                           </div>
-                          <Badge variant={customer.customerType === 'corporate' ? 'default' : 'secondary'} className="text-xs">
+                          <Chip
+                            size="sm"
+                            color={customer.customerType === 'corporate' ? 'primary' : 'default'}
+                            variant="flat"
+                            className="text-xs"
+                          >
                             {customer.customerType}
-                          </Badge>
+                          </Chip>
                         </div>
                       </ProfessionalTableCell>
                       <ProfessionalTableCell>
@@ -661,7 +658,7 @@ export default function CustomersPage() {
                 </TableBody>
               </ProfessionalTable>
             )}
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </Layout>

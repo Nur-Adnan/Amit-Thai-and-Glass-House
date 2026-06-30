@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button, Select, SelectItem } from '@heroui/react';
 import { Shield, Users, Settings, Check, X, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface Permission {
@@ -302,20 +303,15 @@ const PermissionManager: React.FC = () => {
                 Note: You need Owner permissions to initialize the system.
               </p>
             </div>
-            <button
-              onClick={initializePermissions}
-              disabled={loading}
-              className="ml-4 px-6 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center"
+            <Button
+              onPress={initializePermissions}
+              isDisabled={loading}
+              isLoading={loading}
+              color="warning"
+              className="ml-4"
             >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Initializing...
-                </>
-              ) : (
-                'Initialize'
-              )}
-            </button>
+              {loading ? 'Initializing...' : 'Initialize'}
+            </Button>
           </div>
         </div>
       )}
@@ -365,17 +361,19 @@ const PermissionManager: React.FC = () => {
               </h2>
               <div className="flex items-center space-x-2">
                 <label className="text-sm font-medium text-gray-700">Role:</label>
-                <select
-                  value={selectedRole}
-                  onChange={(e) => setSelectedRole(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                <Select
+                  aria-label="Role"
+                  selectedKeys={selectedRole ? [selectedRole] : []}
+                  onSelectionChange={(keys) => setSelectedRole(Array.from(keys)[0] as string)}
+                  className="w-40"
+                  size="sm"
                 >
                   {matrix.roles.filter(role => role !== 'owner').map(role => (
-                    <option key={role} value={role}>
+                    <SelectItem key={role}>
                       {roleLabels[role as keyof typeof roleLabels]}
-                    </option>
+                    </SelectItem>
                   ))}
-                </select>
+                </Select>
               </div>
             </div>
           </div>
@@ -389,19 +387,21 @@ const PermissionManager: React.FC = () => {
               <div className="flex space-x-2">
                 {hasChanges(selectedRole) && (
                   <>
-                    <button
-                      onClick={() => resetChanges(selectedRole)}
-                      className="px-3 py-1 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+                    <Button
+                      onPress={() => resetChanges(selectedRole)}
+                      variant="bordered"
+                      size="sm"
                     >
                       Reset
-                    </button>
-                    <button
-                      onClick={() => saveRolePermissions(selectedRole)}
-                      disabled={loading}
-                      className="px-3 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300"
+                    </Button>
+                    <Button
+                      onPress={() => saveRolePermissions(selectedRole)}
+                      isDisabled={loading}
+                      color="primary"
+                      size="sm"
                     >
                       Save Changes
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>

@@ -2,10 +2,20 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Input,
+  Chip,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  Select,
+  SelectItem,
+} from '@heroui/react'
 import { EmptyState } from '@/components/ui/empty-state'
 import { StatusBadge } from '@/components/ui/status-badge'
 import {
@@ -16,13 +26,6 @@ import {
   TableBody,
   TableHeader
 } from '@/components/ui/professional-table'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import { 
   Search, 
   Receipt, 
@@ -665,7 +668,7 @@ export default function InvoicesPage() {
       <Layout>
         <div className="space-professional">
           <Card>
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <EmptyState
                 icon={Receipt}
                 title="Error loading invoices"
@@ -675,7 +678,7 @@ export default function InvoicesPage() {
                   onClick: fetchInvoices
                 }}
               />
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </Layout>
@@ -697,11 +700,10 @@ export default function InvoicesPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="secondary" className="text-sm">
+            <Chip color="default" variant="flat" className="text-sm">
               {filteredInvoices.length} invoices
-            </Badge>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
+            </Chip>
+            <Button color="primary" startContent={<Plus className="h-4 w-4" />}>
               New Invoice
             </Button>
           </div>
@@ -709,11 +711,12 @@ export default function InvoicesPage() {
 
         {/* Search and Filters */}
         <Card>
-          <CardContent className="pt-6">
+          <CardBody className="pt-6">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
                 <Input
+                  aria-label="Search invoices"
                   placeholder="Search invoices..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -723,30 +726,31 @@ export default function InvoicesPage() {
               
               <div className="flex items-center gap-2">
                 <Filter className="h-4 w-4 text-muted-foreground" />
-                <select
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                  className="h-10 px-3 border border-input rounded-md bg-background"
+                <Select
+                  aria-label="Filter by status"
+                  selectedKeys={statusFilter ? [statusFilter] : []}
+                  onSelectionChange={(keys) => setStatusFilter(Array.from(keys)[0] as string)}
+                  className="w-40"
                 >
-                  <option value="all">All Status</option>
-                  <option value="paid">Paid</option>
-                  <option value="partial">Partial</option>
-                  <option value="due">Due</option>
-                </select>
+                  <SelectItem key="all">All Status</SelectItem>
+                  <SelectItem key="paid">Paid</SelectItem>
+                  <SelectItem key="partial">Partial</SelectItem>
+                  <SelectItem key="due">Due</SelectItem>
+                </Select>
               </div>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
 
         {/* Invoice List */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
               <Receipt className="h-5 w-5" />
               Invoice List
-            </CardTitle>
+            </h3>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             {filteredInvoices.length === 0 ? (
               <EmptyState
                 icon={Receipt}
@@ -822,44 +826,29 @@ export default function InvoicesPage() {
                       </ProfessionalTableCell>
                       <ProfessionalTableCell>
                         <div className="flex items-center gap-1">
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setSelectedInvoice(invoice)}
-                              >
-                                <Eye className="h-4 w-4" />
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                              <DialogHeader>
-                                <DialogTitle>
-                                  Invoice Details - {invoice.invoiceNo}
-                                </DialogTitle>
-                              </DialogHeader>
-                              {selectedInvoice && (
-                                <InvoiceDetails 
-                                  invoice={selectedInvoice}
-                                  onPrint={() => handlePrint(selectedInvoice)}
-                                  onDownloadPDF={() => handleDownloadPDF(selectedInvoice)}
-                                />
-                              )}
-                            </DialogContent>
-                          </Dialog>
-                          
                           <Button
-                            variant="ghost"
+                            isIconOnly
+                            variant="light"
                             size="sm"
-                            onClick={() => handlePrint(invoice)}
+                            onPress={() => setSelectedInvoice(invoice)}
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+
+                          <Button
+                            isIconOnly
+                            variant="light"
+                            size="sm"
+                            onPress={() => handlePrint(invoice)}
                           >
                             <Printer className="h-4 w-4" />
                           </Button>
-                          
+
                           <Button
-                            variant="ghost"
+                            isIconOnly
+                            variant="light"
                             size="sm"
-                            onClick={() => handleDownloadPDF(invoice)}
+                            onPress={() => handleDownloadPDF(invoice)}
                           >
                             <Download className="h-4 w-4" />
                           </Button>
@@ -870,8 +859,35 @@ export default function InvoicesPage() {
                 </TableBody>
               </ProfessionalTable>
             )}
-          </CardContent>
+          </CardBody>
         </Card>
+
+        {/* Invoice Details Modal */}
+        <Modal
+          isOpen={!!selectedInvoice}
+          onOpenChange={(open) => { if (!open) setSelectedInvoice(null) }}
+          size="4xl"
+          scrollBehavior="inside"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Invoice Details - {selectedInvoice?.invoiceNo}
+                </ModalHeader>
+                <ModalBody className="pb-6">
+                  {selectedInvoice && (
+                    <InvoiceDetails
+                      invoice={selectedInvoice}
+                      onPrint={() => handlePrint(selectedInvoice)}
+                      onDownloadPDF={() => handleDownloadPDF(selectedInvoice)}
+                    />
+                  )}
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </Layout>
   )
@@ -901,12 +917,10 @@ function InvoiceDetails({
         </div>
         <div className="flex items-center gap-2">
           <StatusBadge status={invoice.status} />
-          <Button onClick={onPrint} variant="outline" size="sm">
-            <Printer className="h-4 w-4 mr-2" />
+          <Button onPress={onPrint} variant="bordered" size="sm" startContent={<Printer className="h-4 w-4" />}>
             Print
           </Button>
-          <Button onClick={onDownloadPDF} variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
+          <Button onPress={onDownloadPDF} variant="bordered" size="sm" startContent={<Download className="h-4 w-4" />}>
             PDF
           </Button>
         </div>
@@ -914,8 +928,8 @@ function InvoiceDetails({
 
       {/* Business Header Info */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-center">
+        <CardHeader className="flex flex-col items-start gap-1">
+          <div className="text-center w-full">
             <div className="text-xl font-bold">Thai & Aluminum Glass House</div>
             <div className="text-sm text-muted-foreground mt-1">
               পেশাদার গ্লাস সমাধান | Professional Glass Solutions
@@ -923,19 +937,19 @@ function InvoiceDetails({
             <div className="text-xs text-muted-foreground mt-2">
               📍 Dhanmondi, Dhaka-1205 | 📞 +880-1XXX-XXXXXX | 🏢 Trade License: TRAD/DH/2024/001234
             </div>
-          </CardTitle>
+          </div>
         </CardHeader>
       </Card>
 
       {/* Customer Info */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <User className="h-5 w-5" />
             গ্রাহকের তথ্য | Customer Information
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <p className="text-sm text-muted-foreground">নাম | Name</p>
@@ -954,15 +968,15 @@ function InvoiceDetails({
               </div>
             )}
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Items */}
       <Card>
-        <CardHeader>
-          <CardTitle>পণ্যের তালিকা | Items</CardTitle>
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold">পণ্যের তালিকা | Items</h3>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <ProfessionalTable>
             <TableHeader>
               <tr>
@@ -1029,15 +1043,15 @@ function InvoiceDetails({
               })}
             </TableBody>
           </ProfessionalTable>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Totals */}
       <Card>
-        <CardHeader>
-          <CardTitle>পেমেন্ট সারাংশ | Payment Summary</CardTitle>
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold">পেমেন্ট সারাংশ | Payment Summary</h3>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className="space-y-3">
             <div className="flex justify-between">
               <span>উপমোট | Subtotal</span>
@@ -1070,18 +1084,18 @@ function InvoiceDetails({
               </span>
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Notes */}
       {invoice.notes && (
         <Card>
-          <CardHeader>
-            <CardTitle>বিশেষ নোট | Notes</CardTitle>
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-lg font-semibold">বিশেষ নোট | Notes</h3>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             <p>{invoice.notes}</p>
-          </CardContent>
+          </CardBody>
         </Card>
       )}
     </div>

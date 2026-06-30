@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { Button, Input } from '@heroui/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFormatting } from '@/hooks/useFormatting';
 
@@ -136,12 +137,13 @@ export default function DailySummary({ selectedDate, onDateChange }: DailySummar
       <div className="bg-white rounded-lg shadow p-6">
         <div className="text-center text-red-600">
           <p>{t('networkError')}: {error}</p>
-          <button 
-            onClick={fetchDailySummary}
-            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          <Button
+            onPress={fetchDailySummary}
+            color="primary"
+            className="mt-2"
           >
             {t('loading')}
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -169,11 +171,11 @@ export default function DailySummary({ selectedDate, onDateChange }: DailySummar
             <p className="text-gray-600">{formatDateWithDay(currentDate)}</p>
           </div>
           <div className="mt-4 sm:mt-0">
-            <input
+            <Input
               type="date"
+              aria-label={t('todaysSales')}
               value={selectedDate || new Date().toISOString().split('T')[0]}
               onChange={handleDateChange}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         </div>

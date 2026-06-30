@@ -2,14 +2,8 @@
 
 import { useState } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardBody, Tabs, Tab } from '@heroui/react'
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
-import { 
   Settings,
   Store,
   DollarSign,
@@ -42,56 +36,84 @@ export default function SettingsPage() {
 
         {/* Settings Tabs */}
         <Card>
-          <CardContent className="p-0">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <CardHeader className="pb-0">
-                <TabsList className="grid w-full grid-cols-5">
-                  <TabsTrigger value="shop-info" className="flex items-center gap-2">
+          <CardBody className="p-0">
+            <Tabs
+              selectedKey={activeTab}
+              onSelectionChange={(key) => setActiveTab(String(key))}
+              aria-label="Settings"
+              className="w-full"
+            >
+              <Tab
+                key="shop-info"
+                title={
+                  <div className="flex items-center gap-2">
                     <Store className="h-4 w-4" />
                     <span className="hidden sm:inline">Shop Info</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="pricing" className="flex items-center gap-2">
+                  </div>
+                }
+              >
+                <div className="p-6">
+                  <BasicShopInfoTab />
+                </div>
+              </Tab>
+
+              <Tab
+                key="pricing"
+                title={
+                  <div className="flex items-center gap-2">
                     <DollarSign className="h-4 w-4" />
                     <span className="hidden sm:inline">Pricing</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="users" className="flex items-center gap-2">
+                  </div>
+                }
+              >
+                <div className="p-6">
+                  <BasicPricingTab />
+                </div>
+              </Tab>
+
+              <Tab
+                key="users"
+                title={
+                  <div className="flex items-center gap-2">
                     <Users className="h-4 w-4" />
                     <span className="hidden sm:inline">Users</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="permissions" className="flex items-center gap-2">
+                  </div>
+                }
+              >
+                <div className="p-6">
+                  <BasicUsersTab />
+                </div>
+              </Tab>
+
+              <Tab
+                key="permissions"
+                title={
+                  <div className="flex items-center gap-2">
                     <Shield className="h-4 w-4" />
                     <span className="hidden sm:inline">Permissions</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="language" className="flex items-center gap-2">
+                  </div>
+                }
+              >
+                <div className="p-6">
+                  <BasicPermissionsTab />
+                </div>
+              </Tab>
+
+              <Tab
+                key="language"
+                title={
+                  <div className="flex items-center gap-2">
                     <Globe className="h-4 w-4" />
                     <span className="hidden sm:inline">Language</span>
-                  </TabsTrigger>
-                </TabsList>
-              </CardHeader>
-
-              <div className="p-6">
-                <TabsContent value="shop-info" className="mt-0">
-                  <BasicShopInfoTab />
-                </TabsContent>
-
-                <TabsContent value="pricing" className="mt-0">
-                  <BasicPricingTab />
-                </TabsContent>
-
-                <TabsContent value="users" className="mt-0">
-                  <BasicUsersTab />
-                </TabsContent>
-
-                <TabsContent value="permissions" className="mt-0">
-                  <BasicPermissionsTab />
-                </TabsContent>
-
-                <TabsContent value="language" className="mt-0">
+                  </div>
+                }
+              >
+                <div className="p-6">
                   <BasicLanguageTab />
-                </TabsContent>
-              </div>
+                </div>
+              </Tab>
             </Tabs>
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </Layout>

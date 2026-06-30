@@ -2,29 +2,22 @@
 
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Input,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Textarea,
+} from '@heroui/react'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { 
   Package, 
   Plus, 
   Search, 
@@ -394,16 +387,16 @@ export default function BDShopStockPage() {
       <Layout>
         <div className="max-w-4xl mx-auto">
           <Card>
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="text-center text-destructive">
                 <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
                 <p className="font-medium">Failed to load form data</p>
                 <p className="text-sm text-muted-foreground mt-1">{error}</p>
-                <Button onClick={fetchFormData} className="mt-4">
+                <Button onPress={fetchFormData} className="mt-4">
                   Try Again
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </Layout>
@@ -427,69 +420,64 @@ export default function BDShopStockPage() {
         {/* Success/Error Messages */}
         {success && (
           <Card className="border-green-200 bg-green-50">
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="flex items-center gap-3">
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <p className="text-green-800 font-medium">{success}</p>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
         {error && (
           <Card className="border-red-200 bg-red-50">
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="flex items-center gap-3">
                 <AlertTriangle className="h-5 w-5 text-red-600" />
                 <p className="text-red-800 font-medium">{error}</p>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         )}
 
         {/* Main Form */}
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
               <Plus className="h-5 w-5" />
               Add New Stock
-            </CardTitle>
+            </h3>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardBody className="space-y-6">
             {/* Material Type */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Layers className="h-4 w-4" />
                 Material Type
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('material_type')})</span>}
-              </Label>
-              <Select 
-                value={formData.materialType} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, materialType: value }))}
+              </label>
+              <Select
+                aria-label="Material Type"
+                selectedKeys={formData.materialType ? [formData.materialType] : []}
+                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, materialType: Array.from(keys)[0] as string }))}
+                placeholder="Select material type"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select material type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {apiFormData.materialTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      <div className="flex items-center gap-2">
-                        <span>{type.label}</span>
-                        {language === 'bn' && <span className="text-muted-foreground">({type.bangla})</span>}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {apiFormData.materialTypes.map((type) => (
+                  <SelectItem key={type.value}>
+                    {language === 'bn' ? `${type.label} (${type.bangla})` : type.label}
+                  </SelectItem>
+                ))}
               </Select>
             </div>
 
             {/* Company/Brand */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Building2 className="h-4 w-4" />
                 Company / Brand
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('company_brand')})</span>}
-              </Label>
+              </label>
               <div className="space-y-2">
                 <div className="relative">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -527,156 +515,143 @@ export default function BDShopStockPage() {
                   </div>
                 )}
                 
-                <Dialog open={showNewCompanyDialog} onOpenChange={setShowNewCompanyDialog}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" className="w-full h-12">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add New Company
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Add New Company</DialogTitle>
-                      <DialogDescription>
-                        Add a new {formData.materialType} company to the database
-                      </DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label>Company Name *</Label>
-                        <Input
-                          value={newCompanyData.name}
-                          onChange={(e) => setNewCompanyData(prev => ({ ...prev, name: e.target.value }))}
-                          placeholder="Enter company name"
-                        />
-                      </div>
-                      <div>
-                        <Label>Country</Label>
-                        <Input
-                          value={newCompanyData.country}
-                          onChange={(e) => setNewCompanyData(prev => ({ ...prev, country: e.target.value }))}
-                          placeholder="e.g., Bangladesh, China, India"
-                        />
-                      </div>
-                      <div>
-                        <Label>Notes</Label>
-                        <Textarea
-                          value={newCompanyData.notes}
-                          onChange={(e) => setNewCompanyData(prev => ({ ...prev, notes: e.target.value }))}
-                          placeholder="Additional notes about the company"
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button 
-                        variant="outline" 
-                        onClick={() => setShowNewCompanyDialog(false)}
-                        disabled={addingCompany}
-                      >
-                        Cancel
-                      </Button>
-                      <Button onClick={handleAddNewCompany} disabled={addingCompany}>
-                        {addingCompany && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
-                        Add Company
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
+                <Button
+                  variant="bordered"
+                  className="w-full h-12"
+                  onPress={() => setShowNewCompanyDialog(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Company
+                </Button>
+                <Modal isOpen={showNewCompanyDialog} onOpenChange={setShowNewCompanyDialog}>
+                  <ModalContent>
+                    {(onClose) => (
+                      <>
+                        <ModalHeader className="flex flex-col gap-1">
+                          Add New Company
+                          <span className="text-sm font-normal text-muted-foreground">
+                            Add a new {formData.materialType} company to the database
+                          </span>
+                        </ModalHeader>
+                        <ModalBody>
+                          <div className="space-y-4">
+                            <Input
+                              label="Company Name *"
+                              value={newCompanyData.name}
+                              onChange={(e) => setNewCompanyData(prev => ({ ...prev, name: e.target.value }))}
+                              placeholder="Enter company name"
+                            />
+                            <Input
+                              label="Country"
+                              value={newCompanyData.country}
+                              onChange={(e) => setNewCompanyData(prev => ({ ...prev, country: e.target.value }))}
+                              placeholder="e.g., Bangladesh, China, India"
+                            />
+                            <Textarea
+                              label="Notes"
+                              value={newCompanyData.notes}
+                              onChange={(e) => setNewCompanyData(prev => ({ ...prev, notes: e.target.value }))}
+                              placeholder="Additional notes about the company"
+                              rows={3}
+                            />
+                          </div>
+                        </ModalBody>
+                        <ModalFooter>
+                          <Button
+                            variant="bordered"
+                            onPress={() => { setShowNewCompanyDialog(false); onClose(); }}
+                            isDisabled={addingCompany}
+                          >
+                            Cancel
+                          </Button>
+                          <Button onPress={handleAddNewCompany} isDisabled={addingCompany}>
+                            {addingCompany && <RefreshCw className="h-4 w-4 mr-2 animate-spin" />}
+                            Add Company
+                          </Button>
+                        </ModalFooter>
+                      </>
+                    )}
+                  </ModalContent>
+                </Modal>
               </div>
             </div>
 
             {/* Thickness (Glass only) */}
             {formData.materialType === 'Glass' && (
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <Layers className="h-4 w-4" />
                   Thickness
                   {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('thickness')})</span>}
-                </Label>
-                <Select 
-                  value={formData.thicknessMM?.toString() || ''} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, thicknessMM: parseInt(value) }))}
+                </label>
+                <Select
+                  aria-label="Thickness"
+                  selectedKeys={formData.thicknessMM ? [formData.thicknessMM.toString()] : []}
+                  onSelectionChange={(keys) => setFormData(prev => ({ ...prev, thicknessMM: parseInt(Array.from(keys)[0] as string) }))}
+                  placeholder="Select thickness"
+                  className="h-12"
                 >
-                  <SelectTrigger className="h-12">
-                    <SelectValue placeholder="Select thickness" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {apiFormData.thicknesses.Glass.map((thickness) => (
-                      <SelectItem key={thickness.value} value={thickness.value.toString()}>
-                        <div className="flex items-center gap-2">
-                          <span>{thickness.label}</span>
-                          {language === 'bn' && <span className="text-muted-foreground">({thickness.bangla})</span>}
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
+                  {apiFormData.thicknesses.Glass.map((thickness) => (
+                    <SelectItem key={thickness.value.toString()}>
+                      {language === 'bn' ? `${thickness.label} (${thickness.bangla})` : thickness.label}
+                    </SelectItem>
+                  ))}
                 </Select>
               </div>
             )}
 
             {/* Quality */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Star className="h-4 w-4" />
                 Quality
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('quality')})</span>}
-              </Label>
-              <Select 
-                value={formData.quality} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, quality: value }))}
+              </label>
+              <Select
+                aria-label="Quality"
+                selectedKeys={formData.quality ? [formData.quality] : []}
+                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, quality: Array.from(keys)[0] as string }))}
+                placeholder="Select quality"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select quality" />
-                </SelectTrigger>
-                <SelectContent>
-                  {apiFormData.qualities.map((quality) => (
-                    <SelectItem key={quality.value} value={quality.value}>
-                      <div className="flex items-center gap-2">
-                        <span>{quality.label}</span>
-                        {language === 'bn' && <span className="text-muted-foreground">({quality.bangla})</span>}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {apiFormData.qualities.map((quality) => (
+                  <SelectItem key={quality.value}>
+                    {language === 'bn' ? `${quality.label} (${quality.bangla})` : quality.label}
+                  </SelectItem>
+                ))}
               </Select>
             </div>
 
             {/* Measurement Type */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Calculator className="h-4 w-4" />
                 Measurement Type
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('measurement_type')})</span>}
-              </Label>
-              <Select 
-                value={formData.measurementType} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, measurementType: value }))}
+              </label>
+              <Select
+                aria-label="Measurement Type"
+                selectedKeys={formData.measurementType ? [formData.measurementType] : []}
+                onSelectionChange={(keys) => setFormData(prev => ({ ...prev, measurementType: Array.from(keys)[0] as string }))}
+                placeholder="Select measurement type"
+                className="h-12"
               >
-                <SelectTrigger className="h-12">
-                  <SelectValue placeholder="Select measurement type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {apiFormData.measurementTypes.map((type) => (
-                    <SelectItem key={type.value} value={type.value}>
-                      <div className="flex items-center gap-2">
-                        <span>{type.label}</span>
-                        {language === 'bn' && <span className="text-muted-foreground">({type.bangla})</span>}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
+                {apiFormData.measurementTypes.map((type) => (
+                  <SelectItem key={type.value}>
+                    {language === 'bn' ? `${type.label} (${type.bangla})` : type.label}
+                  </SelectItem>
+                ))}
               </Select>
             </div>
 
             {/* Prices */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Purchase Price (৳ per unit)
                   {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('purchase_price')})</span>}
-                </Label>
+                </label>
                 <Input
                   type="number"
                   step="0.01"
@@ -693,11 +668,11 @@ export default function BDShopStockPage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="flex items-center gap-2">
+                <label className="flex items-center gap-2">
                   <DollarSign className="h-4 w-4" />
                   Selling Price (৳ per unit) *
                   {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('selling_price')})</span>}
-                </Label>
+                </label>
                 <Input
                   type="number"
                   step="0.01"
@@ -713,11 +688,11 @@ export default function BDShopStockPage() {
 
             {/* Stock Quantity */}
             <div className="space-y-2">
-              <Label className="flex items-center gap-2">
+              <label className="flex items-center gap-2">
                 <Package className="h-4 w-4" />
                 Stock Quantity *
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('stock_quantity')})</span>}
-              </Label>
+              </label>
               <Input
                 type="number"
                 step="0.01"
@@ -732,10 +707,10 @@ export default function BDShopStockPage() {
 
             {/* Notes */}
             <div className="space-y-2">
-              <Label>
+              <label>
                 Notes
                 {language === 'bn' && <span className="text-muted-foreground">({getBanglaText('notes')})</span>}
-              </Label>
+              </label>
               <Textarea
                 value={formData.notes}
                 onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
@@ -746,9 +721,9 @@ export default function BDShopStockPage() {
 
             {/* Save Button */}
             <div className="pt-4">
-              <Button 
-                onClick={handleSaveStock} 
-                disabled={saving || !formData.company || !formData.sellingPrice || !formData.stockQuantity}
+              <Button
+                onPress={handleSaveStock}
+                isDisabled={saving || !formData.company || !formData.sellingPrice || !formData.stockQuantity}
                 className="w-full h-12 text-lg"
                 size="lg"
               >
@@ -757,7 +732,7 @@ export default function BDShopStockPage() {
                 Save Stock
               </Button>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </Layout>

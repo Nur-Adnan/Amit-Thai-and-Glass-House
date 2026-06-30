@@ -2,20 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Chip,
+  Divider,
+  Input,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { 
+} from '@heroui/react'
+import {
   Calculator, 
   Plus, 
   AlertTriangle, 
@@ -361,18 +359,19 @@ export default function StockAwareCalculatorPage() {
             <Card>
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs">STEP 1</Badge>
-                  <CardTitle className="text-lg">Material Type</CardTitle>
+                  <Chip variant="bordered" size="sm" className="text-xs">STEP 1</Chip>
+                  <h3 className="text-lg font-semibold">Material Type</h3>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 <div className="grid grid-cols-2 gap-3">
                   {['Glass', 'Thai'].map((type) => (
                     <Button
                       key={type}
-                      variant={materialType === type ? "default" : "outline"}
+                      color={materialType === type ? "primary" : "default"}
+                      variant={materialType === type ? "solid" : "bordered"}
                       size="lg"
-                      onClick={() => setMaterialType(type)}
+                      onPress={() => setMaterialType(type)}
                       className="h-16 text-lg font-semibold"
                     >
                       <Layers className="h-5 w-5 mr-2" />
@@ -380,7 +379,7 @@ export default function StockAwareCalculatorPage() {
                     </Button>
                   ))}
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             {/* Step 2: Company */}
@@ -388,27 +387,28 @@ export default function StockAwareCalculatorPage() {
               <Card>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">STEP 2</Badge>
-                    <CardTitle className="text-lg">Company</CardTitle>
+                    <Chip variant="bordered" size="sm" className="text-xs">STEP 2</Chip>
+                    <h3 className="text-lg font-semibold">Company</h3>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <Select value={company} onValueChange={setCompany}>
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select company" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {companies.map((comp) => (
-                        <SelectItem key={comp} value={comp}>
-                          <div className="flex items-center gap-2">
-                            <Building2 className="h-4 w-4" />
-                            {comp}
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
+                <CardBody>
+                  <Select
+                    aria-label="Company"
+                    placeholder="Select company"
+                    selectedKeys={company ? [company] : []}
+                    onSelectionChange={(keys) => setCompany(Array.from(keys)[0] as string)}
+                    className="h-12"
+                  >
+                    {companies.map((comp) => (
+                      <SelectItem key={comp}>
+                        <div className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4" />
+                          {comp}
+                        </div>
+                      </SelectItem>
+                    ))}
                   </Select>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
@@ -417,18 +417,19 @@ export default function StockAwareCalculatorPage() {
               <Card>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">STEP 3</Badge>
-                    <CardTitle className="text-lg">Thickness</CardTitle>
+                    <Chip variant="bordered" size="sm" className="text-xs">STEP 3</Chip>
+                    <h3 className="text-lg font-semibold">Thickness</h3>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="grid grid-cols-4 gap-3">
                     {thicknesses.map((thick) => (
                       <Button
                         key={thick}
-                        variant={thickness === thick.toString() ? "default" : "outline"}
+                        color={thickness === thick.toString() ? "primary" : "default"}
+                        variant={thickness === thick.toString() ? "solid" : "bordered"}
                         size="lg"
-                        onClick={() => setThickness(thick.toString())}
+                        onPress={() => setThickness(thick.toString())}
                         className="h-16 flex flex-col"
                       >
                         <Ruler className="h-4 w-4 mb-1" />
@@ -436,7 +437,7 @@ export default function StockAwareCalculatorPage() {
                       </Button>
                     ))}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
@@ -445,18 +446,19 @@ export default function StockAwareCalculatorPage() {
               <Card>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">STEP {materialType === 'Glass' ? '4' : '3'}</Badge>
-                    <CardTitle className="text-lg">Quality</CardTitle>
+                    <Chip variant="bordered" size="sm" className="text-xs">STEP {materialType === 'Glass' ? '4' : '3'}</Chip>
+                    <h3 className="text-lg font-semibold">Quality</h3>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="grid grid-cols-3 gap-3">
                     {qualities.map((qual) => (
                       <Button
                         key={qual}
-                        variant={quality === qual ? "default" : "outline"}
+                        color={quality === qual ? "primary" : "default"}
+                        variant={quality === qual ? "solid" : "bordered"}
                         size="lg"
-                        onClick={() => setQuality(qual)}
+                        onPress={() => setQuality(qual)}
                         className="h-16 flex flex-col"
                       >
                         <Star className="h-4 w-4 mb-1" />
@@ -464,7 +466,7 @@ export default function StockAwareCalculatorPage() {
                       </Button>
                     ))}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
@@ -472,9 +474,9 @@ export default function StockAwareCalculatorPage() {
             {variants.length > 0 && (
               <Card>
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-lg">Available Stock Variants</CardTitle>
+                  <h3 className="text-lg font-semibold">Available Stock Variants</h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="space-y-3">
                     {variants.map((variant) => (
                       <div
@@ -497,17 +499,17 @@ export default function StockAwareCalculatorPage() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <Badge 
+                            <Chip
                               className={
-                                variant.isOutOfStock 
-                                  ? 'bg-red-100 text-red-800' 
-                                  : variant.isLowStock 
-                                    ? 'bg-orange-100 text-orange-800' 
+                                variant.isOutOfStock
+                                  ? 'bg-red-100 text-red-800'
+                                  : variant.isLowStock
+                                    ? 'bg-orange-100 text-orange-800'
                                     : 'bg-green-100 text-green-800'
                               }
                             >
                               {variant.stockQuantity} {variant.unit}
-                            </Badge>
+                            </Chip>
                             <p className="text-xs text-muted-foreground mt-1">
                               {variant.stockStatus}
                             </p>
@@ -516,7 +518,7 @@ export default function StockAwareCalculatorPage() {
                       </div>
                     ))}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
@@ -525,21 +527,22 @@ export default function StockAwareCalculatorPage() {
               <Card>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">STEP {materialType === 'Glass' ? '5' : '4'}</Badge>
-                    <CardTitle className="text-lg">Measurement Type</CardTitle>
+                    <Chip variant="bordered" size="sm" className="text-xs">STEP {materialType === 'Glass' ? '5' : '4'}</Chip>
+                    <h3 className="text-lg font-semibold">Measurement Type</h3>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <Button
-                    variant={measurementType === 'SFT' ? "default" : "outline"}
+                    color={measurementType === 'SFT' ? "primary" : "default"}
+                    variant={measurementType === 'SFT' ? "solid" : "bordered"}
                     size="lg"
-                    onClick={() => setMeasurementType('SFT')}
+                    onPress={() => setMeasurementType('SFT')}
                     className="w-full h-16 text-lg font-semibold"
                   >
                     <Calculator className="h-5 w-5 mr-2" />
                     Square Feet (SFT)
                   </Button>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
@@ -548,15 +551,15 @@ export default function StockAwareCalculatorPage() {
               <Card>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">STEP {materialType === 'Glass' ? '6' : '5'}</Badge>
-                    <CardTitle className="text-lg">Length / Width (Feet & Inches)</CardTitle>
+                    <Chip variant="bordered" size="sm" className="text-xs">STEP {materialType === 'Glass' ? '6' : '5'}</Chip>
+                    <h3 className="text-lg font-semibold">Length / Width (Feet & Inches)</h3>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="grid grid-cols-2 gap-6">
                     {/* Length */}
                     <div className="space-y-3">
-                      <Label className="text-sm font-medium">Length</Label>
+                      <label className="text-sm font-medium">Length</label>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <Input
@@ -584,7 +587,7 @@ export default function StockAwareCalculatorPage() {
 
                     {/* Width */}
                     <div className="space-y-3">
-                      <Label className="text-sm font-medium">Width</Label>
+                      <label className="text-sm font-medium">Width</label>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <Input
@@ -610,7 +613,7 @@ export default function StockAwareCalculatorPage() {
                       </div>
                     </div>
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
 
@@ -619,14 +622,15 @@ export default function StockAwareCalculatorPage() {
               <Card>
                 <CardHeader className="pb-4">
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs">STEP {materialType === 'Glass' ? '7' : '6'}</Badge>
-                    <CardTitle className="text-lg">Waste %</CardTitle>
+                    <Chip variant="bordered" size="sm" className="text-xs">STEP {materialType === 'Glass' ? '7' : '6'}</Chip>
+                    <h3 className="text-lg font-semibold">Waste %</h3>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="flex items-center gap-4">
                     <div className="flex-1">
                       <Input
+                        aria-label="Waste percentage"
                         type="number"
                         value={wastePercentage}
                         onChange={(e) => setWastePercentage(e.target.value)}
@@ -641,16 +645,16 @@ export default function StockAwareCalculatorPage() {
                       {[5, 10, 15].map((percent) => (
                         <Button
                           key={percent}
-                          variant="outline"
+                          variant="bordered"
                           size="sm"
-                          onClick={() => setWastePercentage(percent.toString())}
+                          onPress={() => setWastePercentage(percent.toString())}
                         >
                           {percent}%
                         </Button>
                       ))}
                     </div>
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             )}
           </div>
@@ -660,11 +664,11 @@ export default function StockAwareCalculatorPage() {
             <Card className="sticky top-6">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-2">
-                  <Badge variant="secondary" className="text-xs">LIVE PREVIEW</Badge>
-                  <CardTitle className="text-lg">Calculation</CardTitle>
+                  <Chip color="default" variant="flat" size="sm" className="text-xs">LIVE PREVIEW</Chip>
+                  <h3 className="text-lg font-semibold">Calculation</h3>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {error && (
                   <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
                     <div className="flex items-center gap-2">
@@ -680,9 +684,9 @@ export default function StockAwareCalculatorPage() {
                     <p className="text-sm text-blue-800">{selectedVariant.displayName}</p>
                     <div className="flex items-center justify-between mt-2">
                       <span className="text-sm text-blue-700">Available Stock:</span>
-                      <Badge className="bg-blue-100 text-blue-800">
+                      <Chip className="bg-blue-100 text-blue-800">
                         {selectedVariant.stockQuantity} {selectedVariant.unit}
-                      </Badge>
+                      </Chip>
                     </div>
                   </div>
                 )}
@@ -767,7 +771,7 @@ export default function StockAwareCalculatorPage() {
                         <span className="text-muted-foreground">Quantity:</span>
                         <span>{formatNumber(result.calculation.quantityNeeded)} sqft</span>
                       </div>
-                      <Separator />
+                      <Divider />
                       <div className="flex justify-between font-semibold">
                         <span>Total:</span>
                         <span>{result.calculation.formattedTotalPrice}</span>
@@ -786,27 +790,28 @@ export default function StockAwareCalculatorPage() {
                 {/* Action Buttons */}
                 <div className="space-y-3 mt-6">
                   <Button
-                    onClick={handleAddToInvoice}
-                    disabled={!result || !result.stockValidation.isStockSufficient || loading}
+                    color="primary"
+                    onPress={handleAddToInvoice}
+                    isDisabled={!result || !result.stockValidation.isStockSufficient || loading}
                     size="lg"
                     className="w-full h-14 text-lg font-semibold"
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
-                    {!result ? 'Complete Calculation' : 
-                     !result.stockValidation.isStockSufficient ? 'Insufficient Stock' : 
+                    {!result ? 'Complete Calculation' :
+                     !result.stockValidation.isStockSufficient ? 'Insufficient Stock' :
                      loading ? 'Adding...' : 'Add to Invoice'}
                   </Button>
-                  
+
                   <Button
-                    onClick={resetCalculator}
-                    variant="outline"
+                    onPress={resetCalculator}
+                    variant="bordered"
                     size="lg"
                     className="w-full"
                   >
                     Reset Calculator
                   </Button>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image';
+import { Button, Input, Textarea, Select, SelectItem, Checkbox } from '@heroui/react';
 import Layout from '../../components/Layout';
 
 interface ShopConfig {
@@ -307,14 +308,15 @@ export default function ShopConfigPage() {
               </ul>
             </div>
             <div className="space-x-4">
-              <button 
-                onClick={fetchShopConfig}
-                className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+              <Button
+                color="primary"
+                onPress={fetchShopConfig}
               >
                 Retry Loading
-              </button>
-              <button 
-                onClick={async () => {
+              </Button>
+              <Button
+                color="success"
+                onPress={async () => {
                   // Try to initialize with default config
                   const defaultConfig = {
                     shopName: 'Amit Thai & Aluminum',
@@ -363,16 +365,15 @@ export default function ShopConfigPage() {
                   await initializeShopConfig(defaultConfig as ShopConfig);
                   await fetchShopConfig();
                 }}
-                className="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors"
               >
                 Initialize Default Config
-              </button>
-              <button 
-                onClick={() => window.location.reload()}
-                className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition-colors"
+              </Button>
+              <Button
+                variant="flat"
+                onPress={() => window.location.reload()}
               >
                 Refresh Page
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -398,13 +399,14 @@ export default function ShopConfigPage() {
             <p className="text-gray-600">Manage your shop details and invoice settings</p>
           </div>
           <div className="flex space-x-3">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50"
+            <Button
+              color="primary"
+              onPress={handleSave}
+              isDisabled={saving}
+              isLoading={saving}
             >
               {saving ? 'Saving...' : 'Save Changes'}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -412,10 +414,13 @@ export default function ShopConfigPage() {
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8">
             {tabs.map((tab) => (
-              <button
+              <Button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                variant="light"
+                radius="none"
+                disableRipple
+                onPress={() => setActiveTab(tab.id)}
+                className={`h-auto min-w-0 bg-transparent py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === tab.id
                     ? 'border-blue-500 text-blue-600'
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -423,7 +428,7 @@ export default function ShopConfigPage() {
               >
                 <span className="mr-2">{tab.icon}</span>
                 {tab.name}
-              </button>
+              </Button>
             ))}
           </nav>
         </div>
@@ -447,12 +452,17 @@ export default function ShopConfigPage() {
                         height={80}
                         className="w-20 h-20 object-contain border rounded"
                       />
-                      <button
-                        onClick={handleDeleteLogo}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600"
+                      <Button
+                        isIconOnly
+                        size="sm"
+                        color="danger"
+                        radius="full"
+                        aria-label="Delete logo"
+                        onPress={handleDeleteLogo}
+                        className="absolute -top-2 -right-2 min-w-0 w-6 h-6 text-xs"
                       >
                         ×
-                      </button>
+                      </Button>
                     </div>
                   )}
                   
@@ -486,13 +496,15 @@ export default function ShopConfigPage() {
                       Choose Logo
                     </label>
                     {logoFile && (
-                      <button
-                        onClick={handleLogoUpload}
-                        disabled={uploadingLogo}
-                        className="ml-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:opacity-50"
+                      <Button
+                        color="primary"
+                        onPress={handleLogoUpload}
+                        isDisabled={uploadingLogo}
+                        isLoading={uploadingLogo}
+                        className="ml-2"
                       >
                         {uploadingLogo ? 'Uploading...' : 'Upload'}
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -501,12 +513,13 @@ export default function ShopConfigPage() {
 
               {/* Shop Name */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Shop Name *</label>
-                <input
+                <Input
                   type="text"
+                  label="Shop Name *"
+                  labelPlacement="outside"
                   value={config.shopName}
                   onChange={(e) => updateConfig('shopName', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full"
                   placeholder="Enter shop name"
                 />
               </div>
@@ -516,38 +529,42 @@ export default function ShopConfigPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Address</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="Street Address"
                       value={config.address.street}
                       onChange={(e) => updateConfig('address.street', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Street Address *"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="City"
                       value={config.address.city}
                       onChange={(e) => updateConfig('address.city', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="City *"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="State/Division"
                       value={config.address.state}
                       onChange={(e) => updateConfig('address.state', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="State/Division"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="Zip Code"
                       value={config.address.zipCode}
                       onChange={(e) => updateConfig('address.zipCode', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Zip Code"
                     />
                   </div>
@@ -559,29 +576,32 @@ export default function ShopConfigPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Business Registration</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="Registration Number"
                       value={config.businessRegistration?.registrationNumber || ''}
                       onChange={(e) => updateConfig('businessRegistration.registrationNumber', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Registration Number"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="License Number"
                       value={config.businessRegistration?.licenseNumber || ''}
                       onChange={(e) => updateConfig('businessRegistration.licenseNumber', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="License Number"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="number"
-                      value={config.businessRegistration?.establishedYear || ''}
+                      aria-label="Established Year"
+                      value={String(config.businessRegistration?.establishedYear || '')}
                       onChange={(e) => updateConfig('businessRegistration.establishedYear', parseInt(e.target.value))}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Established Year"
                       min="1900"
                       max={new Date().getFullYear()}
@@ -601,29 +621,32 @@ export default function ShopConfigPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone Numbers</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="Primary Phone"
                       value={config.phone.primary}
                       onChange={(e) => updateConfig('phone.primary', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Primary Phone *"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="Secondary Phone"
                       value={config.phone.secondary || ''}
                       onChange={(e) => updateConfig('phone.secondary', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Secondary Phone"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="text"
+                      aria-label="WhatsApp"
                       value={config.phone.whatsapp || ''}
                       onChange={(e) => updateConfig('phone.whatsapp', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="WhatsApp"
                     />
                   </div>
@@ -635,20 +658,22 @@ export default function ShopConfigPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Email Addresses</label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <input
+                    <Input
                       type="email"
+                      aria-label="Primary Email"
                       value={config.email.primary || ''}
                       onChange={(e) => updateConfig('email.primary', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Primary Email"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="email"
+                      aria-label="Support Email"
                       value={config.email.support || ''}
                       onChange={(e) => updateConfig('email.support', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Support Email"
                     />
                   </div>
@@ -657,12 +682,13 @@ export default function ShopConfigPage() {
 
               {/* Website */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                <input
+                <Input
                   type="url"
+                  label="Website"
+                  labelPlacement="outside"
                   value={config.website || ''}
                   onChange={(e) => updateConfig('website', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full"
                   placeholder="https://www.yourwebsite.com"
                 />
               </div>
@@ -672,29 +698,32 @@ export default function ShopConfigPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Social Media</label>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <input
+                    <Input
                       type="url"
+                      aria-label="Facebook URL"
                       value={config.socialMedia?.facebook || ''}
                       onChange={(e) => updateConfig('socialMedia.facebook', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Facebook URL"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="url"
+                      aria-label="Instagram URL"
                       value={config.socialMedia?.instagram || ''}
                       onChange={(e) => updateConfig('socialMedia.instagram', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="Instagram URL"
                     />
                   </div>
                   <div>
-                    <input
+                    <Input
                       type="url"
+                      aria-label="LinkedIn URL"
                       value={config.socialMedia?.linkedin || ''}
                       onChange={(e) => updateConfig('socialMedia.linkedin', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                       placeholder="LinkedIn URL"
                     />
                   </div>
@@ -710,12 +739,13 @@ export default function ShopConfigPage() {
               {/* Invoice Configuration */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Invoice Prefix *</label>
-                  <input
+                  <Input
                     type="text"
+                    label="Invoice Prefix *"
+                    labelPlacement="outside"
                     value={config.invoicePrefix}
                     onChange={(e) => updateConfig('invoicePrefix', e.target.value.toUpperCase())}
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="w-full"
                     placeholder="INV"
                     maxLength={10}
                   />
@@ -725,39 +755,44 @@ export default function ShopConfigPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
                   <div className="grid grid-cols-2 gap-2">
-                    <select
-                      value={config.currency.code}
-                      onChange={(e) => {
-                        const symbol = e.target.value === 'BDT' ? '৳' : e.target.value === 'USD' ? '$' : '€';
-                        updateConfig('currency.code', e.target.value);
+                    <Select
+                      aria-label="Currency Code"
+                      selectedKeys={config.currency.code ? [config.currency.code] : []}
+                      onSelectionChange={(keys) => {
+                        const code = Array.from(keys)[0] as string;
+                        if (!code) return;
+                        const symbol = code === 'BDT' ? '৳' : code === 'USD' ? '$' : '€';
+                        updateConfig('currency.code', code);
                         updateConfig('currency.symbol', symbol);
                       }}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full"
                     >
-                      <option value="BDT">BDT (৳)</option>
-                      <option value="USD">USD ($)</option>
-                      <option value="EUR">EUR (€)</option>
-                    </select>
-                    <select
-                      value={config.currency.position}
-                      onChange={(e) => updateConfig('currency.position', e.target.value)}
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      <SelectItem key="BDT">BDT (৳)</SelectItem>
+                      <SelectItem key="USD">USD ($)</SelectItem>
+                      <SelectItem key="EUR">EUR (€)</SelectItem>
+                    </Select>
+                    <Select
+                      aria-label="Currency Position"
+                      selectedKeys={config.currency.position ? [config.currency.position] : []}
+                      onSelectionChange={(keys) => updateConfig('currency.position', Array.from(keys)[0] as string)}
+                      className="w-full"
                     >
-                      <option value="before">Before Amount</option>
-                      <option value="after">After Amount</option>
-                    </select>
+                      <SelectItem key="before">Before Amount</SelectItem>
+                      <SelectItem key="after">After Amount</SelectItem>
+                    </Select>
                   </div>
                 </div>
               </div>
 
               {/* Footer Note */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Footer Note</label>
-                <textarea
+                <Textarea
+                  label="Footer Note"
+                  labelPlacement="outside"
                   value={config.footerNote}
                   onChange={(e) => updateConfig('footerNote', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  rows={3}
+                  className="w-full"
+                  minRows={3}
                   placeholder="Thank you for your business!"
                   maxLength={500}
                 />
@@ -765,12 +800,13 @@ export default function ShopConfigPage() {
 
               {/* Terms and Conditions */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Terms and Conditions</label>
-                <textarea
+                <Textarea
+                  label="Terms and Conditions"
+                  labelPlacement="outside"
                   value={config.termsAndConditions || ''}
                   onChange={(e) => updateConfig('termsAndConditions', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  rows={4}
+                  className="w-full"
+                  minRows={4}
                   placeholder="Enter terms and conditions..."
                   maxLength={2000}
                 />
@@ -781,23 +817,24 @@ export default function ShopConfigPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">Tax Configuration</label>
                 <div className="space-y-4">
                   <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={config.tax.enabled}
-                      onChange={(e) => updateConfig('tax.enabled', e.target.checked)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label className="ml-2 text-sm text-gray-700">Enable Tax</label>
+                    <Checkbox
+                      isSelected={config.tax.enabled}
+                      onValueChange={(checked) => updateConfig('tax.enabled', checked)}
+                      classNames={{ label: 'text-sm text-gray-700' }}
+                    >
+                      Enable Tax
+                    </Checkbox>
                   </div>
-                  
+
                   {config.tax.enabled && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <input
+                        <Input
                           type="number"
-                          value={config.tax.rate}
+                          aria-label="Tax Rate (%)"
+                          value={String(config.tax.rate)}
                           onChange={(e) => updateConfig('tax.rate', parseFloat(e.target.value))}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full"
                           placeholder="Tax Rate (%)"
                           min="0"
                           max="100"
@@ -805,20 +842,22 @@ export default function ShopConfigPage() {
                         />
                       </div>
                       <div>
-                        <input
+                        <Input
                           type="text"
+                          aria-label="Tax Label"
                           value={config.tax.label}
                           onChange={(e) => updateConfig('tax.label', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full"
                           placeholder="Tax Label (VAT, GST, etc.)"
                         />
                       </div>
                       <div>
-                        <input
+                        <Input
                           type="text"
+                          aria-label="Tax Registration Number"
                           value={config.tax.registrationNumber || ''}
                           onChange={(e) => updateConfig('tax.registrationNumber', e.target.value)}
-                          className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          className="w-full"
                           placeholder="Tax Registration Number"
                         />
                       </div>
@@ -842,13 +881,13 @@ export default function ShopConfigPage() {
                     { key: 'showTax', label: 'Show Tax' }
                   ].map((setting) => (
                     <div key={setting.key} className="flex items-center">
-                      <input
-                        type="checkbox"
-                        checked={config.invoiceSettings[setting.key as keyof typeof config.invoiceSettings] as boolean}
-                        onChange={(e) => updateConfig(`invoiceSettings.${setting.key}`, e.target.checked)}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label className="ml-2 text-sm text-gray-700">{setting.label}</label>
+                      <Checkbox
+                        isSelected={config.invoiceSettings[setting.key as keyof typeof config.invoiceSettings] as boolean}
+                        onValueChange={(checked) => updateConfig(`invoiceSettings.${setting.key}`, checked)}
+                        classNames={{ label: 'text-sm text-gray-700' }}
+                      >
+                        {setting.label}
+                      </Checkbox>
                     </div>
                   ))}
                 </div>
@@ -869,15 +908,17 @@ export default function ShopConfigPage() {
                     <div className="flex items-center space-x-2">
                       <input
                         type="color"
+                        aria-label="Primary Color Picker"
                         value={config.theme.primaryColor}
                         onChange={(e) => updateConfig('theme.primaryColor', e.target.value)}
                         className="w-12 h-10 border border-gray-300 rounded"
                       />
-                      <input
+                      <Input
                         type="text"
+                        aria-label="Primary Color Hex"
                         value={config.theme.primaryColor}
                         onChange={(e) => updateConfig('theme.primaryColor', e.target.value)}
-                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="flex-1"
                         placeholder="#2563eb"
                       />
                     </div>
@@ -887,15 +928,17 @@ export default function ShopConfigPage() {
                     <div className="flex items-center space-x-2">
                       <input
                         type="color"
+                        aria-label="Secondary Color Picker"
                         value={config.theme.secondaryColor}
                         onChange={(e) => updateConfig('theme.secondaryColor', e.target.value)}
                         className="w-12 h-10 border border-gray-300 rounded"
                       />
-                      <input
+                      <Input
                         type="text"
+                        aria-label="Secondary Color Hex"
                         value={config.theme.secondaryColor}
                         onChange={(e) => updateConfig('theme.secondaryColor', e.target.value)}
-                        className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className="flex-1"
                         placeholder="#64748b"
                       />
                     </div>
@@ -905,32 +948,36 @@ export default function ShopConfigPage() {
 
               {/* Font Family */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
-                <select
-                  value={config.theme.fontFamily}
-                  onChange={(e) => updateConfig('theme.fontFamily', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                <Select
+                  label="Font Family"
+                  labelPlacement="outside"
+                  aria-label="Font Family"
+                  selectedKeys={config.theme.fontFamily ? [config.theme.fontFamily] : []}
+                  onSelectionChange={(keys) => updateConfig('theme.fontFamily', Array.from(keys)[0] as string)}
+                  className="w-full"
                 >
-                  <option value="Arial">Arial</option>
-                  <option value="Helvetica">Helvetica</option>
-                  <option value="Times New Roman">Times New Roman</option>
-                  <option value="Roboto">Roboto</option>
-                  <option value="Open Sans">Open Sans</option>
-                </select>
+                  <SelectItem key="Arial">Arial</SelectItem>
+                  <SelectItem key="Helvetica">Helvetica</SelectItem>
+                  <SelectItem key="Times New Roman">Times New Roman</SelectItem>
+                  <SelectItem key="Roboto">Roboto</SelectItem>
+                  <SelectItem key="Open Sans">Open Sans</SelectItem>
+                </Select>
               </div>
 
               {/* Logo Size */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Logo Size on Invoice</label>
-                <select
-                  value={config.invoiceSettings.logoSize}
-                  onChange={(e) => updateConfig('invoiceSettings.logoSize', e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                <Select
+                  label="Logo Size on Invoice"
+                  labelPlacement="outside"
+                  aria-label="Logo Size on Invoice"
+                  selectedKeys={config.invoiceSettings.logoSize ? [config.invoiceSettings.logoSize] : []}
+                  onSelectionChange={(keys) => updateConfig('invoiceSettings.logoSize', Array.from(keys)[0] as string)}
+                  className="w-full"
                 >
-                  <option value="small">Small</option>
-                  <option value="medium">Medium</option>
-                  <option value="large">Large</option>
-                </select>
+                  <SelectItem key="small">Small</SelectItem>
+                  <SelectItem key="medium">Medium</SelectItem>
+                  <SelectItem key="large">Large</SelectItem>
+                </Select>
               </div>
 
               {/* Preview */}
@@ -973,10 +1020,11 @@ export default function ShopConfigPage() {
                 <p className="text-yellow-700 mb-4">
                   This will reset all settings to default values. This action cannot be undone.
                 </p>
-                <button
-                  onClick={async () => {
+                <Button
+                  color="warning"
+                  onPress={async () => {
                     if (!confirm('Are you sure you want to reset all configuration to defaults? This cannot be undone.')) return;
-                    
+
                     try {
                       const token = localStorage.getItem('token');
                       const response = await fetch('http://localhost:3001/api/shop-config/reset', {
@@ -999,10 +1047,9 @@ export default function ShopConfigPage() {
                       alert('Error resetting configuration');
                     }
                   }}
-                  className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
                 >
                   Reset to Defaults
-                </button>
+                </Button>
               </div>
 
               {/* Export/Import */}
@@ -1011,21 +1058,21 @@ export default function ShopConfigPage() {
                 <p className="text-blue-700 mb-4">
                   Download your current configuration as a backup.
                 </p>
-                <button
-                  onClick={() => {
+                <Button
+                  color="primary"
+                  onPress={() => {
                     const dataStr = JSON.stringify(config, null, 2);
                     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
                     const exportFileDefaultName = `shop-config-${new Date().toISOString().split('T')[0]}.json`;
-                    
+
                     const linkElement = document.createElement('a');
                     linkElement.setAttribute('href', dataUri);
                     linkElement.setAttribute('download', exportFileDefaultName);
                     linkElement.click();
                   }}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
                 >
                   Export Configuration
-                </button>
+                </Button>
               </div>
 
               {/* System Information */}

@@ -6,7 +6,7 @@ import BusinessSummaryCards from '@/components/BusinessSummaryCards'
 import DailySummary from '@/components/DailySummary'
 import FinancialWarnings from '@/components/FinancialWarnings'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { Separator } from '@/components/ui/separator'
+import { Divider } from '@heroui/react'
 
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -26,12 +26,12 @@ export default function DashboardPage() {
         {/* Business Summary Cards - Instant Clarity */}
         <BusinessSummaryCards />
         
-        <Separator />
+        <Divider />
         
         {/* Financial Warnings */}
         <FinancialWarnings />
         
-        <Separator />
+        <Divider />
         
         {/* Detailed Daily Summary */}
         <div>

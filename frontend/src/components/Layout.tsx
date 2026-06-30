@@ -26,17 +26,18 @@ import { useLanguage } from '@/contexts/LanguageContext'
 import { useFormatting } from '@/hooks/useFormatting'
 import { AccessibilityProvider } from '@/components/AccessibilityProvider'
 import LanguageToggle from './LanguageToggle'
-import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import { Separator } from '@/components/ui/separator'
+import {
+  Button,
+  Avatar,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Divider,
+  Drawer,
+  DrawerContent,
+  DrawerBody,
+} from '@heroui/react'
 
 interface User {
   id: string
@@ -205,43 +206,48 @@ export default function Layout({ children }: LayoutProps) {
         ))}
       </nav>
 
-      <Separator />
+      <Divider />
 
       {/* User section */}
       <div className="p-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="w-full justify-start gap-3 h-auto p-3">
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {user.name.charAt(0).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
+        <Dropdown>
+          <DropdownTrigger>
+            <Button variant="light" className="w-full justify-start gap-3 h-auto p-3">
+              <Avatar
+                name={user.name.charAt(0).toUpperCase()}
+                className="h-8 w-8 bg-primary text-primary-foreground"
+              />
               <div className="flex-1 text-left">
                 <p className="text-sm font-medium">{user.name}</p>
                 <p className="text-xs text-muted-foreground capitalize">{user.role}</p>
               </div>
               <ChevronDown className="h-4 w-4 text-muted-foreground" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
-            <div className="px-2 py-1.5">
+          </DropdownTrigger>
+          <DropdownMenu aria-label={t('settings')} className="w-56">
+            <DropdownItem key="user-info" isReadOnly className="opacity-100">
               <p className="text-sm font-medium">{user.name}</p>
               <p className="text-xs text-muted-foreground">{user.email}</p>
-            </div>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push('/settings')}>
-              <Settings className="mr-2 h-4 w-4" />
+            </DropdownItem>
+            <DropdownItem
+              key="settings"
+              showDivider
+              onPress={() => router.push('/settings')}
+              startContent={<Settings className="h-4 w-4" />}
+            >
               {t('settings')}
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-              <LogOut className="mr-2 h-4 w-4" />
+            </DropdownItem>
+            <DropdownItem
+              key="signout"
+              onPress={handleLogout}
+              className="text-destructive"
+              startContent={<LogOut className="h-4 w-4" />}
+            >
               {t('signOut')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+
         {/* Language Toggle */}
         <div className="mt-3">
           <LanguageToggle />
@@ -263,16 +269,18 @@ export default function Layout({ children }: LayoutProps) {
         {/* Mobile Top Bar */}
         <div className="sticky top-0 z-40 bg-background border-b">
           <div className="flex items-center justify-between h-16 px-4">
-            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="p-0 w-72">
-                <SidebarContent />
-              </SheetContent>
-            </Sheet>
+            <Button isIconOnly variant="light" onPress={() => setSidebarOpen(true)} aria-label="Menu">
+              <Menu className="h-5 w-5" />
+            </Button>
+            <Drawer isOpen={sidebarOpen} onOpenChange={setSidebarOpen} placement="left">
+              <DrawerContent className="p-0 w-72">
+                {() => (
+                  <DrawerBody className="p-0">
+                    <SidebarContent />
+                  </DrawerBody>
+                )}
+              </DrawerContent>
+            </Drawer>
 
             <div className="flex items-center gap-2">
               <div className="h-6 w-6 bg-primary rounded flex items-center justify-center">
@@ -285,33 +293,38 @@ export default function Layout({ children }: LayoutProps) {
               <div className="hidden sm:block text-sm text-muted-foreground">
                 {formatDateWithDay(new Date())}
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        {user.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button isIconOnly variant="light" aria-label={t('settings')}>
+                    <Avatar
+                      name={user.name.charAt(0).toUpperCase()}
+                      className="h-8 w-8 bg-primary text-primary-foreground"
+                    />
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <div className="px-2 py-1.5">
+                </DropdownTrigger>
+                <DropdownMenu aria-label={t('settings')} className="w-56">
+                  <DropdownItem key="user-info" isReadOnly className="opacity-100">
                     <p className="text-sm font-medium">{user.name}</p>
                     <p className="text-xs text-muted-foreground">{user.email}</p>
-                  </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push('/settings')}>
-                    <Settings className="mr-2 h-4 w-4" />
+                  </DropdownItem>
+                  <DropdownItem
+                    key="settings"
+                    showDivider
+                    onPress={() => router.push('/settings')}
+                    startContent={<Settings className="h-4 w-4" />}
+                  >
                     {t('settings')}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
+                  </DropdownItem>
+                  <DropdownItem
+                    key="signout"
+                    onPress={handleLogout}
+                    className="text-destructive"
+                    startContent={<LogOut className="h-4 w-4" />}
+                  >
                     {t('signOut')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
           </div>
         </div>

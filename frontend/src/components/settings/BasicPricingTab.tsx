@@ -1,21 +1,24 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
+  Button,
+  Input,
+  Card,
+  CardBody,
+  CardHeader,
+  Chip,
+  Alert,
+  Select,
+  SelectItem,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableColumn,
+  TableBody,
   TableRow,
-} from '@/components/ui/table'
-import { 
+  TableCell,
+} from '@heroui/react'
+import {
   DollarSign,
   Plus,
   Edit,
@@ -129,94 +132,89 @@ export default function BasicPricingTab() {
     <div className="space-y-6">
       {/* Add New Pricing */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <Plus className="h-5 w-5" />
             Add New Glass Pricing
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="thickness">Thickness</Label>
-              <select
+              <Select
                 id="thickness"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={newPricing.thickness}
-                onChange={(e) => setNewPricing(prev => ({ ...prev, thickness: e.target.value }))}
+                label="Thickness"
+                placeholder="Select thickness"
+                selectedKeys={newPricing.thickness ? [newPricing.thickness] : []}
+                onSelectionChange={(keys) => setNewPricing(prev => ({ ...prev, thickness: Array.from(keys)[0] as string }))}
               >
-                <option value="">Select thickness</option>
                 {thicknessOptions.map(thickness => (
-                  <option key={thickness} value={thickness}>{thickness}</option>
+                  <SelectItem key={thickness}>{thickness}</SelectItem>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="quality">Quality</Label>
-              <select
+              <Select
                 id="quality"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                value={newPricing.quality}
-                onChange={(e) => setNewPricing(prev => ({ ...prev, quality: e.target.value }))}
+                label="Quality"
+                placeholder="Select quality"
+                selectedKeys={newPricing.quality ? [newPricing.quality] : []}
+                onSelectionChange={(keys) => setNewPricing(prev => ({ ...prev, quality: Array.from(keys)[0] as string }))}
               >
-                <option value="">Select quality</option>
                 {qualityOptions.map(quality => (
-                  <option key={quality} value={quality}>{quality}</option>
+                  <SelectItem key={quality}>{quality}</SelectItem>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pricePerSqFt">Price per Sq Ft</Label>
               <Input
                 id="pricePerSqFt"
                 type="number"
                 step="0.01"
-                value={newPricing.pricePerSqFt}
+                label="Price per Sq Ft"
+                value={String(newPricing.pricePerSqFt)}
                 onChange={(e) => setNewPricing(prev => ({ ...prev, pricePerSqFt: parseFloat(e.target.value) || 0 }))}
                 placeholder="0.00"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="effectiveDate">Effective Date</Label>
               <Input
                 id="effectiveDate"
                 type="date"
+                label="Effective Date"
                 value={newPricing.effectiveDate}
                 onChange={(e) => setNewPricing(prev => ({ ...prev, effectiveDate: e.target.value }))}
               />
             </div>
           </div>
 
-          <Button onClick={handleAddPricing} disabled={loading}>
-            <Plus className="h-4 w-4 mr-2" />
+          <Button color="primary" onPress={handleAddPricing} isDisabled={loading} startContent={<Plus className="h-4 w-4" />}>
             {loading ? 'Adding...' : 'Add Pricing'}
           </Button>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Current Pricing List */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <DollarSign className="h-5 w-5" />
             Current Glass Pricing
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           {pricings.length > 0 ? (
-            <Table>
+            <Table aria-label="Current glass pricing table">
               <TableHeader>
-                <TableRow>
-                  <TableHead>Thickness</TableHead>
-                  <TableHead>Quality</TableHead>
-                  <TableHead>Price per Sq Ft</TableHead>
-                  <TableHead>Effective Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Actions</TableHead>
-                </TableRow>
+                <TableColumn>Thickness</TableColumn>
+                <TableColumn>Quality</TableColumn>
+                <TableColumn>Price per Sq Ft</TableColumn>
+                <TableColumn>Effective Date</TableColumn>
+                <TableColumn>Status</TableColumn>
+                <TableColumn>Actions</TableColumn>
               </TableHeader>
               <TableBody>
                 {pricings.map((pricing) => (
@@ -226,19 +224,20 @@ export default function BasicPricingTab() {
                     <TableCell className="font-semibold">৳{pricing.pricePerSqFt}</TableCell>
                     <TableCell>{new Date(pricing.effectiveDate).toLocaleDateString()}</TableCell>
                     <TableCell>
-                      <Badge variant={pricing.isActive ? 'default' : 'secondary'}>
+                      <Chip size="sm" color={pricing.isActive ? 'primary' : 'default'} variant="flat">
                         {pricing.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
+                      </Chip>
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="bordered" isIconOnly>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline"
-                          onClick={() => handleDeletePricing(pricing.id)}
+                        <Button
+                          size="sm"
+                          variant="bordered"
+                          isIconOnly
+                          onPress={() => handleDeletePricing(pricing.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -253,19 +252,16 @@ export default function BasicPricingTab() {
               No glass pricing configured yet
             </div>
           )}
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Messages */}
       {message && (
-        <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-          {message.type === 'success' ? (
-            <CheckCircle className="h-4 w-4" />
-          ) : (
-            <AlertCircle className="h-4 w-4" />
-          )}
-          <AlertDescription>{message.text}</AlertDescription>
-        </Alert>
+        <Alert
+          color={message.type === 'error' ? 'danger' : 'default'}
+          description={message.text}
+          icon={message.type === 'success' ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+        />
       )}
     </div>
   )

@@ -1,20 +1,21 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { EnhancedInput } from '@/components/ui/enhanced-input'
-import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import { EnhancedAlert, EnhancedAlertDescription } from '@/components/ui/enhanced-alert'
-import { 
+import {
+  Button,
+  Input,
+  Card,
+  CardBody,
+  CardHeader,
+  Switch,
+  Alert,
+} from '@heroui/react'
+import {
   Store,
   Phone,
   MapPin,
   FileText,
-  Save,
-  AlertCircle,
-  CheckCircle
+  Save
 } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { announceToScreenReader } from '@/components/AccessibilityProvider'
@@ -149,94 +150,99 @@ export default function BasicShopInfoTab() {
       {/* Basic Shop Information */}
       <Card>
         <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${language === 'bn' ? 'font-bengali' : ''}`}>
+          <h3 className={`flex items-center gap-2 text-lg font-semibold ${language === 'bn' ? 'font-bengali' : ''}`}>
             <Store className="h-5 w-5" />
             {language === 'bn' ? 'দোকানের মৌলিক তথ্য' : 'Basic Shop Information'}
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <EnhancedInput
+            <Input
               label={language === 'bn' ? 'দোকানের নাম' : 'Shop Name'}
               value={config.shopName}
               onChange={(e) => handleInputChange('shopName', e.target.value)}
               placeholder={language === 'bn' ? 'দোকানের নাম প্রবেশ করান' : 'Enter shop name'}
-              error={errors.shopName}
-              required
+              isInvalid={!!errors.shopName}
+              errorMessage={errors.shopName}
+              isRequired
               aria-describedby="shop-name-help"
             />
-            
-            <EnhancedInput
+
+            <Input
               label={language === 'bn' ? 'মালিকের নাম' : 'Owner Name'}
               value={config.ownerName}
               onChange={(e) => handleInputChange('ownerName', e.target.value)}
               placeholder={language === 'bn' ? 'মালিকের নাম প্রবেশ করান' : 'Enter owner name'}
-              error={errors.ownerName}
-              required
+              isInvalid={!!errors.ownerName}
+              errorMessage={errors.ownerName}
+              isRequired
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <EnhancedInput
+            <Input
               label={language === 'bn' ? 'ফোন নম্বর' : 'Phone Number'}
               value={config.phone}
               onChange={(e) => handleInputChange('phone', e.target.value)}
               placeholder="01XXXXXXXXX"
-              error={errors.phone}
-              required
+              isInvalid={!!errors.phone}
+              errorMessage={errors.phone}
+              isRequired
               description={language === 'bn' ? 'বাংলাদেশি ফোন নম্বর (১১ সংখ্যা)' : 'Bangladeshi phone number (11 digits)'}
             />
-            
-            <EnhancedInput
+
+            <Input
               label={language === 'bn' ? 'মুদ্রা' : 'Currency'}
               value={config.currency}
               onChange={(e) => handleInputChange('currency', e.target.value)}
               placeholder="BDT"
-              disabled
+              isDisabled
               description={language === 'bn' ? 'বাংলাদেশি টাকা' : 'Bangladeshi Taka'}
             />
           </div>
 
-          <EnhancedInput
+          <Input
             label={language === 'bn' ? 'দোকানের ঠিকানা' : 'Shop Address'}
             value={config.address}
             onChange={(e) => handleInputChange('address', e.target.value)}
             placeholder={language === 'bn' ? 'সম্পূর্ণ দোকানের ঠিকানা প্রবেশ করান' : 'Enter complete shop address'}
-            error={errors.address}
-            required
+            isInvalid={!!errors.address}
+            errorMessage={errors.address}
+            isRequired
           />
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Trust Information */}
       <Card>
         <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${language === 'bn' ? 'font-bengali' : ''}`}>
+          <h3 className={`flex items-center gap-2 text-lg font-semibold ${language === 'bn' ? 'font-bengali' : ''}`}>
             <FileText className="h-5 w-5" />
             {language === 'bn' ? 'বিশ্বস্ততার তথ্য' : 'Trust Information'}
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <EnhancedInput
+            <Input
               label={language === 'bn' ? 'ট্রেড লাইসেন্স নং' : 'Trade License No.'}
               value={config.tradeLicenseNo}
               onChange={(e) => handleInputChange('tradeLicenseNo', e.target.value)}
               placeholder={language === 'bn' ? 'ট্রেড লাইসেন্স নম্বর প্রবেশ করান' : 'Enter trade license number'}
               description={language === 'bn' ? 'গ্রাহকদের আস্থার জন্য' : 'For customer trust'}
             />
-            
-            <EnhancedInput
+
+            <Input
               label={language === 'bn' ? 'যোগাযোগের নম্বর' : 'Contact Number'}
               value={config.contactNumber}
               onChange={(e) => handleInputChange('contactNumber', e.target.value)}
               placeholder="01XXXXXXXXX"
-              error={errors.contactNumber}
+              isInvalid={!!errors.contactNumber}
+              errorMessage={errors.contactNumber}
               description={language === 'bn' ? 'ইনভয়েসে প্রদর্শনের জন্য' : 'For display on invoices'}
             />
           </div>
 
-          <EnhancedInput
+          <Input
             label={language === 'bn' ? 'দোকানের ঠিকানা (ইনভয়েসের জন্য)' : 'Shop Address (for invoices)'}
             value={config.shopAddress}
             onChange={(e) => handleInputChange('shopAddress', e.target.value)}
@@ -246,77 +252,80 @@ export default function BasicShopInfoTab() {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className={language === 'bn' ? 'font-bengali' : ''}>
+                <label className={`text-sm font-medium ${language === 'bn' ? 'font-bengali' : ''}`}>
                   {language === 'bn' ? 'ইনভয়েসে দেখান' : 'Display on Invoice'}
-                </Label>
+                </label>
                 <p className={`text-sm text-muted-foreground ${language === 'bn' ? 'font-bengali' : ''}`}>
                   {language === 'bn' ? 'ইনভয়েস ভিউতে বিশ্বস্ততার তথ্য দেখান' : 'Show trust information on invoice view'}
                 </p>
               </div>
               <Switch
-                checked={config.displayOnInvoice}
-                onCheckedChange={(checked) => handleInputChange('displayOnInvoice', checked)}
+                isSelected={config.displayOnInvoice}
+                onValueChange={(checked) => handleInputChange('displayOnInvoice', checked)}
                 aria-label={language === 'bn' ? 'ইনভয়েসে প্রদর্শন টগল করুন' : 'Toggle display on invoice'}
               />
             </div>
 
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className={language === 'bn' ? 'font-bengali' : ''}>
+                <label className={`text-sm font-medium ${language === 'bn' ? 'font-bengali' : ''}`}>
                   {language === 'bn' ? 'প্রিন্টে দেখান' : 'Display on Print'}
-                </Label>
+                </label>
                 <p className={`text-sm text-muted-foreground ${language === 'bn' ? 'font-bengali' : ''}`}>
                   {language === 'bn' ? 'প্রিন্ট করা ইনভয়েসে বিশ্বস্ততার তথ্য দেখান' : 'Show trust information on printed invoices'}
                 </p>
               </div>
               <Switch
-                checked={config.displayOnPrint}
-                onCheckedChange={(checked) => handleInputChange('displayOnPrint', checked)}
+                isSelected={config.displayOnPrint}
+                onValueChange={(checked) => handleInputChange('displayOnPrint', checked)}
                 aria-label={language === 'bn' ? 'প্রিন্টে প্রদর্শন টগল করুন' : 'Toggle display on print'}
               />
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Invoice Settings */}
       <Card>
         <CardHeader>
-          <CardTitle className={`flex items-center gap-2 ${language === 'bn' ? 'font-bengali' : ''}`}>
+          <h3 className={`flex items-center gap-2 text-lg font-semibold ${language === 'bn' ? 'font-bengali' : ''}`}>
             <FileText className="h-5 w-5" />
             {language === 'bn' ? 'ইনভয়েস সেটিংস' : 'Invoice Settings'}
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <EnhancedInput
+            <Input
               label={language === 'bn' ? 'ইনভয়েস প্রিফিক্স' : 'Invoice Prefix'}
               value={config.invoicePrefix}
               onChange={(e) => handleInputChange('invoicePrefix', e.target.value)}
               placeholder="INV"
-              error={errors.invoicePrefix}
-              required
+              isInvalid={!!errors.invoicePrefix}
+              errorMessage={errors.invoicePrefix}
+              isRequired
             />
-            
-            <EnhancedInput
+
+            <Input
               label={language === 'bn' ? 'শুরুর নম্বর' : 'Start Number'}
               type="number"
-              value={config.invoiceStartNumber}
+              value={String(config.invoiceStartNumber)}
               onChange={(e) => handleInputChange('invoiceStartNumber', parseInt(e.target.value) || 1)}
               placeholder="1"
-              error={errors.invoiceStartNumber}
-              required
+              isInvalid={!!errors.invoiceStartNumber}
+              errorMessage={errors.invoiceStartNumber}
+              isRequired
               min="1"
             />
-            
-            <EnhancedInput
+
+            <Input
               label={language === 'bn' ? 'কর হার (%)' : 'Tax Rate (%)'}
               type="number"
               step="0.01"
-              value={config.taxRate}
+              value={String(config.taxRate)}
               onChange={(e) => handleInputChange('taxRate', parseFloat(e.target.value) || 0)}
               placeholder="0"
-              error={errors.taxRate}
+              isInvalid={!!errors.taxRate}
+              errorMessage={errors.taxRate}
               min="0"
               max="100"
             />
@@ -327,30 +336,28 @@ export default function BasicShopInfoTab() {
               {language === 'bn' ? 'ইনভয়েস ফরম্যাট প্রিভিউ' : 'Invoice format preview'}: {config.invoicePrefix}-202501-{String(config.invoiceStartNumber).padStart(4, '0')}
             </p>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Save Button and Messages */}
       <div className="space-y-4">
         {message && (
-          <EnhancedAlert type={message.type}>
-            {message.type === 'success' ? (
-              <CheckCircle className="h-4 w-4" />
-            ) : (
-              <AlertCircle className="h-4 w-4" />
-            )}
-            <EnhancedAlertDescription>{message.text}</EnhancedAlertDescription>
-          </EnhancedAlert>
+          <Alert
+            color={message.type === 'success' ? 'success' : 'danger'}
+            description={message.text}
+          />
         )}
 
         <div className="flex justify-end">
-          <Button 
-            onClick={handleSave} 
-            disabled={loading}
+          <Button
+            onPress={handleSave}
+            isDisabled={loading}
+            isLoading={loading}
+            color="primary"
+            startContent={!loading ? <Save className="h-4 w-4" /> : undefined}
             className={language === 'bn' ? 'font-bengali' : ''}
             aria-describedby={loading ? 'save-status' : undefined}
           >
-            <Save className="h-4 w-4 mr-2" />
             {loading ? t('loading') : t('save')}
           </Button>
           {loading && (

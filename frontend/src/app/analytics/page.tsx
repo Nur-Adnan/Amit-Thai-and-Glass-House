@@ -2,19 +2,18 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Input,
+  Chip,
+  Tabs,
+  Tab,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+} from '@heroui/react'
 import {
   ProfessionalTable,
   ProfessionalTableHeader,
@@ -260,32 +259,32 @@ export default function AnalyticsPage() {
   const getMovementCategoryBadge = (category: string) => {
     switch (category) {
       case 'Fast Moving':
-        return <Badge className="bg-green-100 text-green-800">Fast Moving</Badge>
+        return <Chip size="sm" className="bg-green-100 text-green-800">Fast Moving</Chip>
       case 'Medium Moving':
-        return <Badge className="bg-yellow-100 text-yellow-800">Medium Moving</Badge>
+        return <Chip size="sm" className="bg-yellow-100 text-yellow-800">Medium Moving</Chip>
       case 'Slow Moving':
-        return <Badge className="bg-orange-100 text-orange-800">Slow Moving</Badge>
+        return <Chip size="sm" className="bg-orange-100 text-orange-800">Slow Moving</Chip>
       case 'Very Slow Moving':
-        return <Badge className="bg-red-100 text-red-800">Very Slow Moving</Badge>
+        return <Chip size="sm" className="bg-red-100 text-red-800">Very Slow Moving</Chip>
       default:
-        return <Badge variant="secondary">{category}</Badge>
+        return <Chip size="sm" color="default" variant="flat">{category}</Chip>
     }
   }
 
   const getStockStatusBadge = (status: string) => {
     switch (status) {
       case 'Critical':
-        return <Badge className="bg-red-100 text-red-800">Critical</Badge>
+        return <Chip size="sm" className="bg-red-100 text-red-800">Critical</Chip>
       case 'Low':
-        return <Badge className="bg-yellow-100 text-yellow-800">Low</Badge>
+        return <Chip size="sm" className="bg-yellow-100 text-yellow-800">Low</Chip>
       case 'Normal':
-        return <Badge className="bg-green-100 text-green-800">Normal</Badge>
+        return <Chip size="sm" className="bg-green-100 text-green-800">Normal</Chip>
       case 'High':
-        return <Badge className="bg-blue-100 text-blue-800">High</Badge>
+        return <Chip size="sm" className="bg-blue-100 text-blue-800">High</Chip>
       case 'Excess':
-        return <Badge className="bg-purple-100 text-purple-800">Excess</Badge>
+        return <Chip size="sm" className="bg-purple-100 text-purple-800">Excess</Chip>
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Chip size="sm" color="default" variant="flat">{status}</Chip>
     }
   }
 
@@ -304,11 +303,11 @@ export default function AnalyticsPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={resetFilters}>
+            <Button variant="bordered" onPress={resetFilters}>
               <Filter className="h-4 w-4 mr-2" />
               Reset Filters
             </Button>
-            <Button variant="outline" onClick={loadData} disabled={loading}>
+            <Button variant="bordered" onPress={loadData} isDisabled={loading}>
               <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
               Refresh
             </Button>
@@ -317,43 +316,41 @@ export default function AnalyticsPage() {
 
         {/* Filters */}
         <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Filters</CardTitle>
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-sm font-semibold">Filters</h3>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="materialType">Material Type</Label>
-                <Select value={filters.materialType} onValueChange={(value) => handleFilterChange('materialType', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Materials" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Materials</SelectItem>
-                    <SelectItem value="Thai">Thai</SelectItem>
-                    <SelectItem value="Glass">Glass</SelectItem>
-                  </SelectContent>
+                <Select
+                  label="Material Type"
+                  selectedKeys={filters.materialType ? [filters.materialType] : []}
+                  onSelectionChange={(keys) => handleFilterChange('materialType', Array.from(keys)[0] as string)}
+                  placeholder="All Materials"
+                >
+                  <SelectItem key="all">All Materials</SelectItem>
+                  <SelectItem key="Thai">Thai</SelectItem>
+                  <SelectItem key="Glass">Glass</SelectItem>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="quality">Quality</Label>
-                <Select value={filters.quality} onValueChange={(value) => handleFilterChange('quality', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Qualities" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Qualities</SelectItem>
-                    <SelectItem value="Local">Local</SelectItem>
-                    <SelectItem value="Imported">Imported</SelectItem>
-                  </SelectContent>
+                <Select
+                  label="Quality"
+                  selectedKeys={filters.quality ? [filters.quality] : []}
+                  onSelectionChange={(keys) => handleFilterChange('quality', Array.from(keys)[0] as string)}
+                  placeholder="All Qualities"
+                >
+                  <SelectItem key="all">All Qualities</SelectItem>
+                  <SelectItem key="Local">Local</SelectItem>
+                  <SelectItem key="Imported">Imported</SelectItem>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="startDate">Start Date</Label>
                 <Input
                   id="startDate"
+                  label="Start Date"
                   type="date"
                   value={filters.startDate}
                   onChange={(e) => handleFilterChange('startDate', e.target.value)}
@@ -361,9 +358,9 @@ export default function AnalyticsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="endDate">End Date</Label>
                 <Input
                   id="endDate"
+                  label="End Date"
                   type="date"
                   value={filters.endDate}
                   onChange={(e) => handleFilterChange('endDate', e.target.value)}
@@ -371,112 +368,103 @@ export default function AnalyticsPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="sortOrder">Sort Order</Label>
-                <Select value={filters.sortOrder} onValueChange={(value: 'asc' | 'desc') => handleFilterChange('sortOrder', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="desc">Highest First</SelectItem>
-                    <SelectItem value="asc">Lowest First</SelectItem>
-                  </SelectContent>
+                <Select
+                  label="Sort Order"
+                  selectedKeys={filters.sortOrder ? [filters.sortOrder] : []}
+                  onSelectionChange={(keys) => handleFilterChange('sortOrder', Array.from(keys)[0] as string)}
+                >
+                  <SelectItem key="desc">Highest First</SelectItem>
+                  <SelectItem key="asc">Lowest First</SelectItem>
                 </Select>
               </div>
 
               <div className="flex items-end">
-                <Button onClick={loadData} disabled={loading} className="w-full">
+                <Button color="primary" onPress={loadData} isDisabled={loading} className="w-full">
                   Apply Filters
                 </Button>
               </div>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
 
         {/* Analytics Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="stock-by-company" className="flex items-center gap-2">
-              <Building2 className="h-4 w-4" />
-              Stock by Company
-            </TabsTrigger>
-            <TabsTrigger value="profit-by-thickness" className="flex items-center gap-2">
-              <Layers className="h-4 w-4" />
-              Profit by Thickness
-            </TabsTrigger>
-            <TabsTrigger value="sales-by-brand" className="flex items-center gap-2">
-              <Award className="h-4 w-4" />
-              Sales by Brand
-            </TabsTrigger>
-            <TabsTrigger value="fast-moving-variants" className="flex items-center gap-2">
-              <Zap className="h-4 w-4" />
-              Fast-Moving Variants
-            </TabsTrigger>
-          </TabsList>
-
+        <Tabs
+          selectedKey={activeTab}
+          onSelectionChange={(key) => setActiveTab(String(key))}
+          aria-label="Business analytics views"
+        >
           {/* Stock by Company Tab */}
-          <TabsContent value="stock-by-company">
+          <Tab
+            key="stock-by-company"
+            title={
+              <div className="flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                Stock by Company
+              </div>
+            }
+          >
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold">
                     <Building2 className="h-5 w-5" />
                     স্টক কোম্পানি অনুযায়ী | Stock by Company
-                  </CardTitle>
-                  <Button 
-                    variant="outline" 
+                  </h3>
+                  <Button
+                    variant="bordered"
                     size="sm"
-                    onClick={() => stockByCompanyData && exportToCSV(stockByCompanyData.companies, 'stock-by-company')}
-                    disabled={!stockByCompanyData}
+                    onPress={() => stockByCompanyData && exportToCSV(stockByCompanyData.companies, 'stock-by-company')}
+                    isDisabled={!stockByCompanyData}
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Export CSV
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {stockByCompanyData && (
                   <>
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-primary">
                               {stockByCompanyData.summary.totalCompanies}
                             </div>
                             <div className="text-sm text-muted-foreground">Companies</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold">
                               {stockByCompanyData.summary.formattedTotalStock}
                             </div>
                             <div className="text-sm text-muted-foreground">Total Stock</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-green-600">
                               {stockByCompanyData.summary.formattedTotalValue}
                             </div>
                             <div className="text-sm text-muted-foreground">Stock Value</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-blue-600">
                               {stockByCompanyData.summary.formattedProfitMargin}
                             </div>
                             <div className="text-sm text-muted-foreground">Profit Margin</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                     </div>
 
@@ -525,10 +513,10 @@ export default function AnalyticsPage() {
                               <div className="font-medium">{company.company}</div>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
-                              <Badge variant="outline">{company.materialType}</Badge>
+                              <Chip size="sm" variant="bordered">{company.materialType}</Chip>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
-                              <Badge variant="secondary">{company.quality}</Badge>
+                              <Chip size="sm" color="default" variant="flat">{company.quality}</Chip>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
                               <span className="font-semibold">{company.formattedTotalStock}</span>
@@ -560,74 +548,82 @@ export default function AnalyticsPage() {
                     <div className="loading-spinner h-8 w-8"></div>
                   </div>
                 )}
-              </CardContent>
+              </CardBody>
             </Card>
-          </TabsContent>
+          </Tab>
 
           {/* Profit by Thickness Tab */}
-          <TabsContent value="profit-by-thickness">
+          <Tab
+            key="profit-by-thickness"
+            title={
+              <div className="flex items-center gap-2">
+                <Layers className="h-4 w-4" />
+                Profit by Thickness
+              </div>
+            }
+          >
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold">
                     <Layers className="h-5 w-5" />
                     পুরুত্ব অনুযায়ী লাভ | Profit by Thickness
-                  </CardTitle>
-                  <Button 
-                    variant="outline" 
+                  </h3>
+                  <Button
+                    variant="bordered"
                     size="sm"
-                    onClick={() => profitByThicknessData && exportToCSV(profitByThicknessData.thicknessGroups, 'profit-by-thickness')}
-                    disabled={!profitByThicknessData}
+                    onPress={() => profitByThicknessData && exportToCSV(profitByThicknessData.thicknessGroups, 'profit-by-thickness')}
+                    isDisabled={!profitByThicknessData}
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Export CSV
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {profitByThicknessData && (
                   <>
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-primary">
                               {profitByThicknessData.summary.totalThicknesses}
                             </div>
                             <div className="text-sm text-muted-foreground">Thicknesses</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold">
                               {profitByThicknessData.summary.formattedTotalQuantitySold}
                             </div>
                             <div className="text-sm text-muted-foreground">Total Sold</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-green-600">
                               {profitByThicknessData.summary.formattedTotalRevenue}
                             </div>
                             <div className="text-sm text-muted-foreground">Revenue</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-blue-600">
                               {profitByThicknessData.summary.formattedOverallProfit}
                             </div>
                             <div className="text-sm text-muted-foreground">Total Profit</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                     </div>
 
@@ -681,16 +677,20 @@ export default function AnalyticsPage() {
                               <span className="font-semibold text-blue-600">{thickness.formattedTotalProfit}</span>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
-                              <Badge variant={parseFloat(thickness.formattedProfitMargin) > 30 ? 'default' : parseFloat(thickness.formattedProfitMargin) > 15 ? 'secondary' : 'outline'}>
-                                {thickness.formattedProfitMargin}
-                              </Badge>
+                              {parseFloat(thickness.formattedProfitMargin) > 30 ? (
+                                <Chip size="sm" color="primary" variant="flat">{thickness.formattedProfitMargin}</Chip>
+                              ) : parseFloat(thickness.formattedProfitMargin) > 15 ? (
+                                <Chip size="sm" color="default" variant="flat">{thickness.formattedProfitMargin}</Chip>
+                              ) : (
+                                <Chip size="sm" variant="bordered">{thickness.formattedProfitMargin}</Chip>
+                              )}
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
                               <div className="text-sm">
                                 {thickness.companies.slice(0, 3).map((company: string, i: number) => (
-                                  <Badge key={i} variant="outline" className="mr-1 mb-1 text-xs">
+                                  <Chip key={i} size="sm" variant="bordered" className="mr-1 mb-1 text-xs">
                                     {company}
-                                  </Badge>
+                                  </Chip>
                                 ))}
                                 {thickness.companies.length > 3 && (
                                   <span className="text-xs text-muted-foreground">
@@ -702,9 +702,9 @@ export default function AnalyticsPage() {
                             <ProfessionalTableCell>
                               <div className="text-sm">
                                 {thickness.qualities.map((quality: string, i: number) => (
-                                  <Badge key={i} variant="secondary" className="mr-1 text-xs">
+                                  <Chip key={i} size="sm" color="default" variant="flat" className="mr-1 text-xs">
                                     {quality}
-                                  </Badge>
+                                  </Chip>
                                 ))}
                               </div>
                             </ProfessionalTableCell>
@@ -720,74 +720,82 @@ export default function AnalyticsPage() {
                     <div className="loading-spinner h-8 w-8"></div>
                   </div>
                 )}
-              </CardContent>
+              </CardBody>
             </Card>
-          </TabsContent>
+          </Tab>
 
           {/* Sales by Brand Tab */}
-          <TabsContent value="sales-by-brand">
+          <Tab
+            key="sales-by-brand"
+            title={
+              <div className="flex items-center gap-2">
+                <Award className="h-4 w-4" />
+                Sales by Brand
+              </div>
+            }
+          >
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold">
                     <Award className="h-5 w-5" />
                     ব্র্যান্ড অনুযায়ী বিক্রয় | Sales by Brand
-                  </CardTitle>
-                  <Button 
-                    variant="outline" 
+                  </h3>
+                  <Button
+                    variant="bordered"
                     size="sm"
-                    onClick={() => salesByBrandData && exportToCSV(salesByBrandData.brands, 'sales-by-brand')}
-                    disabled={!salesByBrandData}
+                    onPress={() => salesByBrandData && exportToCSV(salesByBrandData.brands, 'sales-by-brand')}
+                    isDisabled={!salesByBrandData}
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Export CSV
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {salesByBrandData && (
                   <>
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-primary">
                               {salesByBrandData.summary.totalBrands}
                             </div>
                             <div className="text-sm text-muted-foreground">Brands</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold">
                               {salesByBrandData.summary.formattedTotalQuantitySold}
                             </div>
                             <div className="text-sm text-muted-foreground">Total Sold</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-green-600">
                               {salesByBrandData.summary.formattedTotalRevenue}
                             </div>
                             <div className="text-sm text-muted-foreground">Revenue</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-blue-600">
                               {salesByBrandData.summary.totalCustomers}
                             </div>
                             <div className="text-sm text-muted-foreground">Customers</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                     </div>
 
@@ -836,10 +844,10 @@ export default function AnalyticsPage() {
                               <div className="font-semibold text-lg">{brand.company}</div>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
-                              <Badge variant="outline">{brand.materialType}</Badge>
+                              <Chip size="sm" variant="bordered">{brand.materialType}</Chip>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
-                              <Badge variant="secondary">{brand.quality}</Badge>
+                              <Chip size="sm" color="default" variant="flat">{brand.quality}</Chip>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
                               <span className="font-semibold">{brand.formattedTotalQuantitySold}</span>
@@ -874,74 +882,82 @@ export default function AnalyticsPage() {
                     <div className="loading-spinner h-8 w-8"></div>
                   </div>
                 )}
-              </CardContent>
+              </CardBody>
             </Card>
-          </TabsContent>
+          </Tab>
 
           {/* Fast-Moving Variants Tab */}
-          <TabsContent value="fast-moving-variants">
+          <Tab
+            key="fast-moving-variants"
+            title={
+              <div className="flex items-center gap-2">
+                <Zap className="h-4 w-4" />
+                Fast-Moving Variants
+              </div>
+            }
+          >
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="flex items-center gap-2 text-lg font-semibold">
                     <Zap className="h-5 w-5" />
                     দ্রুত বিক্রয় | Fast-Moving Variants
-                  </CardTitle>
-                  <Button 
-                    variant="outline" 
+                  </h3>
+                  <Button
+                    variant="bordered"
                     size="sm"
-                    onClick={() => fastMovingData && exportToCSV(fastMovingData.thicknesses, 'fast-moving-variants')}
-                    disabled={!fastMovingData}
+                    onPress={() => fastMovingData && exportToCSV(fastMovingData.thicknesses, 'fast-moving-variants')}
+                    isDisabled={!fastMovingData}
                   >
                     <Download className="h-4 w-4 mr-2" />
                     Export CSV
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {fastMovingData && (
                   <>
                     {/* Summary Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-primary">
                               {fastMovingData.summary.totalThicknesses}
                             </div>
                             <div className="text-sm text-muted-foreground">Variants</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold">
                               {fastMovingData.summary.formattedTotalQuantitySold}
                             </div>
                             <div className="text-sm text-muted-foreground">Total Sold</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-green-600">
                               {fastMovingData.summary.formattedTotalRevenue}
                             </div>
                             <div className="text-sm text-muted-foreground">Revenue</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                       <Card>
-                        <CardContent className="pt-6">
+                        <CardBody className="pt-6">
                           <div className="text-center">
                             <div className="text-2xl font-bold text-blue-600">
                               {fastMovingData.summary.formattedAvgVelocity}
                             </div>
                             <div className="text-sm text-muted-foreground">Avg Velocity</div>
                           </div>
-                        </CardContent>
+                        </CardBody>
                       </Card>
                     </div>
 
@@ -986,7 +1002,7 @@ export default function AnalyticsPage() {
                               <span className="font-semibold">{variant.thicknessMM}mm</span>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
-                              <Badge variant="outline">{variant.materialType}</Badge>
+                              <Chip size="sm" variant="bordered">{variant.materialType}</Chip>
                             </ProfessionalTableCell>
                             <ProfessionalTableCell>
                               {getMovementCategoryBadge(variant.movementCategory)}
@@ -1024,9 +1040,9 @@ export default function AnalyticsPage() {
                     <div className="loading-spinner h-8 w-8"></div>
                   </div>
                 )}
-              </CardContent>
+              </CardBody>
             </Card>
-          </TabsContent>
+          </Tab>
         </Tabs>
       </div>
     </Layout>

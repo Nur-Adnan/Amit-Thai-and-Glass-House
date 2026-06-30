@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { Button } from "@heroui/react"
 
 interface EmptyStateProps {
   icon: React.ComponentType<{ className?: string }>
@@ -14,13 +14,25 @@ interface EmptyStateProps {
   className?: string
 }
 
-export function EmptyState({ 
-  icon: Icon, 
-  title, 
-  description, 
-  action, 
-  className 
+// Maps the legacy shadcn-style action variant to HeroUI Button props.
+const actionVariant: Record<
+  NonNullable<EmptyStateProps["action"]>["variant"] & string,
+  { color?: "default" | "primary"; variant?: "solid" | "bordered" | "flat" }
+> = {
+  default: { color: "primary", variant: "solid" },
+  outline: { variant: "bordered" },
+  secondary: { variant: "flat" },
+}
+
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+  className,
 }: EmptyStateProps) {
+  const btn = action ? actionVariant[action.variant || "default"] : undefined
+
   return (
     <div className={cn(
       "flex flex-col items-center justify-center py-16 px-4 text-center",
@@ -38,10 +50,7 @@ export function EmptyState({
         </p>
       )}
       {action && (
-        <Button 
-          onClick={action.onClick}
-          variant={action.variant || "default"}
-        >
+        <Button onPress={action.onClick} color={btn?.color} variant={btn?.variant}>
           {action.label}
         </Button>
       )}

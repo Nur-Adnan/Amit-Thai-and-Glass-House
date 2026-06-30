@@ -2,28 +2,22 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
 import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Input,
+  Chip,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/tabs'
-import { 
-  DollarSign, 
-  Plus, 
-  Check, 
+  Tab,
+} from '@heroui/react'
+import {
+  DollarSign,
+  Plus,
+  Check,
   AlertTriangle,
   Calendar,
   User,
@@ -135,12 +129,12 @@ export default function FinancePage() {
     setLoading(true)
     try {
       const token = localStorage.getItem('token')
-      
+
       // Fetch expenses
       const expensesResponse = await fetch('http://localhost:3001/api/expenses?limit=50', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      
+
       // Fetch salary payments
       const salariesResponse = await fetch('http://localhost:3001/api/salary-payments?limit=50', {
         headers: { 'Authorization': `Bearer ${token}` }
@@ -164,7 +158,7 @@ export default function FinancePage() {
           setSalaries(salariesList)
         }
       }
-      
+
       // Calculate stats with guaranteed arrays
       calculateStats(expensesList, salariesList)
     } catch (error) {
@@ -186,7 +180,7 @@ export default function FinancePage() {
     // Ensure we have arrays to work with
     const safeExpenseList = Array.isArray(expenseList) ? expenseList : []
     const safeSalaryList = Array.isArray(salaryList) ? salaryList : []
-    
+
     const currentMonth = new Date().getMonth() + 1
     const currentYear = new Date().getFullYear()
 
@@ -305,32 +299,32 @@ export default function FinancePage() {
   const getStatusBadge = (status: string, type: 'expense' | 'salary') => {
     if (type === 'salary') {
       return status === 'paid' ? (
-        <Badge className="bg-green-100 text-green-800 border-green-200">
+        <Chip className="bg-green-100 text-green-800 border-green-200">
           <Check className="h-3 w-3 mr-1" />
           Paid
-        </Badge>
+        </Chip>
       ) : (
-        <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+        <Chip className="bg-orange-100 text-orange-800 border-orange-200">
           <AlertTriangle className="h-3 w-3 mr-1" />
           Due
-        </Badge>
+        </Chip>
       )
     } else {
       return status === 'approved' ? (
-        <Badge className="bg-green-100 text-green-800 border-green-200">
+        <Chip className="bg-green-100 text-green-800 border-green-200">
           <Check className="h-3 w-3 mr-1" />
           Approved
-        </Badge>
+        </Chip>
       ) : status === 'pending' ? (
-        <Badge className="bg-orange-100 text-orange-800 border-orange-200">
+        <Chip className="bg-orange-100 text-orange-800 border-orange-200">
           <AlertTriangle className="h-3 w-3 mr-1" />
           Pending
-        </Badge>
+        </Chip>
       ) : (
-        <Badge className="bg-red-100 text-red-800 border-red-200">
+        <Chip className="bg-red-100 text-red-800 border-red-200">
           <AlertTriangle className="h-3 w-3 mr-1" />
           Rejected
-        </Badge>
+        </Chip>
       )
     }
   }
@@ -339,18 +333,18 @@ export default function FinancePage() {
   const groupByMonth = (items: any[], dateField: string) => {
     // Ensure we have an array to work with
     const safeItems = Array.isArray(items) ? items : []
-    
+
     const grouped = safeItems.reduce((acc: Record<string, any[]>, item: any) => {
       // Check if item and dateField exist
       if (!item || !item[dateField]) return acc
-      
+
       try {
         const date = new Date(item[dateField])
         // Check if date is valid
         if (isNaN(date.getTime())) return acc
-        
+
         const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-        
+
         if (!acc[monthYear]) {
           acc[monthYear] = []
         }
@@ -358,7 +352,7 @@ export default function FinancePage() {
       } catch (error) {
         console.warn('Error processing date for grouping:', error)
       }
-      
+
       return acc
     }, {} as Record<string, any[]>)
 
@@ -401,7 +395,7 @@ export default function FinancePage() {
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <TrendingDown className="h-8 w-8 text-red-600" />
                   <div>
@@ -409,11 +403,11 @@ export default function FinancePage() {
                     <p className="text-2xl font-bold text-red-600">{formatCurrency(stats.expenses.total)}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <TrendingUp className="h-8 w-8 text-blue-600" />
                   <div>
@@ -421,11 +415,11 @@ export default function FinancePage() {
                     <p className="text-2xl font-bold text-blue-600">{formatCurrency(stats.salaries.total)}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <AlertTriangle className="h-8 w-8 text-orange-600" />
                   <div>
@@ -433,11 +427,11 @@ export default function FinancePage() {
                     <p className="text-2xl font-bold text-orange-600">{stats.expenses.pending}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardContent className="pt-6">
+              <CardBody className="pt-6">
                 <div className="flex items-center gap-3">
                   <AlertTriangle className="h-8 w-8 text-orange-600" />
                   <div>
@@ -445,39 +439,37 @@ export default function FinancePage() {
                     <p className="text-2xl font-bold text-orange-600">{stats.salaries.due}</p>
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
         )}
 
         {/* Main Content */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="add-expense">Add Expense</TabsTrigger>
-            <TabsTrigger value="add-salary">Add Salary</TabsTrigger>
-          </TabsList>
-
+        <Tabs
+          aria-label="Finance sections"
+          selectedKey={activeTab}
+          onSelectionChange={(key) => setActiveTab(String(key))}
+        >
           {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
+          <Tab key="overview" title="Overview" className="space-y-6">
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               {/* Recent Expenses */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Receipt className="h-5 w-5" />
                     Recent Expenses
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="space-y-4">
                     {Array.isArray(expenses) && expenses.length > 0 ? (
                       groupByMonth(expenses.slice(0, 10), 'expenseDate').map(group => (
                         <div key={group.monthYear}>
                           <h4 className="font-semibold text-sm text-muted-foreground mb-2">
-                            {new Date(group.monthYear + '-01').toLocaleDateString('en-US', { 
-                              month: 'long', 
-                              year: 'numeric' 
+                            {new Date(group.monthYear + '-01').toLocaleDateString('en-US', {
+                              month: 'long',
+                              year: 'numeric'
                             })}
                           </h4>
                           <div className="space-y-2">
@@ -506,26 +498,26 @@ export default function FinancePage() {
                       </div>
                     )}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
 
               {/* Recent Salaries */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <User className="h-5 w-5" />
                     Recent Salaries
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="space-y-4">
                     {Array.isArray(salaries) && salaries.length > 0 ? (
                       groupByMonth(salaries.slice(0, 10), 'createdAt').map(group => (
                         <div key={group.monthYear}>
                           <h4 className="font-semibold text-sm text-muted-foreground mb-2">
-                            {new Date(group.monthYear + '-01').toLocaleDateString('en-US', { 
-                              month: 'long', 
-                              year: 'numeric' 
+                            {new Date(group.monthYear + '-01').toLocaleDateString('en-US', {
+                              month: 'long',
+                              year: 'numeric'
                             })}
                           </h4>
                           <div className="space-y-2">
@@ -556,97 +548,94 @@ export default function FinancePage() {
                       </div>
                     )}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             </div>
-          </TabsContent>
+          </Tab>
 
           {/* Add Expense Tab */}
-          <TabsContent value="add-expense">
+          <Tab key="add-expense" title="Add Expense">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Plus className="h-5 w-5" />
                     Add New Expense
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <form onSubmit={handleExpenseSubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="expense-title">Expense Title</Label>
                       <Input
                         id="expense-title"
+                        label="Expense Title"
                         value={expenseForm.title}
                         onChange={(e) => setExpenseForm({...expenseForm, title: e.target.value})}
                         placeholder="Enter expense title"
-                        required
+                        isRequired
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="expense-amount">Amount</Label>
                       <Input
                         id="expense-amount"
+                        label="Amount"
                         type="number"
                         step="0.01"
                         value={expenseForm.amount}
                         onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
                         placeholder="0.00"
-                        required
+                        isRequired
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="expense-category">Category</Label>
-                      <Select value={expenseForm.category} onValueChange={(value) => setExpenseForm({...expenseForm, category: value})}>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {expenseCategories.map(category => (
-                            <SelectItem key={category} value={category}>{category}</SelectItem>
-                          ))}
-                        </SelectContent>
+                      <Select
+                        label="Category"
+                        placeholder="Select category"
+                        selectedKeys={expenseForm.category ? [expenseForm.category] : []}
+                        onSelectionChange={(keys) => setExpenseForm({...expenseForm, category: Array.from(keys)[0] as string})}
+                      >
+                        {expenseCategories.map(category => (
+                          <SelectItem key={category}>{category}</SelectItem>
+                        ))}
                       </Select>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="expense-date">Date</Label>
                       <Input
                         id="expense-date"
+                        label="Date"
                         type="date"
                         value={expenseForm.expenseDate}
                         onChange={(e) => setExpenseForm({...expenseForm, expenseDate: e.target.value})}
-                        required
+                        isRequired
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="expense-payment">Payment Method</Label>
-                      <Select value={expenseForm.paymentMethod} onValueChange={(value) => setExpenseForm({...expenseForm, paymentMethod: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {paymentMethods.map(method => (
-                            <SelectItem key={method.value} value={method.value}>{method.label}</SelectItem>
-                          ))}
-                        </SelectContent>
+                      <Select
+                        label="Payment Method"
+                        selectedKeys={expenseForm.paymentMethod ? [expenseForm.paymentMethod] : []}
+                        onSelectionChange={(keys) => setExpenseForm({...expenseForm, paymentMethod: Array.from(keys)[0] as string})}
+                      >
+                        {paymentMethods.map(method => (
+                          <SelectItem key={method.value}>{method.label}</SelectItem>
+                        ))}
                       </Select>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="expense-description">Description (Optional)</Label>
                       <Input
                         id="expense-description"
+                        label="Description (Optional)"
                         value={expenseForm.description}
                         onChange={(e) => setExpenseForm({...expenseForm, description: e.target.value})}
                         placeholder="Additional details"
                       />
                     </div>
 
-                    <Button type="submit" disabled={submitting} className="w-full">
+                    <Button type="submit" isDisabled={submitting} className="w-full">
                       {submitting ? (
                         <>
                           <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -660,18 +649,18 @@ export default function FinancePage() {
                       )}
                     </Button>
                   </form>
-                </CardContent>
+                </CardBody>
               </Card>
-              
+
               {/* Recent Expenses Preview */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Receipt className="h-5 w-5" />
                     Recent Expenses Preview
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="space-y-3">
                     {Array.isArray(expenses) && expenses.length > 0 ? (
                       expenses.slice(0, 5).map((expense) => (
@@ -696,92 +685,86 @@ export default function FinancePage() {
                       </div>
                     )}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             </div>
-          </TabsContent>
+          </Tab>
 
           {/* Add Salary Tab */}
-          <TabsContent value="add-salary">
+          <Tab key="add-salary" title="Add Salary">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Plus className="h-5 w-5" />
                     Add Salary Payment
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <form onSubmit={handleSalarySubmit} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="salary-employee">Employee</Label>
                       <Input
                         id="salary-employee"
+                        label="Employee"
                         value={salaryForm.employee}
                         onChange={(e) => setSalaryForm({...salaryForm, employee: e.target.value})}
                         placeholder="Employee ID or Name"
-                        required
+                        isRequired
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="salary-amount">Base Salary</Label>
                       <Input
                         id="salary-amount"
+                        label="Base Salary"
                         type="number"
                         step="0.01"
                         value={salaryForm.baseSalary}
                         onChange={(e) => setSalaryForm({...salaryForm, baseSalary: e.target.value})}
                         placeholder="0.00"
-                        required
+                        isRequired
                       />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="salary-month">Month</Label>
-                        <Select value={salaryForm.paymentMonth.toString()} onValueChange={(value) => setSalaryForm({...salaryForm, paymentMonth: parseInt(value)})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {months.map((month, index) => (
-                              <SelectItem key={index + 1} value={(index + 1).toString()}>{month}</SelectItem>
-                            ))}
-                          </SelectContent>
+                        <Select
+                          label="Month"
+                          selectedKeys={[salaryForm.paymentMonth.toString()]}
+                          onSelectionChange={(keys) => setSalaryForm({...salaryForm, paymentMonth: parseInt(Array.from(keys)[0] as string)})}
+                        >
+                          {months.map((month, index) => (
+                            <SelectItem key={(index + 1).toString()}>{month}</SelectItem>
+                          ))}
                         </Select>
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="salary-year">Year</Label>
-                        <Select value={salaryForm.paymentYear.toString()} onValueChange={(value) => setSalaryForm({...salaryForm, paymentYear: parseInt(value)})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {[2024, 2025, 2026].map(year => (
-                              <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
-                            ))}
-                          </SelectContent>
+                        <Select
+                          label="Year"
+                          selectedKeys={[salaryForm.paymentYear.toString()]}
+                          onSelectionChange={(keys) => setSalaryForm({...salaryForm, paymentYear: parseInt(Array.from(keys)[0] as string)})}
+                        >
+                          {[2024, 2025, 2026].map(year => (
+                            <SelectItem key={year.toString()}>{year.toString()}</SelectItem>
+                          ))}
                         </Select>
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="salary-payment">Payment Method</Label>
-                      <Select value={salaryForm.paymentMethod} onValueChange={(value) => setSalaryForm({...salaryForm, paymentMethod: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                          <SelectItem value="cash">Cash</SelectItem>
-                          <SelectItem value="cheque">Cheque</SelectItem>
-                        </SelectContent>
+                      <Select
+                        label="Payment Method"
+                        selectedKeys={salaryForm.paymentMethod ? [salaryForm.paymentMethod] : []}
+                        onSelectionChange={(keys) => setSalaryForm({...salaryForm, paymentMethod: Array.from(keys)[0] as string})}
+                      >
+                        <SelectItem key="bank_transfer">Bank Transfer</SelectItem>
+                        <SelectItem key="cash">Cash</SelectItem>
+                        <SelectItem key="cheque">Cheque</SelectItem>
                       </Select>
                     </div>
 
-                    <Button type="submit" disabled={submitting} className="w-full">
+                    <Button type="submit" isDisabled={submitting} className="w-full">
                       {submitting ? (
                         <>
                           <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -795,18 +778,18 @@ export default function FinancePage() {
                       )}
                     </Button>
                   </form>
-                </CardContent>
+                </CardBody>
               </Card>
-              
+
               {/* Recent Salaries Preview */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <User className="h-5 w-5" />
                     Recent Salaries Preview
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent>
+                <CardBody>
                   <div className="space-y-3">
                     {Array.isArray(salaries) && salaries.length > 0 ? (
                       salaries.slice(0, 5).map((salary) => (
@@ -833,10 +816,10 @@ export default function FinancePage() {
                       </div>
                     )}
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
             </div>
-          </TabsContent>
+          </Tab>
         </Tabs>
       </div>
     </Layout>

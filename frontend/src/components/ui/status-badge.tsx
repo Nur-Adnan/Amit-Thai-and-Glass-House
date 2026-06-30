@@ -1,24 +1,20 @@
 import * as React from "react"
-import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
-import { 
-  CheckCircle, 
-  AlertCircle, 
-  XCircle, 
+import { Chip } from "@heroui/react"
+import {
+  CheckCircle,
+  AlertCircle,
+  XCircle,
   Clock,
   AlertTriangle,
-  Package,
-  Users,
-  CreditCard
 } from "lucide-react"
 
-// Standardized status colors and meanings
-export type StatusType = 
-  | 'paid' 
-  | 'partial' 
-  | 'due' 
+// Standardized status meanings mapped to HeroUI Chip colors (HeroUI-native)
+export type StatusType =
+  | 'paid'
+  | 'partial'
+  | 'due'
   | 'pending'
-  | 'active' 
+  | 'active'
   | 'inactive'
   | 'in-stock'
   | 'low-stock'
@@ -27,6 +23,8 @@ export type StatusType =
   | 'warning'
   | 'critical'
   | 'blocked'
+
+type ChipColor = 'default' | 'primary' | 'secondary' | 'success' | 'warning' | 'danger'
 
 interface StatusBadgeProps {
   status: StatusType
@@ -38,128 +36,56 @@ interface StatusBadgeProps {
 }
 
 const statusConfig: Record<StatusType, {
-  variant: string
+  color: ChipColor
   icon: React.ComponentType<{ className?: string }>
   defaultText: string
-  className: string
 }> = {
   // Payment Status
-  paid: {
-    variant: 'default',
-    icon: CheckCircle,
-    defaultText: 'Paid',
-    className: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
-  },
-  partial: {
-    variant: 'default',
-    icon: AlertCircle,
-    defaultText: 'Partial',
-    className: 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200'
-  },
-  due: {
-    variant: 'default',
-    icon: XCircle,
-    defaultText: 'Due',
-    className: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200'
-  },
-  pending: {
-    variant: 'default',
-    icon: Clock,
-    defaultText: 'Pending',
-    className: 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200'
-  },
-  
+  paid: { color: 'success', icon: CheckCircle, defaultText: 'Paid' },
+  partial: { color: 'warning', icon: AlertCircle, defaultText: 'Partial' },
+  due: { color: 'danger', icon: XCircle, defaultText: 'Due' },
+  pending: { color: 'default', icon: Clock, defaultText: 'Pending' },
+
   // General Status
-  active: {
-    variant: 'default',
-    icon: CheckCircle,
-    defaultText: 'Active',
-    className: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
-  },
-  inactive: {
-    variant: 'default',
-    icon: XCircle,
-    defaultText: 'Inactive',
-    className: 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200'
-  },
-  
+  active: { color: 'success', icon: CheckCircle, defaultText: 'Active' },
+  inactive: { color: 'default', icon: XCircle, defaultText: 'Inactive' },
+
   // Stock Status
-  'in-stock': {
-    variant: 'default',
-    icon: CheckCircle,
-    defaultText: 'In Stock',
-    className: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
-  },
-  'low-stock': {
-    variant: 'default',
-    icon: AlertTriangle,
-    defaultText: 'Low Stock',
-    className: 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200'
-  },
-  'out-of-stock': {
-    variant: 'default',
-    icon: XCircle,
-    defaultText: 'Out of Stock',
-    className: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200'
-  },
-  
+  'in-stock': { color: 'success', icon: CheckCircle, defaultText: 'In Stock' },
+  'low-stock': { color: 'warning', icon: AlertTriangle, defaultText: 'Low Stock' },
+  'out-of-stock': { color: 'danger', icon: XCircle, defaultText: 'Out of Stock' },
+
   // Risk Status
-  good: {
-    variant: 'default',
-    icon: CheckCircle,
-    defaultText: 'Good',
-    className: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
-  },
-  warning: {
-    variant: 'default',
-    icon: AlertTriangle,
-    defaultText: 'Warning',
-    className: 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-200'
-  },
-  critical: {
-    variant: 'default',
-    icon: AlertTriangle,
-    defaultText: 'Critical',
-    className: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200'
-  },
-  blocked: {
-    variant: 'default',
-    icon: XCircle,
-    defaultText: 'Blocked',
-    className: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200'
-  }
+  good: { color: 'success', icon: CheckCircle, defaultText: 'Good' },
+  warning: { color: 'warning', icon: AlertTriangle, defaultText: 'Warning' },
+  critical: { color: 'danger', icon: AlertTriangle, defaultText: 'Critical' },
+  blocked: { color: 'danger', icon: XCircle, defaultText: 'Blocked' },
 }
 
-export function StatusBadge({ 
-  status, 
-  text, 
-  showIcon = true, 
+export function StatusBadge({
+  status,
+  text,
+  showIcon = true,
   size = 'default',
   animate = false,
-  className 
+  className,
 }: StatusBadgeProps) {
   const config = statusConfig[status]
   const Icon = config.icon
   const displayText = text || config.defaultText
-  
-  const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5',
-    default: 'text-xs px-2.5 py-0.5',
-    lg: 'text-sm px-3 py-1'
-  }
+  const chipSize: 'sm' | 'md' | 'lg' = size === 'default' ? 'md' : size
+  const pulse =
+    animate && (status === 'critical' || status === 'out-of-stock' || status === 'blocked')
 
   return (
-    <Badge 
-      className={cn(
-        config.className,
-        sizeClasses[size],
-        animate && (status === 'critical' || status === 'out-of-stock' || status === 'blocked') && 'animate-pulse',
-        'font-medium border',
-        className
-      )}
+    <Chip
+      color={config.color}
+      variant="flat"
+      size={chipSize}
+      className={[pulse ? 'animate-pulse' : '', className ?? ''].filter(Boolean).join(' ') || undefined}
+      startContent={showIcon ? <Icon className="h-3 w-3" /> : undefined}
     >
-      {showIcon && <Icon className="h-3 w-3 mr-1" />}
       {displayText}
-    </Badge>
+    </Chip>
   )
 }

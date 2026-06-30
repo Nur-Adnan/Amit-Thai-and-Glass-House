@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, AlertTriangle, Package } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Card, CardHeader, CardBody, Chip, Divider, Button } from '@heroui/react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useFormatting } from '@/hooks/useFormatting';
 
@@ -101,10 +99,10 @@ export default function BusinessSummaryCards() {
             <CardHeader className="pb-2">
               <div className="h-4 bg-muted rounded w-3/4"></div>
             </CardHeader>
-            <CardContent>
+            <CardBody>
               <div className="h-8 bg-muted rounded w-1/2 mb-2"></div>
               <div className="h-3 bg-muted rounded w-full"></div>
-            </CardContent>
+            </CardBody>
           </Card>
         ))}
       </div>
@@ -114,19 +112,20 @@ export default function BusinessSummaryCards() {
   if (error) {
     return (
       <Card className="col-span-full">
-        <CardContent className="pt-6">
+        <CardBody className="pt-6">
           <div className="text-center text-destructive">
             <AlertTriangle className="h-8 w-8 mx-auto mb-2" />
             <p className="font-medium">{t('networkError')}</p>
             <p className="text-sm text-muted-foreground mt-1">{error}</p>
-            <button 
-              onClick={fetchBusinessSummary}
-              className="mt-3 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+            <Button
+              onPress={fetchBusinessSummary}
+              color="primary"
+              className="mt-3"
             >
               {t('loading')}
-            </button>
+            </Button>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
     );
   }
@@ -138,12 +137,12 @@ export default function BusinessSummaryCards() {
       {/* Today Sales */}
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm font-medium text-muted-foreground">
             {t('todaysSales')}
-          </CardTitle>
+          </h3>
           <DollarSign className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className="text-3xl font-bold text-foreground mb-1">
             {formatCurrency(data.todaysSales?.amount || 0)}
           </div>
@@ -156,18 +155,18 @@ export default function BusinessSummaryCards() {
               <span>{formatTrend(data.todaysSales?.trend || 0)}</span>
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Today Profit */}
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm font-medium text-muted-foreground">
             Today&apos;s Profit
-          </CardTitle>
+          </h3>
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className={`text-3xl font-bold mb-1 ${
             (data.todaysProfit?.amount || 0) >= 0 ? 'text-green-600' : 'text-red-600'
           }`}>
@@ -182,18 +181,18 @@ export default function BusinessSummaryCards() {
               <span>{formatTrend(data.todaysProfit?.trend || 0)}</span>
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* New Due */}
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm font-medium text-muted-foreground">
             New Due Today
-          </CardTitle>
+          </h3>
           <AlertTriangle className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className="text-3xl font-bold text-red-600 mb-1">
             {formatCurrency(data.newDue?.amount || 0)}
           </div>
@@ -206,18 +205,18 @@ export default function BusinessSummaryCards() {
               <span>{formatTrend(data.newDue?.trend || 0)}</span>
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Low Stock Items */}
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+          <h3 className="text-sm font-medium text-muted-foreground">
             Low Stock Alert
-          </CardTitle>
+          </h3>
           <Package className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className="flex items-baseline gap-2 mb-1">
             <span className={`text-3xl font-bold ${
               (data.lowStockItems?.criticalCount || 0) > 0 ? 'text-red-600' : 
@@ -226,9 +225,9 @@ export default function BusinessSummaryCards() {
               {formatNumber(data.lowStockItems?.count || 0)}
             </span>
             {(data.lowStockItems?.criticalCount || 0) > 0 && (
-              <Badge variant="destructive" className="text-xs">
+              <Chip color="danger" variant="flat" size="sm" className="text-xs">
                 {formatNumber(data.lowStockItems?.criticalCount || 0)} critical
-              </Badge>
+              </Chip>
             )}
           </div>
           <p className="text-sm text-muted-foreground">
@@ -237,7 +236,7 @@ export default function BusinessSummaryCards() {
           
           {(data.lowStockItems?.items?.length || 0) > 0 && (
             <>
-              <Separator className="my-3" />
+              <Divider className="my-3" />
               <div className="space-y-2">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   Critical Items
@@ -245,12 +244,14 @@ export default function BusinessSummaryCards() {
                 {(data.lowStockItems?.items || []).slice(0, 3).map((item, index) => (
                   <div key={index} className="flex items-center justify-between text-xs">
                     <span className="truncate flex-1 mr-2">{item.name}</span>
-                    <Badge 
-                      variant={item.currentStock === 0 ? "destructive" : "secondary"}
+                    <Chip
+                      color={item.currentStock === 0 ? "danger" : "default"}
+                      variant="flat"
+                      size="sm"
                       className="text-xs"
                     >
                       {formatNumber(item.currentStock)}
-                    </Badge>
+                    </Chip>
                   </div>
                 ))}
                 {(data.lowStockItems?.items?.length || 0) > 3 && (
@@ -261,7 +262,7 @@ export default function BusinessSummaryCards() {
               </div>
             </>
           )}
-        </CardContent>
+        </CardBody>
       </Card>
     </div>
   );

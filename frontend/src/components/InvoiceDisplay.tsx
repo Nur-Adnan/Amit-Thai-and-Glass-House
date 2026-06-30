@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { Button } from '@heroui/react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useFormatting } from '@/hooks/useFormatting'
 
@@ -376,18 +377,20 @@ const InvoiceDisplay: React.FC<InvoiceDisplayProps> = ({
         {/* Action Buttons - Hidden in print view */}
         {!isPrintView && (
           <div className="no-print mt-6 flex justify-center space-x-4">
-            <button
-              onClick={onPrint}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+            <Button
+              color="primary"
+              onPress={onPrint}
+              className="px-6 py-2"
             >
               🖨️ {language === 'bn' ? 'প্রিন্ট করুন' : 'Print'}
-            </button>
-            <button
-              onClick={onDownloadPDF}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+            </Button>
+            <Button
+              color="success"
+              onPress={onDownloadPDF}
+              className="px-6 py-2 text-white"
             >
               📄 {language === 'bn' ? 'PDF ডাউনলোড' : 'Download PDF'}
-            </button>
+            </Button>
           </div>
         )}
       </div>

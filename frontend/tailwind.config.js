@@ -1,3 +1,5 @@
+const { heroui } = require("@heroui/react");
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -6,6 +8,7 @@ module.exports = {
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
     './src/**/*.{ts,tsx}',
+    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
   	container: {
@@ -211,8 +214,11 @@ module.exports = {
   	}
   },
   plugins: [
-    require("@tailwindcss/forms"),
+    // `class` strategy so the forms reset is opt-in (via .form-* classes) and does
+    // not override HeroUI's own input styling. HeroUI is the source of truth for inputs.
+    require("@tailwindcss/forms")({ strategy: "class" }),
     require("@tailwindcss/typography"),
     require("tailwindcss-animate"),
+    heroui(),
   ],
 }

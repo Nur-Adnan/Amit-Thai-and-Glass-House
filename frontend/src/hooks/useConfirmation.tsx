@@ -1,6 +1,15 @@
 'use client';
 
 import { useState } from 'react';
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Textarea,
+} from '@heroui/react';
 
 interface ConfirmationConfig {
   title: string;
@@ -23,19 +32,21 @@ export function useConfirmation(): UseConfirmationReturn {
   const [config, setConfig] = useState<ConfirmationConfig | null>(null);
   const [resolvePromise, setResolvePromise] = useState<((value: { confirmed: boolean; reason?: string }) => void) | null>(null);
   const [loading, setLoading] = useState(false);
+  const [reason, setReason] = useState('');
 
   const showConfirmation = (confirmationConfig: ConfirmationConfig): Promise<{ confirmed: boolean; reason?: string }> => {
     return new Promise((resolve) => {
       setConfig(confirmationConfig);
+      setReason('');
       setIsOpen(true);
       setResolvePromise(() => resolve);
     });
   };
 
-  const handleConfirm = (reason?: string) => {
+  const handleConfirm = (reasonValue?: string) => {
     setLoading(true);
     if (resolvePromise) {
-      resolvePromise({ confirmed: true, reason });
+      resolvePromise({ confirmed: true, reason: reasonValue });
     }
     setIsOpen(false);
     setLoading(false);
@@ -53,81 +64,86 @@ export function useConfirmation(): UseConfirmationReturn {
   const ConfirmationComponent = () => {
     if (!config) return null;
 
-    return (
-      <div className={`fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4 ${isOpen ? '' : 'hidden'}`}>
-        <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full mx-auto">
-          <div className="p-6">
-            {/* Icon and Title */}
-            <div className="flex items-center mb-4">
-              <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mr-3 ${
-                config.type === 'danger' ? 'bg-red-100' :
-                config.type === 'info' ? 'bg-blue-100' : 'bg-yellow-100'
-              }`}>
-                <span className={`text-lg ${
-                  config.type === 'danger' ? 'text-red-600' :
-                  config.type === 'info' ? 'text-blue-600' : 'text-yellow-600'
-                }`}>
-                  {config.type === 'info' ? 'ℹ️' : '⚠️'}
-                </span>
-              </div>
-              <h3 className="text-lg font-medium text-gray-900">{config.title}</h3>
-            </div>
+    const iconBg =
+      config.type === 'danger' ? 'bg-red-100' :
+      config.type === 'info' ? 'bg-blue-100' : 'bg-yellow-100';
+    const iconColor =
+      config.type === 'danger' ? 'text-red-600' :
+      config.type === 'info' ? 'text-blue-600' : 'text-yellow-600';
+    const confirmColor =
+      config.type === 'danger' ? 'danger' :
+      config.type === 'info' ? 'primary' : 'warning';
 
-            {/* Message */}
-            <div className="mb-6">
-              <p className="text-sm text-gray-600 whitespace-pre-line">{config.message}</p>
+    return (
+      <Modal
+        isOpen={isOpen}
+        onOpenChange={(open) => { if (!open) handleCancel(); }}
+        placement="center"
+        size="md"
+      >
+        <ModalContent>
+          <ModalHeader className="flex items-center gap-3">
+            <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${iconBg}`}>
+              <span className={`text-lg ${iconColor}`}>
+                {config.type === 'info' ? 'ℹ️' : '⚠️'}
+              </span>
             </div>
+            <h3 className="text-lg font-medium text-gray-900">{config.title}</h3>
+          </ModalHeader>
+
+          <ModalBody>
+            {/* Message */}
+            <p className="text-sm text-gray-600 whitespace-pre-line">{config.message}</p>
 
             {/* Reason Input */}
             {config.requireReason && (
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {config.reasonLabel || 'Reason'} <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="confirmation-reason"
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
-                  rows={3}
-                  placeholder={config.reasonPlaceholder || 'Please provide a reason for this action...'}
-                  maxLength={500}
-                />
-              </div>
+              <Textarea
+                id="confirmation-reason"
+                label={
+                  <span>
+                    {config.reasonLabel || 'Reason'} <span className="text-red-500">*</span>
+                  </span>
+                }
+                labelPlacement="outside"
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
+                minRows={3}
+                placeholder={config.reasonPlaceholder || 'Please provide a reason for this action...'}
+                maxLength={500}
+                className="resize-none"
+              />
             )}
+          </ModalBody>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end space-x-3">
-              <button
-                onClick={handleCancel}
-                disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
-              >
-                {config.cancelText || 'Cancel'}
-              </button>
-              <button
-                onClick={() => {
-                  const reasonElement = document.getElementById('confirmation-reason') as HTMLTextAreaElement;
-                  const reason = reasonElement?.value?.trim();
-                  
-                  if (config.requireReason && !reason) {
-                    alert('Reason is required for this action');
-                    return;
-                  }
-                  
-                  handleConfirm(reason);
-                }}
-                disabled={loading}
-                className={`px-4 py-2 text-sm font-medium text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 ${
-                  config.type === 'danger' ? 'bg-red-600 hover:bg-red-700 focus:ring-red-500' :
-                  config.type === 'info' ? 'bg-blue-600 hover:bg-blue-700 focus:ring-blue-500' :
-                  'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500'
-                }`}
-              >
-                {loading ? 'Processing...' : (config.confirmText || 'Confirm')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+          {/* Action Buttons */}
+          <ModalFooter>
+            <Button
+              variant="bordered"
+              onPress={handleCancel}
+              isDisabled={loading}
+            >
+              {config.cancelText || 'Cancel'}
+            </Button>
+            <Button
+              color={confirmColor}
+              onPress={() => {
+                const trimmedReason = reason.trim();
+
+                if (config.requireReason && !trimmedReason) {
+                  alert('Reason is required for this action');
+                  return;
+                }
+
+                handleConfirm(trimmedReason);
+              }}
+              isDisabled={loading}
+              isLoading={loading}
+            >
+              {loading ? 'Processing...' : (config.confirmText || 'Confirm')}
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     );
   };
 

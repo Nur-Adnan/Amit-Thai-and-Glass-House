@@ -1,6 +1,23 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import {
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+} from '@heroui/react'
 import Layout from '@/components/Layout'
 
 interface Employee {
@@ -247,40 +264,41 @@ export default function PayrollPage() {
             <h1 className="text-2xl font-bold text-gray-900">Payroll Management</h1>
             <p className="text-gray-600">Manage employee salaries and payments</p>
           </div>
-          <button
-            onClick={() => setShowCreateForm(true)}
-            className="mt-4 sm:mt-0 btn-primary"
+          <Button
+            color="primary"
+            onPress={() => setShowCreateForm(true)}
+            className="mt-4 sm:mt-0"
           >
             Create Salary Payment
-          </button>
+          </Button>
         </div>
 
         {/* Month/Year Selector */}
         <div className="card">
           <div className="flex items-center space-x-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Month</label>
-              <select
-                value={currentMonth}
-                onChange={(e) => setCurrentMonth(parseInt(e.target.value))}
+              <Select
+                label="Month"
+                selectedKeys={[String(currentMonth)]}
+                onSelectionChange={(keys) => setCurrentMonth(parseInt(Array.from(keys)[0] as string))}
                 className="input-field"
               >
                 {monthNames.map((month, index) => (
-                  <option key={index} value={index + 1}>{month}</option>
+                  <SelectItem key={String(index + 1)}>{month}</SelectItem>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
-              <select
-                value={currentYear}
-                onChange={(e) => setCurrentYear(parseInt(e.target.value))}
+              <Select
+                label="Year"
+                selectedKeys={[String(currentYear)]}
+                onSelectionChange={(keys) => setCurrentYear(parseInt(Array.from(keys)[0] as string))}
                 className="input-field"
               >
                 {Array.from({ length: 5 }, (_, i) => currentYear - 2 + i).map(year => (
-                  <option key={year} value={year}>{year}</option>
+                  <SelectItem key={String(year)}>{String(year)}</SelectItem>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
         </div>
@@ -341,462 +359,442 @@ export default function PayrollPage() {
           <h3 className="text-lg font-medium text-gray-900 mb-4">
             {monthNames[currentMonth - 1]} {currentYear} Salary Payments
           </h3>
-          
+
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Employee
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Department
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Gross Salary
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Deductions
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Net Salary
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+            <Table aria-label="Salary payments" removeWrapper className="min-w-full">
+              <TableHeader>
+                <TableColumn>Employee</TableColumn>
+                <TableColumn>Department</TableColumn>
+                <TableColumn>Gross Salary</TableColumn>
+                <TableColumn>Deductions</TableColumn>
+                <TableColumn>Net Salary</TableColumn>
+                <TableColumn>Status</TableColumn>
+                <TableColumn>Actions</TableColumn>
+              </TableHeader>
+              <TableBody emptyContent={`No salary payments found for ${monthNames[currentMonth - 1]} ${currentYear}`}>
                 {salaryPayments.map((payment) => (
-                  <tr key={payment._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <TableRow key={payment._id}>
+                    <TableCell>
                       <div className="text-sm font-medium text-gray-900">{payment.employee.name}</div>
                       <div className="text-sm text-gray-500">{payment.employee.employeeId}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {payment.employee.department}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {formatCurrency(payment.grossSalary)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600">
-                      {formatCurrency(payment.totalDeductions)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                      {formatCurrency(payment.netSalary)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-gray-900">{payment.employee.department}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm font-medium text-gray-900">{formatCurrency(payment.grossSalary)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm text-red-600">{formatCurrency(payment.totalDeductions)}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-sm font-medium text-green-600">{formatCurrency(payment.netSalary)}</span>
+                    </TableCell>
+                    <TableCell>
                       <span className={getStatusColor(payment.status)}>
                         {payment.status.toUpperCase()}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                      <button
-                        onClick={() => setSelectedPayment(payment)}
-                        className="text-blue-600 hover:text-blue-900"
-                      >
-                        View
-                      </button>
-                      {payment.status === 'due' && (
-                        <button
-                          onClick={() => handleMarkAsPaid(payment._id)}
-                          className="text-green-600 hover:text-green-900"
-                          disabled={loading}
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-sm font-medium space-x-2 flex items-center">
+                        <Button
+                          variant="light"
+                          size="sm"
+                          onPress={() => setSelectedPayment(payment)}
+                          className="text-blue-600 hover:text-blue-900 min-w-0"
                         >
-                          Mark Paid
-                        </button>
-                      )}
-                    </td>
-                  </tr>
+                          View
+                        </Button>
+                        {payment.status === 'due' && (
+                          <Button
+                            variant="light"
+                            size="sm"
+                            onPress={() => handleMarkAsPaid(payment._id)}
+                            className="text-green-600 hover:text-green-900 min-w-0"
+                            isDisabled={loading}
+                          >
+                            Mark Paid
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
-
-          {salaryPayments.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
-              <span className="text-4xl mb-4 block">💰</span>
-              <p>No salary payments found for {monthNames[currentMonth - 1]} {currentYear}</p>
-            </div>
-          )}
         </div>
 
         {/* Create Salary Payment Modal */}
-        {showCreateForm && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+        <Modal
+          isOpen={showCreateForm}
+          onOpenChange={setShowCreateForm}
+          size="4xl"
+          scrollBehavior="inside"
+        >
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader>
                   Create Salary Payment - {monthNames[currentMonth - 1]} {currentYear}
-                </h3>
-                <button
-                  onClick={() => setShowCreateForm(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="space-y-6">
-                {/* Employee Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Select Employee *</label>
-                  <select
-                    value={selectedEmployee}
-                    onChange={(e) => setSelectedEmployee(e.target.value)}
-                    className="input-field"
-                  >
-                    <option value="">Choose an employee</option>
-                    {employees.map((employee) => (
-                      <option key={employee._id} value={employee._id}>
-                        {employee.name} ({employee.employeeId}) - {employee.department}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {selectedEmployee && (
-                  <>
-                    {/* Base Salary Display */}
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-blue-900 mb-2">Base Salary Information</h4>
-                      <p className="text-blue-700">
-                        Monthly Salary: {formatCurrency(employees.find(e => e._id === selectedEmployee)?.monthlySalary || 0)}
-                      </p>
-                    </div>
-
-                    {/* Allowances */}
+                </ModalHeader>
+                <ModalBody>
+                  <div className="space-y-6">
+                    {/* Employee Selection */}
                     <div>
-                      <h4 className="font-medium text-gray-900 mb-3">Allowances</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">HRA</label>
-                          <input
-                            type="number"
-                            value={allowances.hra}
-                            onChange={(e) => setAllowances({...allowances, hra: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Transport</label>
-                          <input
-                            type="number"
-                            value={allowances.transport}
-                            onChange={(e) => setAllowances({...allowances, transport: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Medical</label>
-                          <input
-                            type="number"
-                            value={allowances.medical}
-                            onChange={(e) => setAllowances({...allowances, medical: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Other</label>
-                          <input
-                            type="number"
-                            value={allowances.other}
-                            onChange={(e) => setAllowances({...allowances, other: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                      </div>
+                      <Select
+                        label="Select Employee *"
+                        placeholder="Choose an employee"
+                        selectedKeys={selectedEmployee ? [selectedEmployee] : []}
+                        onSelectionChange={(keys) => setSelectedEmployee(Array.from(keys)[0] as string ?? '')}
+                        className="input-field"
+                      >
+                        {employees.map((employee) => (
+                          <SelectItem key={employee._id}>
+                            {`${employee.name} (${employee.employeeId}) - ${employee.department}`}
+                          </SelectItem>
+                        ))}
+                      </Select>
                     </div>
 
-                    {/* Deductions */}
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-3">Deductions</h4>
-                      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">PF</label>
-                          <input
-                            type="number"
-                            value={deductions.pf}
-                            onChange={(e) => setDeductions({...deductions, pf: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
+                    {selectedEmployee && (
+                      <>
+                        {/* Base Salary Display */}
+                        <div className="bg-blue-50 p-4 rounded-lg">
+                          <h4 className="font-medium text-blue-900 mb-2">Base Salary Information</h4>
+                          <p className="text-blue-700">
+                            Monthly Salary: {formatCurrency(employees.find(e => e._id === selectedEmployee)?.monthlySalary || 0)}
+                          </p>
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">ESI</label>
-                          <input
-                            type="number"
-                            value={deductions.esi}
-                            onChange={(e) => setDeductions({...deductions, esi: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Tax</label>
-                          <input
-                            type="number"
-                            value={deductions.tax}
-                            onChange={(e) => setDeductions({...deductions, tax: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Advance</label>
-                          <input
-                            type="number"
-                            value={deductions.advance}
-                            onChange={(e) => setDeductions({...deductions, advance: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Other</label>
-                          <input
-                            type="number"
-                            value={deductions.other}
-                            onChange={(e) => setDeductions({...deductions, other: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Overtime */}
-                    <div>
-                      <h4 className="font-medium text-gray-900 mb-3">Overtime</h4>
-                      <div className="grid grid-cols-2 gap-4">
+                        {/* Allowances */}
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Hours</label>
-                          <input
+                          <h4 className="font-medium text-gray-900 mb-3">Allowances</h4>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                              <Input
+                                type="number"
+                                label="HRA"
+                                value={String(allowances.hra)}
+                                onChange={(e) => setAllowances({...allowances, hra: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Transport"
+                                value={String(allowances.transport)}
+                                onChange={(e) => setAllowances({...allowances, transport: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Medical"
+                                value={String(allowances.medical)}
+                                onChange={(e) => setAllowances({...allowances, medical: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Other"
+                                value={String(allowances.other)}
+                                onChange={(e) => setAllowances({...allowances, other: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Deductions */}
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-3">Deductions</h4>
+                          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                            <div>
+                              <Input
+                                type="number"
+                                label="PF"
+                                value={String(deductions.pf)}
+                                onChange={(e) => setDeductions({...deductions, pf: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="ESI"
+                                value={String(deductions.esi)}
+                                onChange={(e) => setDeductions({...deductions, esi: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Tax"
+                                value={String(deductions.tax)}
+                                onChange={(e) => setDeductions({...deductions, tax: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Advance"
+                                value={String(deductions.advance)}
+                                onChange={(e) => setDeductions({...deductions, advance: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Other"
+                                value={String(deductions.other)}
+                                onChange={(e) => setDeductions({...deductions, other: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Overtime */}
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-3">Overtime</h4>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Input
+                                type="number"
+                                label="Hours"
+                                value={String(overtime.hours)}
+                                onChange={(e) => setOvertime({...overtime, hours: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.5"
+                              />
+                            </div>
+                            <div>
+                              <Input
+                                type="number"
+                                label="Rate per Hour"
+                                value={String(overtime.rate)}
+                                onChange={(e) => setOvertime({...overtime, rate: parseFloat(e.target.value) || 0})}
+                                className="input-field"
+                                placeholder="0"
+                                step="0.01"
+                              />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Working Days */}
+                        <div>
+                          <Input
                             type="number"
-                            value={overtime.hours}
-                            onChange={(e) => setOvertime({...overtime, hours: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.5"
+                            label="Actual Working Days"
+                            value={String(actualWorkingDays)}
+                            onChange={(e) => setActualWorkingDays(parseInt(e.target.value) || 30)}
+                            className="input-field w-32"
+                            placeholder="30"
+                            min="1"
+                            max="31"
                           />
                         </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">Rate per Hour</label>
-                          <input
-                            type="number"
-                            value={overtime.rate}
-                            onChange={(e) => setOvertime({...overtime, rate: parseFloat(e.target.value) || 0})}
-                            className="input-field"
-                            placeholder="0"
-                            step="0.01"
-                          />
-                        </div>
-                      </div>
-                    </div>
 
-                    {/* Working Days */}
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Actual Working Days</label>
-                      <input
-                        type="number"
-                        value={actualWorkingDays}
-                        onChange={(e) => setActualWorkingDays(parseInt(e.target.value) || 30)}
-                        className="input-field w-32"
-                        placeholder="30"
-                        min="1"
-                        max="31"
-                      />
-                    </div>
-
-                    {/* Salary Summary */}
-                    <div className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-medium text-gray-900 mb-3">Salary Summary</h4>
-                      <div className="grid grid-cols-3 gap-4 text-center">
-                        <div>
-                          <p className="text-sm text-gray-600">Gross Salary</p>
-                          <p className="text-lg font-semibold text-gray-900">{formatCurrency(calculateGrossSalary())}</p>
+                        {/* Salary Summary */}
+                        <div className="bg-gray-50 p-4 rounded-lg">
+                          <h4 className="font-medium text-gray-900 mb-3">Salary Summary</h4>
+                          <div className="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                              <p className="text-sm text-gray-600">Gross Salary</p>
+                              <p className="text-lg font-semibold text-gray-900">{formatCurrency(calculateGrossSalary())}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-600">Total Deductions</p>
+                              <p className="text-lg font-semibold text-red-600">{formatCurrency(calculateTotalDeductions())}</p>
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-600">Net Salary</p>
+                              <p className="text-xl font-bold text-green-600">{formatCurrency(calculateNetSalary())}</p>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Total Deductions</p>
-                          <p className="text-lg font-semibold text-red-600">{formatCurrency(calculateTotalDeductions())}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-600">Net Salary</p>
-                          <p className="text-xl font-bold text-green-600">{formatCurrency(calculateNetSalary())}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                {/* Actions */}
-                <div className="flex justify-end space-x-3 pt-4 border-t">
-                  <button
-                    onClick={() => setShowCreateForm(false)}
-                    className="btn-secondary"
+                      </>
+                    )}
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    variant="light"
+                    onPress={onClose}
                   >
                     Cancel
-                  </button>
-                  <button
-                    onClick={handleCreateSalary}
-                    disabled={loading || !selectedEmployee}
-                    className="btn-primary disabled:opacity-50"
+                  </Button>
+                  <Button
+                    color="primary"
+                    onPress={handleCreateSalary}
+                    isDisabled={loading || !selectedEmployee}
+                    isLoading={loading}
                   >
                     {loading ? 'Creating...' : 'Create Salary Payment'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
 
         {/* Salary Payment Details Modal */}
-        {selectedPayment && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-            <div className="relative top-20 mx-auto p-5 border w-11/12 max-w-2xl shadow-lg rounded-md bg-white">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium text-gray-900">Salary Payment Details</h3>
-                <button
-                  onClick={() => setSelectedPayment(null)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
+        <Modal
+          isOpen={!!selectedPayment}
+          onOpenChange={(open) => { if (!open) setSelectedPayment(null) }}
+          size="2xl"
+          scrollBehavior="inside"
+        >
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader>Salary Payment Details</ModalHeader>
+                <ModalBody>
+                  {selectedPayment && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Employee</label>
+                          <p className="text-sm text-gray-900">{selectedPayment.employee.name}</p>
+                          <p className="text-xs text-gray-500">{selectedPayment.employee.employeeId}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Department</label>
+                          <p className="text-sm text-gray-900">{selectedPayment.employee.department}</p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Period</label>
+                          <p className="text-sm text-gray-900">
+                            {monthNames[selectedPayment.paymentMonth - 1]} {selectedPayment.paymentYear}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700">Status</label>
+                          <span className={getStatusColor(selectedPayment.status)}>
+                            {selectedPayment.status.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
 
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Employee</label>
-                    <p className="text-sm text-gray-900">{selectedPayment.employee.name}</p>
-                    <p className="text-xs text-gray-500">{selectedPayment.employee.employeeId}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Department</label>
-                    <p className="text-sm text-gray-900">{selectedPayment.employee.department}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Period</label>
-                    <p className="text-sm text-gray-900">
-                      {monthNames[selectedPayment.paymentMonth - 1]} {selectedPayment.paymentYear}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Status</label>
-                    <span className={getStatusColor(selectedPayment.status)}>
-                      {selectedPayment.status.toUpperCase()}
-                    </span>
-                  </div>
-                </div>
+                      <div className="grid grid-cols-2 gap-6">
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Allowances</h4>
+                          <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span>HRA:</span>
+                              <span>{formatCurrency(selectedPayment.allowances.hra)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Transport:</span>
+                              <span>{formatCurrency(selectedPayment.allowances.transport)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Medical:</span>
+                              <span>{formatCurrency(selectedPayment.allowances.medical)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Other:</span>
+                              <span>{formatCurrency(selectedPayment.allowances.other)}</span>
+                            </div>
+                          </div>
+                        </div>
 
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Allowances</h4>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between">
-                        <span>HRA:</span>
-                        <span>{formatCurrency(selectedPayment.allowances.hra)}</span>
+                        <div>
+                          <h4 className="font-medium text-gray-900 mb-2">Deductions</h4>
+                          <div className="space-y-1 text-sm">
+                            <div className="flex justify-between">
+                              <span>PF:</span>
+                              <span>{formatCurrency(selectedPayment.deductions.pf)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>ESI:</span>
+                              <span>{formatCurrency(selectedPayment.deductions.esi)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Tax:</span>
+                              <span>{formatCurrency(selectedPayment.deductions.tax)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Advance:</span>
+                              <span>{formatCurrency(selectedPayment.deductions.advance)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Other:</span>
+                              <span>{formatCurrency(selectedPayment.deductions.other)}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Transport:</span>
-                        <span>{formatCurrency(selectedPayment.allowances.transport)}</span>
+
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="grid grid-cols-3 gap-4 text-center">
+                          <div>
+                            <p className="text-sm text-gray-600">Gross Salary</p>
+                            <p className="text-lg font-semibold text-gray-900">{formatCurrency(selectedPayment.grossSalary)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Total Deductions</p>
+                            <p className="text-lg font-semibold text-red-600">{formatCurrency(selectedPayment.totalDeductions)}</p>
+                          </div>
+                          <div>
+                            <p className="text-sm text-gray-600">Net Salary</p>
+                            <p className="text-xl font-bold text-green-600">{formatCurrency(selectedPayment.netSalary)}</p>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Medical:</span>
-                        <span>{formatCurrency(selectedPayment.allowances.medical)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Other:</span>
-                        <span>{formatCurrency(selectedPayment.allowances.other)}</span>
-                      </div>
+
+                      {selectedPayment.overtime.hours > 0 && (
+                        <div className="bg-blue-50 p-3 rounded-lg">
+                          <h4 className="font-medium text-blue-900 mb-1">Overtime</h4>
+                          <p className="text-sm text-blue-700">
+                            {selectedPayment.overtime.hours} hours × {formatCurrency(selectedPayment.overtime.rate)} = {formatCurrency(selectedPayment.overtime.amount)}
+                          </p>
+                        </div>
+                      )}
+
+                      {selectedPayment.paymentDate && (
+                        <div className="bg-green-50 p-3 rounded-lg">
+                          <h4 className="font-medium text-green-900 mb-1">Payment Information</h4>
+                          <p className="text-sm text-green-700">
+                            Paid on: {new Date(selectedPayment.paymentDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
                     </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-medium text-gray-900 mb-2">Deductions</h4>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between">
-                        <span>PF:</span>
-                        <span>{formatCurrency(selectedPayment.deductions.pf)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>ESI:</span>
-                        <span>{formatCurrency(selectedPayment.deductions.esi)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Tax:</span>
-                        <span>{formatCurrency(selectedPayment.deductions.tax)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Advance:</span>
-                        <span>{formatCurrency(selectedPayment.deductions.advance)}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Other:</span>
-                        <span>{formatCurrency(selectedPayment.deductions.other)}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-gray-50 p-4 rounded-lg">
-                  <div className="grid grid-cols-3 gap-4 text-center">
-                    <div>
-                      <p className="text-sm text-gray-600">Gross Salary</p>
-                      <p className="text-lg font-semibold text-gray-900">{formatCurrency(selectedPayment.grossSalary)}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Total Deductions</p>
-                      <p className="text-lg font-semibold text-red-600">{formatCurrency(selectedPayment.totalDeductions)}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-600">Net Salary</p>
-                      <p className="text-xl font-bold text-green-600">{formatCurrency(selectedPayment.netSalary)}</p>
-                    </div>
-                  </div>
-                </div>
-
-                {selectedPayment.overtime.hours > 0 && (
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <h4 className="font-medium text-blue-900 mb-1">Overtime</h4>
-                    <p className="text-sm text-blue-700">
-                      {selectedPayment.overtime.hours} hours × {formatCurrency(selectedPayment.overtime.rate)} = {formatCurrency(selectedPayment.overtime.amount)}
-                    </p>
-                  </div>
-                )}
-
-                {selectedPayment.paymentDate && (
-                  <div className="bg-green-50 p-3 rounded-lg">
-                    <h4 className="font-medium text-green-900 mb-1">Payment Information</h4>
-                    <p className="text-sm text-green-700">
-                      Paid on: {new Date(selectedPayment.paymentDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+                  )}
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
       </div>
     </Layout>
   )

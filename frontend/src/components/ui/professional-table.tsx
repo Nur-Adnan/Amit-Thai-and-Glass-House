@@ -1,15 +1,38 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 
-// Standardized table header component
+// NOTE: HeroUI's <Table> is a controlled, column-model component and does not fit
+// this freeform wrapper API (arbitrary row highlighting, per-row onClick, custom
+// cells). Per the design system rules, this is a custom component that matches
+// HeroUI's visual language (rounded card surface, muted header, hover rows) built
+// on semantic HTML. Simple/standard tables elsewhere use HeroUI's <Table> directly.
+
+// Semantic table primitives (HeroUI-styled) — replace the former shadcn re-exports.
+export const Table = React.forwardRef<
+  HTMLTableElement,
+  React.HTMLAttributes<HTMLTableElement>
+>(({ className, ...props }, ref) => (
+  <table ref={ref} className={cn("w-full caption-bottom text-sm", className)} {...props} />
+))
+Table.displayName = "Table"
+
+export const TableHeader = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
+))
+TableHeader.displayName = "TableHeader"
+
+export const TableBody = React.forwardRef<
+  HTMLTableSectionElement,
+  React.HTMLAttributes<HTMLTableSectionElement>
+>(({ className, ...props }, ref) => (
+  <tbody ref={ref} className={cn("[&_tr:last-child]:border-0", className)} {...props} />
+))
+TableBody.displayName = "TableBody"
+
+// Standardized table header cell
 interface ProfessionalTableHeaderProps {
   icon?: React.ComponentType<{ className?: string }>
   children: React.ReactNode
@@ -17,20 +40,16 @@ interface ProfessionalTableHeaderProps {
   align?: 'left' | 'center' | 'right'
 }
 
-export function ProfessionalTableHeader({ 
-  icon: Icon, 
-  children, 
+export function ProfessionalTableHeader({
+  icon: Icon,
+  children,
   className,
-  align = 'left'
+  align = 'left',
 }: ProfessionalTableHeaderProps) {
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right'
-  }
+  const alignClasses = { left: 'text-left', center: 'text-center', right: 'text-right' }
 
   return (
-    <TableHead className={cn(
+    <th className={cn(
       "h-12 px-4 align-middle font-semibold text-muted-foreground bg-muted/30",
       alignClasses[align],
       className
@@ -43,7 +62,7 @@ export function ProfessionalTableHeader({
         {Icon && <Icon className="h-4 w-4" />}
         {children}
       </div>
-    </TableHead>
+    </th>
   )
 }
 
@@ -55,7 +74,7 @@ interface ProfessionalTableProps {
 
 export function ProfessionalTable({ children, className }: ProfessionalTableProps) {
   return (
-    <div className="rounded-lg border bg-card">
+    <div className="rounded-lg border bg-card overflow-hidden">
       <Table className={className}>
         {children}
       </Table>
@@ -71,9 +90,9 @@ interface ProfessionalTableRowProps extends React.HTMLAttributes<HTMLTableRowEle
   onClick?: () => void
 }
 
-export function ProfessionalTableRow({ 
-  children, 
-  className, 
+export function ProfessionalTableRow({
+  children,
+  className,
   highlight = 'none',
   onClick,
   ...props
@@ -82,13 +101,13 @@ export function ProfessionalTableRow({
     none: '',
     warning: 'bg-orange-50 border-l-4 border-l-orange-500',
     danger: 'bg-red-50 border-l-4 border-l-red-500',
-    success: 'bg-green-50 border-l-4 border-l-green-500'
+    success: 'bg-green-50 border-l-4 border-l-green-500',
   }
 
   return (
-    <TableRow 
+    <tr
       className={cn(
-        "hover:bg-muted/50 transition-colors",
+        "border-b transition-colors hover:bg-muted/50",
         highlightClasses[highlight],
         onClick && "cursor-pointer",
         className
@@ -97,7 +116,7 @@ export function ProfessionalTableRow({
       {...props}
     >
       {children}
-    </TableRow>
+    </tr>
   )
 }
 
@@ -108,26 +127,16 @@ interface ProfessionalTableCellProps {
   align?: 'left' | 'center' | 'right'
 }
 
-export function ProfessionalTableCell({ 
-  children, 
-  className, 
-  align = 'left' 
+export function ProfessionalTableCell({
+  children,
+  className,
+  align = 'left',
 }: ProfessionalTableCellProps) {
-  const alignClasses = {
-    left: 'text-left',
-    center: 'text-center',
-    right: 'text-right'
-  }
+  const alignClasses = { left: 'text-left', center: 'text-center', right: 'text-right' }
 
   return (
-    <TableCell className={cn(
-      "p-4 align-middle",
-      alignClasses[align],
-      className
-    )}>
+    <td className={cn("p-4 align-middle", alignClasses[align], className)}>
       {children}
-    </TableCell>
+    </td>
   )
 }
-
-export { Table, TableBody, TableHeader }

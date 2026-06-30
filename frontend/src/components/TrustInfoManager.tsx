@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
+import { Button, Input, Textarea, Checkbox } from '@heroui/react'
 import { useLanguage } from '@/contexts/LanguageContext'
 
 interface TrustInfo {
@@ -159,11 +160,11 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
               ({language === 'bn' ? 'ঐচ্ছিক' : 'Optional'})
             </span>
           </label>
-          <input
+          <Input
             type="text"
             value={trustInfo.tradeLicenseNo}
             onChange={(e) => handleInputChange('tradeLicenseNo', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full"
             placeholder={language === 'bn' ? 'যেমন: TRAD/DSCC/123456/2024' : 'e.g., TRAD/DSCC/123456/2024'}
           />
           <p className="text-xs text-gray-500 mt-1">
@@ -182,12 +183,12 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
               ({language === 'bn' ? 'ঐচ্ছিক' : 'Optional'})
             </span>
           </label>
-          <textarea
+          <Textarea
             value={trustInfo.shopAddress}
             onChange={(e) => handleInputChange('shopAddress', e.target.value)}
-            rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            placeholder={language === 'bn' 
+            minRows={3}
+            className="w-full"
+            placeholder={language === 'bn'
               ? 'যেমন: ১২৩ নিউ মার্কেট, ধানমন্ডি, ঢাকা-১২০৫'
               : 'e.g., 123 New Market, Dhanmondi, Dhaka-1205'
             }
@@ -208,13 +209,12 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
               ({language === 'bn' ? 'ঐচ্ছিক' : 'Optional'})
             </span>
           </label>
-          <input
+          <Input
             type="tel"
             value={trustInfo.contactNumber}
             onChange={(e) => handleInputChange('contactNumber', e.target.value)}
-            className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-              !isPhoneValid ? 'border-red-300 bg-red-50' : 'border-gray-300'
-            }`}
+            isInvalid={!isPhoneValid}
+            className="w-full"
             placeholder={language === 'bn' ? 'যেমন: ০১৭১২৩৪৫৬৭৮' : 'e.g., 01712345678'}
           />
           {!isPhoneValid && (
@@ -241,29 +241,25 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
           
           <div className="space-y-4">
             <div className="flex items-center">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="displayOnInvoice"
-                checked={trustInfo.displayOnInvoice}
-                onChange={(e) => handleInputChange('displayOnInvoice', e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="displayOnInvoice" className="ml-3 text-sm text-gray-700">
+                isSelected={trustInfo.displayOnInvoice}
+                onValueChange={(checked) => handleInputChange('displayOnInvoice', checked)}
+                classNames={{ label: 'text-sm text-gray-700' }}
+              >
                 {language === 'bn' ? 'ইনভয়েসে দেখান' : 'Display on Invoice'}
-              </label>
+              </Checkbox>
             </div>
 
             <div className="flex items-center">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="displayOnPrint"
-                checked={trustInfo.displayOnPrint}
-                onChange={(e) => handleInputChange('displayOnPrint', e.target.checked)}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <label htmlFor="displayOnPrint" className="ml-3 text-sm text-gray-700">
+                isSelected={trustInfo.displayOnPrint}
+                onValueChange={(checked) => handleInputChange('displayOnPrint', checked)}
+                classNames={{ label: 'text-sm text-gray-700' }}
+              >
                 {language === 'bn' ? 'প্রিন্ট ভিউতে দেখান' : 'Display on Print View'}
-              </label>
+              </Checkbox>
             </div>
           </div>
 
@@ -277,25 +273,20 @@ const TrustInfoManager: React.FC<TrustInfoManagerProps> = ({ onSave, className =
 
         {/* Save Button */}
         <div className="flex justify-end pt-6 border-t">
-          <button
-            onClick={handleSave}
-            disabled={saving || !isPhoneValid}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+          <Button
+            onPress={handleSave}
+            isDisabled={saving || !isPhoneValid}
+            isLoading={saving}
+            color="primary"
           >
             {saving ? (
-              <span className="flex items-center">
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                {language === 'bn' ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving...'}
-              </span>
+              language === 'bn' ? 'সংরক্ষণ করা হচ্ছে...' : 'Saving...'
             ) : (
               <>
                 💾 {language === 'bn' ? 'সংরক্ষণ করুন' : 'Save Changes'}
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

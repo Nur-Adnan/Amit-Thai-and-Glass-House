@@ -1,15 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { Label } from '@/components/ui/label'
-import { 
+import { Button, Card, CardBody, CardHeader, Chip, Alert } from '@heroui/react'
+import {
   Globe,
   Save,
-  AlertCircle,
   CheckCircle,
   Languages,
   Calendar,
@@ -92,12 +87,12 @@ export default function BasicLanguageTab() {
       {/* Language Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <Globe className="h-5 w-5" />
             Select Language
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {languageOptions.map((lang) => (
               <div
@@ -116,7 +111,7 @@ export default function BasicLanguageTab() {
                     </div>
                   </div>
                   {language === lang.code && (
-                    <Badge variant="default">Active</Badge>
+                    <Chip size="sm" color="primary" variant="flat">Active</Chip>
                   )}
                 </div>
               </div>
@@ -132,18 +127,18 @@ export default function BasicLanguageTab() {
               {currentLanguage?.flag} {currentLanguage?.name} ({currentLanguage?.nativeName})
             </p>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Formatting Preview */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <Hash className="h-5 w-5" />
             Formatting Preview
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Numbers and Currency */}
             <div className="space-y-3">
@@ -215,18 +210,18 @@ export default function BasicLanguageTab() {
               }
             </p>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Language Features */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <Languages className="h-5 w-5" />
             Language Features
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardBody className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
               <h4 className="font-medium">Supported Features</h4>
@@ -272,25 +267,26 @@ export default function BasicLanguageTab() {
               </div>
             </div>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Save Settings */}
       <div className="space-y-4">
         {message && (
-          <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-            {message.type === 'success' ? (
-              <CheckCircle className="h-4 w-4" />
-            ) : (
-              <AlertCircle className="h-4 w-4" />
-            )}
-            <AlertDescription>{message.text}</AlertDescription>
-          </Alert>
+          <Alert
+            color={message.type === 'error' ? 'danger' : 'default'}
+            description={message.text}
+          />
         )}
 
         <div className="flex justify-end">
-          <Button onClick={handleSaveSettings} disabled={loading}>
-            <Save className="h-4 w-4 mr-2" />
+          <Button
+            color="primary"
+            onPress={handleSaveSettings}
+            isDisabled={loading}
+            isLoading={loading}
+            startContent={!loading ? <Save className="h-4 w-4" /> : undefined}
+          >
             {loading ? 'Saving...' : 'Save Settings'}
           </Button>
         </div>

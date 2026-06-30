@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Card, CardBody, CardHeader, Button, Input } from '@heroui/react'
 import { useFormatting } from '@/hooks/useFormatting'
 
 interface Filters {
@@ -186,13 +184,13 @@ export default function ReportsPage() {
           <h1 className="text-2xl font-bold">Reports & Analytics</h1>
           <div className="flex space-x-2">
             <Button
-              onClick={() => exportReport('sales')}
+              onPress={() => exportReport('sales')}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Export Sales
             </Button>
             <Button
-              onClick={() => exportReport('profit')}
+              onPress={() => exportReport('profit')}
               className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
             >
               Export Profit
@@ -242,36 +240,36 @@ export default function ReportsPage() {
         {reportData && (
           <div className="space-y-6">
             <Card>
-              <CardHeader>
-                <CardTitle>Sales Report</CardTitle>
+              <CardHeader className="flex flex-col items-start gap-1">
+                <h3 className="text-lg font-semibold">Sales Report</h3>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 <div className="text-center py-8 text-gray-500">
                   Sales data will be displayed here
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Profit Report</CardTitle>
+              <CardHeader className="flex flex-col items-start gap-1">
+                <h3 className="text-lg font-semibold">Profit Report</h3>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 <div className="text-center py-8 text-gray-500">
                   Profit data will be displayed here
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             <Card>
-              <CardHeader>
-                <CardTitle>Cash vs Due Analysis</CardTitle>
+              <CardHeader className="flex flex-col items-start gap-1">
+                <h3 className="text-lg font-semibold">Cash vs Due Analysis</h3>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 <div className="text-center py-8 text-gray-500">
                   Cash vs Due data will be displayed here
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
         )}

@@ -2,17 +2,15 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
 import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Chip,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+} from '@heroui/react'
 import {
   ProfessionalTable,
   ProfessionalTableHeader,
@@ -188,24 +186,24 @@ export default function StockOverviewPage() {
   const getStockBadge = (item: StockItem) => {
     if (item.stockStatus === 'Out of Stock') {
       return (
-        <Badge className="bg-red-600 text-white border-red-700 font-bold">
+        <Chip size="sm" className="bg-red-600 text-white border-red-700 font-bold">
           🔴 Out of Stock
-        </Badge>
+        </Chip>
       )
     }
 
     if (item.stockStatus === 'Low Stock') {
       return (
-        <Badge className="bg-red-500 text-white border-red-600 font-bold">
+        <Chip size="sm" className="bg-red-500 text-white border-red-600 font-bold">
           🔴 Low Stock
-        </Badge>
+        </Chip>
       )
     }
 
     return (
-      <Badge className="bg-green-500 text-white border-green-600 font-bold">
+      <Chip size="sm" className="bg-green-500 text-white border-green-600 font-bold">
         🟢 Healthy Stock
-      </Badge>
+      </Chip>
     )
   }
 
@@ -242,9 +240,9 @@ export default function StockOverviewPage() {
     }
     
     return (
-      <Badge className={colors[quality as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
+      <Chip size="sm" className={colors[quality as keyof typeof colors] || 'bg-gray-100 text-gray-800'}>
         {quality}
-      </Badge>
+      </Chip>
     )
   }
 
@@ -268,16 +266,16 @@ export default function StockOverviewPage() {
       <Layout>
         <div className="max-w-7xl mx-auto">
           <Card>
-            <CardContent className="pt-6">
+            <CardBody className="pt-6">
               <div className="text-center text-destructive">
                 <AlertTriangle className="h-12 w-12 mx-auto mb-4" />
                 <p className="font-medium">Error loading stock overview</p>
                 <p className="text-sm text-muted-foreground mt-1">{error}</p>
-                <Button onClick={fetchStockData} className="mt-4">
+                <Button onPress={fetchStockData} className="mt-4">
                   Try Again
                 </Button>
               </div>
-            </CardContent>
+            </CardBody>
           </Card>
         </div>
       </Layout>
@@ -299,11 +297,11 @@ export default function StockOverviewPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              onClick={handleRefresh} 
-              variant="outline" 
+            <Button
+              onPress={handleRefresh}
+              variant="bordered"
               size="sm"
-              disabled={refreshing}
+              isDisabled={refreshing}
             >
               <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
               Refresh
@@ -314,70 +312,65 @@ export default function StockOverviewPage() {
         {/* Filters */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
               <Filter className="h-5 w-5" />
               Filters
-            </CardTitle>
+            </h3>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Material Type Filter */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Material Type</label>
-                <Select 
-                  value={filters.materialType} 
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, materialType: value }))}
+                <Select
+                  selectedKeys={filters.materialType ? [filters.materialType] : []}
+                  onSelectionChange={(keys) => setFilters(prev => ({ ...prev, materialType: Array.from(keys)[0] as string }))}
+                  placeholder="All Materials"
+                  aria-label="Material Type"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Materials" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Materials</SelectItem>
-                    <SelectItem value="Thai">Thai Glass</SelectItem>
-                    <SelectItem value="Glass">Glass</SelectItem>
-                  </SelectContent>
+                  <SelectItem key="all">All Materials</SelectItem>
+                  <SelectItem key="Thai">Thai Glass</SelectItem>
+                  <SelectItem key="Glass">Glass</SelectItem>
                 </Select>
               </div>
 
               {/* Company Filter */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Company</label>
-                <Select 
-                  value={filters.company} 
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, company: value }))}
+                <Select
+                  selectedKeys={filters.company ? [filters.company] : []}
+                  onSelectionChange={(keys) => setFilters(prev => ({ ...prev, company: Array.from(keys)[0] as string }))}
+                  placeholder="All Companies"
+                  aria-label="Company"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Companies" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Companies</SelectItem>
-                    {companies.map((company) => (
-                      <SelectItem key={company} value={company}>
+                  {[
+                    <SelectItem key="all">All Companies</SelectItem>,
+                    ...companies.map((company) => (
+                      <SelectItem key={company}>
                         {company}
                       </SelectItem>
-                    ))}
-                  </SelectContent>
+                    )),
+                  ]}
                 </Select>
               </div>
 
               {/* Thickness Filter */}
               <div>
                 <label className="text-sm font-medium mb-2 block">Thickness</label>
-                <Select 
-                  value={filters.thickness} 
-                  onValueChange={(value) => setFilters(prev => ({ ...prev, thickness: value }))}
+                <Select
+                  selectedKeys={filters.thickness ? [filters.thickness] : []}
+                  onSelectionChange={(keys) => setFilters(prev => ({ ...prev, thickness: Array.from(keys)[0] as string }))}
+                  placeholder="All Thickness"
+                  aria-label="Thickness"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="All Thickness" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Thickness</SelectItem>
-                    {thicknesses.map((thickness) => (
-                      <SelectItem key={thickness} value={thickness.toString()}>
+                  {[
+                    <SelectItem key="all">All Thickness</SelectItem>,
+                    ...thicknesses.map((thickness) => (
+                      <SelectItem key={thickness.toString()}>
                         {thickness}mm
                       </SelectItem>
-                    ))}
-                  </SelectContent>
+                    )),
+                  ]}
                 </Select>
               </div>
 
@@ -385,8 +378,9 @@ export default function StockOverviewPage() {
               <div>
                 <label className="text-sm font-medium mb-2 block">Stock Status</label>
                 <Button
-                  variant={filters.lowStockOnly ? "default" : "outline"}
-                  onClick={() => setFilters(prev => ({ ...prev, lowStockOnly: !prev.lowStockOnly }))}
+                  color={filters.lowStockOnly ? "primary" : "default"}
+                  variant={filters.lowStockOnly ? "solid" : "bordered"}
+                  onPress={() => setFilters(prev => ({ ...prev, lowStockOnly: !prev.lowStockOnly }))}
                   className="w-full h-10"
                 >
                   {filters.lowStockOnly ? (
@@ -403,26 +397,26 @@ export default function StockOverviewPage() {
                 </Button>
               </div>
             </div>
-          </CardContent>
+          </CardBody>
         </Card>
 
         {/* Stock Overview Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
+            <div className="w-full text-lg font-semibold flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Package className="h-5 w-5" />
                 Stock Overview ({filteredItems.length} items)
               </div>
               {filters.lowStockOnly && (
-                <Badge className="bg-red-100 text-red-800 border-red-200">
+                <Chip size="sm" className="bg-red-100 text-red-800 border-red-200">
                   <AlertTriangle className="h-3 w-3 mr-1" />
                   Critical Stock Only
-                </Badge>
+                </Chip>
               )}
-            </CardTitle>
+            </div>
           </CardHeader>
-          <CardContent>
+          <CardBody>
             {filteredItems.length === 0 ? (
               <div className="text-center py-12">
                 <Package className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
@@ -457,9 +451,13 @@ export default function StockOverviewPage() {
                       }
                     >
                       <ProfessionalTableCell>
-                        <Badge variant={item.materialType === 'Thai' ? 'default' : 'secondary'}>
+                        <Chip
+                          size="sm"
+                          color={item.materialType === 'Thai' ? 'primary' : 'default'}
+                          variant="flat"
+                        >
                           {item.materialType}
-                        </Badge>
+                        </Chip>
                       </ProfessionalTableCell>
                       <ProfessionalTableCell>
                         <span className="font-medium">{item.company}</span>
@@ -484,7 +482,7 @@ export default function StockOverviewPage() {
                 </TableBody>
               </ProfessionalTable>
             )}
-          </CardContent>
+          </CardBody>
         </Card>
       </div>
     </Layout>

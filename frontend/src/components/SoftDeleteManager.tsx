@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Button, Input, Select, SelectItem } from '@heroui/react';
 import { Trash2, RotateCcw, Search, AlertTriangle, CheckCircle } from 'lucide-react';
 
 interface DeletedItem {
@@ -239,48 +240,43 @@ const SoftDeleteManager: React.FC = () => {
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Model Type
-              </label>
-              <select
-                value={selectedModel}
-                onChange={(e) => {
-                  setSelectedModel(e.target.value);
-                  fetchDeletedItems(e.target.value);
+              <Select
+                label="Model Type"
+                selectedKeys={selectedModel ? [selectedModel] : []}
+                onSelectionChange={(keys) => {
+                  const value = Array.from(keys)[0] as string;
+                  setSelectedModel(value);
+                  fetchDeletedItems(value);
                 }}
-                className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-48"
               >
                 {Object.entries(modelLabels).map(([value, label]) => (
-                  <option key={value} value={value}>{label}</option>
+                  <SelectItem key={value}>{label}</SelectItem>
                 ))}
-              </select>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Search
-              </label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search deleted items..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+              <Input
+                type="text"
+                label="Search"
+                placeholder="Search deleted items..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                startContent={<Search className="text-gray-400 w-4 h-4" />}
+                className="w-64"
+              />
             </div>
           </div>
 
-          <button
-            onClick={handleBulkRestore}
-            disabled={!deletedItems[selectedModel]?.length}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed flex items-center"
+          <Button
+            onPress={handleBulkRestore}
+            isDisabled={!deletedItems[selectedModel]?.length}
+            color="success"
+            startContent={<RotateCcw className="w-4 h-4" />}
           >
-            <RotateCcw className="w-4 h-4 mr-2" />
             Restore All
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -317,13 +313,15 @@ const SoftDeleteManager: React.FC = () => {
                         <p>By: {item.deletedBy.name} ({item.deletedBy.email})</p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => handleRestore(selectedModel, item._id)}
-                      className="ml-4 px-3 py-1 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 flex items-center"
+                    <Button
+                      onPress={() => handleRestore(selectedModel, item._id)}
+                      color="primary"
+                      size="sm"
+                      className="ml-4"
+                      startContent={<RotateCcw className="w-3 h-3" />}
                     >
-                      <RotateCcw className="w-3 h-3 mr-1" />
                       Restore
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
+import { Button } from '@heroui/react'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useFormatting } from '@/hooks/useFormatting'
 
@@ -159,12 +160,12 @@ const FinancialWarnings: React.FC<FinancialWarningsProps> = ({ className = '', p
             {language === 'bn' ? 'ডেটা লোড করতে ব্যর্থ' : 'Failed to Load Data'}
           </h3>
           <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={handleRefresh}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+          <Button
+            onPress={handleRefresh}
+            color="primary"
           >
             {language === 'bn' ? 'পুনরায় চেষ্টা করুন' : 'Try Again'}
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -187,13 +188,14 @@ const FinancialWarnings: React.FC<FinancialWarningsProps> = ({ className = '', p
             }
           </p>
         </div>
-        <button
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className="px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 disabled:opacity-50 transition-colors duration-200"
+        <Button
+          onPress={handleRefresh}
+          isDisabled={refreshing}
+          variant="flat"
+          size="sm"
         >
           {refreshing ? '🔄' : '🔄'} {language === 'bn' ? 'রিফ্রেশ' : 'Refresh'}
-        </button>
+        </Button>
       </div>
 
       {/* Overall Risk Level */}

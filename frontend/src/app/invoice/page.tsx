@@ -2,37 +2,28 @@
 
 import { useState, useEffect } from 'react'
 import Layout from '@/components/Layout'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import {
+  Card,
+  CardHeader,
+  CardBody,
+  Button,
+  Input,
+  Chip,
+  Divider,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableColumn,
+  TableBody,
   TableRow,
-} from '@/components/ui/table'
-import {
+  TableCell,
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+} from '@heroui/react'
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { 
   Plus, 
   Trash2, 
   Receipt, 
@@ -204,13 +195,13 @@ export default function InvoicePage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
-        return <Badge className="bg-green-100 text-green-800">Paid</Badge>
+        return <Chip size="sm" className="bg-green-100 text-green-800">Paid</Chip>
       case 'partial':
-        return <Badge className="bg-yellow-100 text-yellow-800">Partial</Badge>
+        return <Chip size="sm" className="bg-yellow-100 text-yellow-800">Partial</Chip>
       case 'due':
-        return <Badge className="bg-red-100 text-red-800">Due</Badge>
+        return <Chip size="sm" className="bg-red-100 text-red-800">Due</Chip>
       default:
-        return <Badge variant="secondary">Unknown</Badge>
+        return <Chip size="sm" color="default" variant="flat">Unknown</Chip>
     }
   }
 
@@ -234,16 +225,16 @@ export default function InvoicePage() {
             
             {/* Customer Information */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+              <CardHeader className="flex flex-col items-start gap-1">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
                   <User className="h-5 w-5" />
                   Customer Information
-                </CardTitle>
+                </h3>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardBody className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="customerName">Customer Name *</Label>
+                    <label htmlFor="customerName" className="text-sm font-medium">Customer Name *</label>
                     <Input
                       id="customerName"
                       value={customer.name}
@@ -253,9 +244,9 @@ export default function InvoicePage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="customerPhone">Phone Number</Label>
+                    <label htmlFor="customerPhone" className="text-sm font-medium">Phone Number</label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
                       <Input
                         id="customerPhone"
                         value={customer.phone}
@@ -267,9 +258,9 @@ export default function InvoicePage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="customerAddress">Address</Label>
+                  <label htmlFor="customerAddress" className="text-sm font-medium">Address</label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground z-10" />
                     <Input
                       id="customerAddress"
                       value={customer.address}
@@ -279,24 +270,24 @@ export default function InvoicePage() {
                     />
                   </div>
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
 
             {/* Invoice Items */}
             <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
+              <CardHeader className="flex flex-col items-start gap-1">
+                <div className="flex items-center justify-between w-full">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <FileText className="h-5 w-5" />
                     Invoice Items
-                  </CardTitle>
-                  <Button onClick={addItem} size="sm">
+                  </h3>
+                  <Button onPress={addItem} size="sm" color="primary">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Item
                   </Button>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardBody>
                 {items.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <Calculator className="h-12 w-12 mx-auto mb-4 opacity-50" />
@@ -305,16 +296,14 @@ export default function InvoicePage() {
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
-                    <Table>
+                    <Table aria-label="Invoice items">
                       <TableHeader>
-                        <TableRow>
-                          <TableHead className="w-[300px]">Product Details</TableHead>
-                          <TableHead className="w-[100px]">Qty</TableHead>
-                          <TableHead className="w-[100px]">Unit</TableHead>
-                          <TableHead className="w-[120px]">Unit Price</TableHead>
-                          <TableHead className="w-[120px]">Total</TableHead>
-                          <TableHead className="w-[50px]"></TableHead>
-                        </TableRow>
+                        <TableColumn className="w-[300px]">Product Details</TableColumn>
+                        <TableColumn className="w-[100px]">Qty</TableColumn>
+                        <TableColumn className="w-[100px]">Unit</TableColumn>
+                        <TableColumn className="w-[120px]">Unit Price</TableColumn>
+                        <TableColumn className="w-[120px]">Total</TableColumn>
+                        <TableColumn className="w-[50px]">{''}</TableColumn>
                       </TableHeader>
                       <TableBody>
                         {items.map((item) => {
@@ -347,32 +336,29 @@ export default function InvoicePage() {
                                 <Input
                                   type="number"
                                   step="0.01"
-                                  value={item.quantity}
+                                  value={String(item.quantity)}
                                   onChange={(e) => updateItem(item.id, 'quantity', parseFloat(e.target.value) || 0)}
                                   className="border-0 p-0 h-8 focus-visible:ring-0 text-center"
                                 />
                               </TableCell>
                               <TableCell>
                                 <Select
-                                  value={item.unit}
-                                  onValueChange={(value) => updateItem(item.id, 'unit', value)}
+                                  aria-label="Unit"
+                                  selectedKeys={item.unit ? [item.unit] : []}
+                                  onSelectionChange={(keys) => updateItem(item.id, 'unit', Array.from(keys)[0] as string)}
+                                  className="border-0 p-0 h-8"
                                 >
-                                  <SelectTrigger className="border-0 p-0 h-8 focus:ring-0">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="sqft">sqft</SelectItem>
-                                    <SelectItem value="piece">piece</SelectItem>
-                                    <SelectItem value="kg">kg</SelectItem>
-                                    <SelectItem value="meter">meter</SelectItem>
-                                  </SelectContent>
+                                  <SelectItem key="sqft">sqft</SelectItem>
+                                  <SelectItem key="piece">piece</SelectItem>
+                                  <SelectItem key="kg">kg</SelectItem>
+                                  <SelectItem key="meter">meter</SelectItem>
                                 </Select>
                               </TableCell>
                               <TableCell>
                                 <Input
                                   type="number"
                                   step="0.01"
-                                  value={item.unitPrice}
+                                  value={String(item.unitPrice)}
                                   onChange={(e) => updateItem(item.id, 'unitPrice', parseFloat(e.target.value) || 0)}
                                   className="border-0 p-0 h-8 focus-visible:ring-0 text-right"
                                 />
@@ -381,37 +367,43 @@ export default function InvoicePage() {
                                 {formatCurrency(item.totalPrice)}
                               </TableCell>
                               <TableCell>
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setDeleteItemId(item.id)}
-                                    >
-                                      <Trash2 className="h-4 w-4 text-destructive" />
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent>
-                                    <DialogHeader>
-                                      <DialogTitle>Delete Item</DialogTitle>
-                                      <DialogDescription>
-                                        Are you sure you want to remove this item from the invoice?
-                                        This action cannot be undone.
-                                      </DialogDescription>
-                                    </DialogHeader>
-                                    <DialogFooter>
-                                      <Button variant="outline" onClick={() => setDeleteItemId(null)}>
-                                        Cancel
-                                      </Button>
-                                      <Button 
-                                        variant="destructive" 
-                                        onClick={() => removeItem(item.id)}
-                                      >
-                                        Delete
-                                      </Button>
-                                    </DialogFooter>
-                                  </DialogContent>
-                                </Dialog>
+                                <Button
+                                  isIconOnly
+                                  variant="light"
+                                  size="sm"
+                                  onPress={() => setDeleteItemId(item.id)}
+                                >
+                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                </Button>
+                                <Modal
+                                  isOpen={deleteItemId === item.id}
+                                  onOpenChange={(open) => { if (!open) setDeleteItemId(null) }}
+                                >
+                                  <ModalContent>
+                                    {(onClose) => (
+                                      <>
+                                        <ModalHeader className="flex flex-col gap-1">
+                                          Delete Item
+                                          <span className="text-sm font-normal text-muted-foreground">
+                                            Are you sure you want to remove this item from the invoice?
+                                            This action cannot be undone.
+                                          </span>
+                                        </ModalHeader>
+                                        <ModalFooter>
+                                          <Button variant="bordered" onPress={() => { setDeleteItemId(null); onClose(); }}>
+                                            Cancel
+                                          </Button>
+                                          <Button
+                                            color="danger"
+                                            onPress={() => { removeItem(item.id); onClose(); }}
+                                          >
+                                            Delete
+                                          </Button>
+                                        </ModalFooter>
+                                      </>
+                                    )}
+                                  </ModalContent>
+                                </Modal>
                               </TableCell>
                             </TableRow>
                           );
@@ -420,59 +412,56 @@ export default function InvoicePage() {
                     </Table>
                   </div>
                 )}
-              </CardContent>
+              </CardBody>
             </Card>
 
             {/* Additional Details */}
             <Card>
-              <CardHeader>
-                <CardTitle>Additional Details</CardTitle>
+              <CardHeader className="flex flex-col items-start gap-1">
+                <h3 className="text-lg font-semibold">Additional Details</h3>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardBody className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="discount">Discount</Label>
+                    <label htmlFor="discount" className="text-sm font-medium">Discount</label>
                     <div className="flex gap-2">
                       <Input
                         id="discount"
                         type="number"
                         step="0.01"
-                        value={discount}
+                        value={String(discount)}
                         onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)}
                         placeholder="0"
                         className="h-12"
                       />
                       <Select
-                        value={discountType}
-                        onValueChange={(value: 'percentage' | 'amount') => setDiscountType(value)}
+                        aria-label="Discount type"
+                        selectedKeys={discountType ? [discountType] : []}
+                        onSelectionChange={(keys) => setDiscountType(Array.from(keys)[0] as 'percentage' | 'amount')}
+                        className="w-20 h-12"
                       >
-                        <SelectTrigger className="w-20 h-12">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="amount">৳</SelectItem>
-                          <SelectItem value="percentage">%</SelectItem>
-                        </SelectContent>
+                        <SelectItem key="amount">৳</SelectItem>
+                        <SelectItem key="percentage">%</SelectItem>
                       </Select>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="paymentMethod">Payment Method</Label>
-                    <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                      <SelectTrigger className="h-12">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cash">Cash</SelectItem>
-                        <SelectItem value="card">Card</SelectItem>
-                        <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                        <SelectItem value="cheque">Cheque</SelectItem>
-                      </SelectContent>
+                    <label htmlFor="paymentMethod" className="text-sm font-medium">Payment Method</label>
+                    <Select
+                      aria-label="Payment method"
+                      selectedKeys={paymentMethod ? [paymentMethod] : []}
+                      onSelectionChange={(keys) => setPaymentMethod(Array.from(keys)[0] as string)}
+                      className="h-12"
+                    >
+                      <SelectItem key="cash">Cash</SelectItem>
+                      <SelectItem key="card">Card</SelectItem>
+                      <SelectItem key="bank_transfer">Bank Transfer</SelectItem>
+                      <SelectItem key="cheque">Cheque</SelectItem>
                     </Select>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="notes">Notes</Label>
+                  <label htmlFor="notes" className="text-sm font-medium">Notes</label>
                   <Input
                     id="notes"
                     value={notes}
@@ -481,7 +470,7 @@ export default function InvoicePage() {
                     className="h-12"
                   />
                 </div>
-              </CardContent>
+              </CardBody>
             </Card>
           </div>
 
@@ -491,13 +480,13 @@ export default function InvoicePage() {
               
               {/* Invoice Summary */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="flex flex-col items-start gap-1">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
                     <CreditCard className="h-5 w-5" />
                     Invoice Summary
-                  </CardTitle>
+                  </h3>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardBody className="space-y-4">
                   
                   {/* Subtotal */}
                   <div className="flex justify-between items-center">
@@ -519,7 +508,7 @@ export default function InvoicePage() {
                     </div>
                   )}
 
-                  <Separator />
+                  <Divider />
 
                   {/* Grand Total */}
                   <div className="flex justify-between items-center">
@@ -529,17 +518,17 @@ export default function InvoicePage() {
                     </span>
                   </div>
 
-                  <Separator />
+                  <Divider />
 
                   {/* Payment Tracking */}
                   <div className="space-y-3">
                     <div className="space-y-2">
-                      <Label htmlFor="paidAmount">Paid Amount</Label>
+                      <label htmlFor="paidAmount" className="text-sm font-medium">Paid Amount</label>
                       <Input
                         id="paidAmount"
                         type="number"
                         step="0.01"
-                        value={paidAmount}
+                        value={String(paidAmount)}
                         onChange={(e) => setPaidAmount(parseFloat(e.target.value) || 0)}
                         placeholder="0.00"
                         className="h-12 text-lg font-semibold"
@@ -559,25 +548,27 @@ export default function InvoicePage() {
                       </div>
                     </div>
                   </div>
-                </CardContent>
+                </CardBody>
               </Card>
 
               {/* Action Buttons */}
               <div className="space-y-3">
                 <Button
-                  onClick={handleCreateInvoice}
-                  disabled={loading || !customer.name || items.length === 0}
+                  onPress={handleCreateInvoice}
+                  isDisabled={loading || !customer.name || items.length === 0}
+                  isLoading={loading}
+                  color="primary"
                   size="lg"
                   className="w-full h-14 text-lg font-semibold"
                 >
                   {loading ? 'Creating...' : 'Create Invoice'}
                 </Button>
-                
+
                 <Button
-                  variant="outline"
+                  variant="bordered"
                   size="lg"
                   className="w-full"
-                  disabled={items.length === 0}
+                  isDisabled={items.length === 0}
                 >
                   Save as Draft
                 </Button>
@@ -586,7 +577,7 @@ export default function InvoicePage() {
               {/* Quick Stats */}
               {items.length > 0 && (
                 <Card>
-                  <CardContent className="pt-6">
+                  <CardBody className="pt-6">
                     <div className="text-center space-y-2">
                       <div className="text-2xl font-bold text-primary">
                         {items.length}
@@ -595,7 +586,7 @@ export default function InvoicePage() {
                         {items.length === 1 ? 'Item' : 'Items'} Added
                       </div>
                     </div>
-                  </CardContent>
+                  </CardBody>
                 </Card>
               )}
             </div>

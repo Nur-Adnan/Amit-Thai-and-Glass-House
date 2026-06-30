@@ -1,20 +1,22 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Switch } from '@/components/ui/switch'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Switch,
+  Chip,
+  Alert,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableColumn,
+  TableBody,
   TableRow,
-} from '@/components/ui/table'
-import { 
+  TableCell,
+} from '@heroui/react'
+import {
   Shield,
   Save,
   AlertCircle,
@@ -233,45 +235,54 @@ export default function BasicPermissionsTab() {
     accountant: { label: 'Accountant', color: 'outline' }
   }
 
+  const getRoleChipProps = (color: string): { color: any; variant: any } => {
+    switch (color) {
+      case 'default':
+        return { color: 'primary', variant: 'flat' }
+      case 'secondary':
+        return { color: 'default', variant: 'flat' }
+      case 'outline':
+      default:
+        return { color: 'default', variant: 'bordered' }
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
             <Shield className="h-5 w-5" />
             Role-Based Permissions
-          </CardTitle>
+          </h3>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <p className="text-muted-foreground mb-4">
             Configure what each role can access and modify in the system.
           </p>
-          
+
           <div className="flex items-center gap-4">
-            <Button onClick={handleSavePermissions} disabled={loading}>
-              <Save className="h-4 w-4 mr-2" />
+            <Button color="primary" onPress={handleSavePermissions} isDisabled={loading} startContent={<Save className="h-4 w-4" />}>
               {loading ? 'Saving...' : 'Save Changes'}
             </Button>
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Permissions Matrix */}
       {Object.entries(groupedPermissions).map(([category, permissions]) => (
         <Card key={category}>
-          <CardHeader>
-            <CardTitle className="text-lg">{category} Permissions</CardTitle>
+          <CardHeader className="flex flex-col items-start gap-1">
+            <h3 className="text-lg font-semibold">{category} Permissions</h3>
           </CardHeader>
-          <CardContent>
-            <Table>
+          <CardBody>
+            <Table aria-label={`${category} permissions matrix`}>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-1/3">Permission</TableHead>
-                  <TableHead className="text-center">{roleLabels.owner.label}</TableHead>
-                  <TableHead className="text-center">{roleLabels.manager.label}</TableHead>
-                  <TableHead className="text-center">{roleLabels.accountant.label}</TableHead>
-                </TableRow>
+                <TableColumn className="w-1/3">Permission</TableColumn>
+                <TableColumn className="text-center">{roleLabels.owner.label}</TableColumn>
+                <TableColumn className="text-center">{roleLabels.manager.label}</TableColumn>
+                <TableColumn className="text-center">{roleLabels.accountant.label}</TableColumn>
               </TableHeader>
               <TableBody>
                 {permissions.map((permission) => {
@@ -287,7 +298,7 @@ export default function BasicPermissionsTab() {
                           </div>
                         </div>
                       </TableCell>
-                      
+
                       {/* Owner Column */}
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center">
@@ -295,14 +306,14 @@ export default function BasicPermissionsTab() {
                             <Lock className="h-4 w-4 text-primary" />
                           ) : (
                             <Switch
-                              checked={hasPermission('owner', permission.key)}
-                              onCheckedChange={(checked: boolean) => handlePermissionToggle('owner', permission.key, hasPermission('owner', permission.key))}
-                              disabled={permission.key === 'CAN_MANAGE_PERMISSIONS'}
+                              isSelected={hasPermission('owner', permission.key)}
+                              onValueChange={(checked: boolean) => handlePermissionToggle('owner', permission.key, hasPermission('owner', permission.key))}
+                              isDisabled={permission.key === 'CAN_MANAGE_PERMISSIONS'}
                             />
                           )}
                         </div>
                       </TableCell>
-                      
+
                       {/* Manager Column */}
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center">
@@ -310,13 +321,13 @@ export default function BasicPermissionsTab() {
                             <Lock className="h-4 w-4 text-muted-foreground" />
                           ) : (
                             <Switch
-                              checked={hasPermission('manager', permission.key)}
-                              onCheckedChange={(checked: boolean) => handlePermissionToggle('manager', permission.key, hasPermission('manager', permission.key))}
+                              isSelected={hasPermission('manager', permission.key)}
+                              onValueChange={(checked: boolean) => handlePermissionToggle('manager', permission.key, hasPermission('manager', permission.key))}
                             />
                           )}
                         </div>
                       </TableCell>
-                      
+
                       {/* Accountant Column */}
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center">
@@ -324,8 +335,8 @@ export default function BasicPermissionsTab() {
                             <Lock className="h-4 w-4 text-muted-foreground" />
                           ) : (
                             <Switch
-                              checked={hasPermission('accountant', permission.key)}
-                              onCheckedChange={(checked: boolean) => handlePermissionToggle('accountant', permission.key, hasPermission('accountant', permission.key))}
+                              isSelected={hasPermission('accountant', permission.key)}
+                              onValueChange={(checked: boolean) => handlePermissionToggle('accountant', permission.key, hasPermission('accountant', permission.key))}
                             />
                           )}
                         </div>
@@ -335,23 +346,23 @@ export default function BasicPermissionsTab() {
                 })}
               </TableBody>
             </Table>
-          </CardContent>
+          </CardBody>
         </Card>
       ))}
 
       {/* Role Summary */}
       <Card>
-        <CardHeader>
-          <CardTitle>Role Summary</CardTitle>
+        <CardHeader className="flex flex-col items-start gap-1">
+          <h3 className="text-lg font-semibold">Role Summary</h3>
         </CardHeader>
-        <CardContent>
+        <CardBody>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {rolePermissions.map((rolePermission) => {
               const roleInfo = roleLabels[rolePermission.role as keyof typeof roleLabels]
               return (
                 <div key={rolePermission.role} className="p-4 border rounded-lg">
                   <div className="flex items-center gap-2 mb-3">
-                    <Badge variant={roleInfo.color as any}>{roleInfo.label}</Badge>
+                    <Chip size="sm" {...getRoleChipProps(roleInfo.color)}>{roleInfo.label}</Chip>
                     <span className="text-sm text-muted-foreground">
                       {rolePermission.permissions.length} permissions
                     </span>
@@ -376,19 +387,16 @@ export default function BasicPermissionsTab() {
               )
             })}
           </div>
-        </CardContent>
+        </CardBody>
       </Card>
 
       {/* Messages */}
       {message && (
-        <Alert variant={message.type === 'error' ? 'destructive' : 'default'}>
-          {message.type === 'success' ? (
-            <CheckCircle className="h-4 w-4" />
-          ) : (
-            <AlertCircle className="h-4 w-4" />
-          )}
-          <AlertDescription>{message.text}</AlertDescription>
-        </Alert>
+        <Alert
+          color={message.type === 'error' ? 'danger' : 'default'}
+          description={message.text}
+          icon={message.type === 'success' ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+        />
       )}
     </div>
   )
