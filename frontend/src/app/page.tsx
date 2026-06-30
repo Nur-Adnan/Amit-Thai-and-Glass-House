@@ -72,12 +72,6 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            <button className="bg-white/80 backdrop-blur-sm hover:bg-white text-gray-700 font-semibold px-8 py-4 rounded-xl transition-all duration-200 transform hover:scale-105 shadow-lg border border-gray-200 flex items-center space-x-2">
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m-9-4V8a3 3 0 016 0v2M5 12h14l-1 7H6l-1-7z" />
-              </svg>
-              <span>Learn More</span>
-            </button>
           </div>
         </div>
 
@@ -125,7 +119,7 @@ export default function Home() {
       <footer className="relative z-10 border-t border-gray-200 bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="text-center text-gray-600">
-            <p>&copy; 2024 Thai & Aluminum Business Management System. Built for success.</p>
+            <p>&copy; {new Date().getFullYear()} Thai &amp; Aluminum Business Management System. Built for success.</p>
           </div>
         </div>
       </footer>

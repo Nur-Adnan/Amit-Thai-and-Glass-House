@@ -46,6 +46,12 @@ export interface Translations {
   customers: string;
   expenses: string;
   settings: string;
+  // Navigation section headings
+  navSales: string;
+  navMoney: string;
+  navStock: string;
+  navAdmin: string;
+  stockPurchases: string;
 
   // Dashboard
   dailySummary: string;
@@ -248,6 +254,11 @@ export const translations: Record<'en' | 'bn', Translations> = {
     customers: 'Customers',
     expenses: 'Expenses',
     settings: 'Settings',
+    navSales: 'Sales',
+    navMoney: 'Customers & Money',
+    navStock: 'Stock',
+    navAdmin: 'Administration',
+    stockPurchases: 'Stock Purchases',
 
     // Dashboard
     dailySummary: 'Daily Summary',
@@ -449,6 +460,11 @@ export const translations: Record<'en' | 'bn', Translations> = {
     customers: 'গ্রাহকগণ',
     expenses: 'খরচ',
     settings: 'সেটিংস',
+    navSales: 'বিক্রয়',
+    navMoney: 'গ্রাহক ও বকেয়া',
+    navStock: 'স্টক',
+    navAdmin: 'প্রশাসন',
+    stockPurchases: 'স্টক ক্রয়',
 
     // Dashboard
     dailySummary: 'দৈনিক সারসংক্ষেপ',

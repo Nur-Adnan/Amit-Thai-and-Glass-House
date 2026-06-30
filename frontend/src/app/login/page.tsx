@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import config from '@/lib/config'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -22,7 +23,7 @@ export default function LoginPage() {
     setError('')
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
+      const response = await fetch(`${config.apiUrl}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -166,21 +167,23 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-8 pt-6 border-t border-gray-200">
-            <div className="bg-blue-50/50 rounded-xl p-4">
-              <div className="flex items-center space-x-2 mb-3">
-                <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="font-semibold text-blue-900 text-sm">Demo Credentials</p>
-              </div>
-              <div className="space-y-1 text-sm text-blue-800">
-                <p><span className="font-medium">Email:</span> owner@company.com</p>
-                <p><span className="font-medium">Password:</span> password123</p>
+          {/* Demo Credentials — dev only, never shown in production */}
+          {config.enableDebug && (
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <div className="bg-blue-50/50 rounded-xl p-4">
+                <div className="flex items-center space-x-2 mb-3">
+                  <svg className="h-5 w-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p className="font-semibold text-blue-900 text-sm">Demo Credentials</p>
+                </div>
+                <div className="space-y-1 text-sm text-blue-800">
+                  <p><span className="font-medium">Email:</span> owner@company.com</p>
+                  <p><span className="font-medium">Password:</span> password123</p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Footer */}

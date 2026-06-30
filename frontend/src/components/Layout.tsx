@@ -3,17 +3,21 @@
 import { useState, useEffect } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { 
-  LayoutDashboard, 
-  Calculator, 
-  FileText, 
-  Receipt, 
-  Package, 
-  Users, 
-  CreditCard, 
-  UserCheck, 
-  BarChart3, 
+import {
+  LayoutDashboard,
+  Calculator,
+  FilePlus,
+  Receipt,
+  Package,
+  Truck,
+  Users,
+  CreditCard,
+  UserCheck,
+  BarChart3,
   Settings,
+  Trash2,
+  ShieldCheck,
+  Store,
   Menu,
   LogOut,
   ChevronDown
@@ -49,8 +53,13 @@ interface NavigationItem {
   name: string
   href: string
   icon: React.ComponentType<{ className?: string }>
-  badge?: string
   roles?: string[]
+  primary?: boolean
+}
+
+interface NavigationSection {
+  label?: string
+  items: NavigationItem[]
 }
 
 export default function Layout({ children }: LayoutProps) {
@@ -83,100 +92,62 @@ export default function Layout({ children }: LayoutProps) {
     router.push('/login')
   }
 
-  // Navigation items in the specified order
-  const navigationItems: NavigationItem[] = [
-    { 
-      name: t('dashboard'), 
-      href: '/dashboard', 
-      icon: LayoutDashboard 
+  // Navigation grouped into plain-language sections so non-technical staff
+  // see a few labelled groups instead of a long flat list of icons.
+  // Reports points at /analytics (the real reports page); the empty /reports
+  // stub is intentionally not linked. Admin items are role-gated.
+  const navigationSections: NavigationSection[] = [
+    {
+      items: [
+        { name: t('dashboard'), href: '/dashboard', icon: LayoutDashboard },
+      ],
     },
-    { 
-      name: t('calculator'), 
-      href: '/calculator', 
-      icon: Calculator 
+    {
+      label: t('navSales'),
+      items: [
+        { name: t('createInvoice'), href: '/invoice', icon: FilePlus, primary: true },
+        { name: t('invoices'), href: '/invoices', icon: Receipt },
+        { name: t('calculator'), href: '/calculator', icon: Calculator },
+      ],
     },
-    { 
-      name: t('createInvoice'), 
-      href: '/invoice', 
-      icon: FileText 
+    {
+      label: t('navMoney'),
+      items: [
+        { name: t('customers'), href: '/customers', icon: Users },
+        { name: t('expenses'), href: '/finance', icon: CreditCard },
+        { name: t('payroll'), href: '/payroll', icon: UserCheck },
+        { name: t('reports'), href: '/analytics', icon: BarChart3 },
+      ],
     },
-    { 
-      name: t('invoices'), 
-      href: '/invoices', 
-      icon: Receipt 
+    {
+      label: t('navStock'),
+      items: [
+        { name: t('inventory'), href: '/inventory', icon: Package },
+        { name: t('stockPurchases'), href: '/inventory/stock-purchase', icon: Truck },
+      ],
     },
-    { 
-      name: t('inventory'), 
-      href: '/inventory', 
-      icon: Package 
+    {
+      label: t('navAdmin'),
+      items: [
+        { name: t('settings'), href: '/settings', icon: Settings },
+        { name: t('deletedItems'), href: '/soft-delete', icon: Trash2, roles: ['manager', 'owner'] },
+        { name: t('permissions'), href: '/permissions', icon: ShieldCheck, roles: ['owner'] },
+        { name: t('shopConfig'), href: '/shop-config', icon: Store, roles: ['owner'] },
+      ],
     },
-    { 
-      name: t('customers'), 
-      href: '/customers', 
-      icon: Users 
-    },
-    { 
-      name: t('expenses'), 
-      href: '/finance', 
-      icon: CreditCard 
-    },
-    { 
-      name: t('payroll'), 
-      href: '/payroll', 
-      icon: UserCheck 
-    },
-    { 
-      name: t('reports'), 
-      href: '/reports', 
-      icon: BarChart3 
-    },
-    { 
-      name: 'Analytics', 
-      href: '/analytics', 
-      icon: BarChart3 
-    },
-    { 
-      name: t('settings'), 
-      href: '/settings', 
-      icon: Settings 
-    }
   ]
 
-  // Filter navigation based on user role
-  const getFilteredNavigation = () => {
-    if (!user) return []
-    
-    const filteredNav = [...navigationItems]
-    
-    // Add role-specific items
-    if (user.role === 'manager' || user.role === 'owner') {
-      filteredNav.push({
-        name: t('deletedItems'),
-        href: '/soft-delete',
-        icon: Settings,
-        roles: ['manager', 'owner']
-      })
-    }
+  // Keep only items the current role may see, then drop any now-empty section.
+  const navigation: NavigationSection[] = !user
+    ? []
+    : navigationSections
+        .map((section) => ({
+          ...section,
+          items: section.items.filter((item) => !item.roles || item.roles.includes(user.role)),
+        }))
+        .filter((section) => section.items.length > 0)
 
-    if (user.role === 'owner') {
-      filteredNav.push({
-        name: t('permissions'),
-        href: '/permissions',
-        icon: Settings,
-        roles: ['owner']
-      })
-      filteredNav.push({
-        name: t('shopConfig'),
-        href: '/shop-config',
-        icon: Settings,
-        roles: ['owner']
-      })
-    }
-
-    return filteredNav
-  }
-
-  const navigation = getFilteredNavigation()
+  const allItems = navigation.flatMap((section) => section.items)
 
   if (!user) {
     return (
@@ -199,32 +170,39 @@ export default function Layout({ children }: LayoutProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-6 space-y-1">
-        {navigation.map((item) => {
-          const isActive = pathname === item.href
-          const Icon = item.icon
-          
-          return (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-              }`}
-              onClick={() => setSidebarOpen(false)}
-            >
-              <Icon className="h-4 w-4" />
-              {item.name}
-              {item.badge && (
-                <span className="ml-auto bg-primary/10 text-primary text-xs px-2 py-0.5 rounded-full">
-                  {item.badge}
-                </span>
-              )}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 px-4 py-6 space-y-6 overflow-y-auto">
+        {navigation.map((section, sectionIdx) => (
+          <div key={section.label ?? `section-${sectionIdx}`} className="space-y-1">
+            {section.label && (
+              <p className="px-3 pb-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
+                {section.label}
+              </p>
+            )}
+            {section.items.map((item) => {
+              const isActive = pathname === item.href
+              const Icon = item.icon
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground'
+                      : item.primary
+                        ? 'text-primary hover:bg-primary/10'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                  }`}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <Icon className="h-4 w-4" />
+                  {item.name}
+                </Link>
+              )
+            })}
+          </div>
+        ))}
       </nav>
 
       <Separator />
@@ -252,9 +230,9 @@ export default function Layout({ children }: LayoutProps) {
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/settings')}>
               <Settings className="mr-2 h-4 w-4" />
-              Profile Settings
+              {t('settings')}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-destructive">
@@ -323,9 +301,9 @@ export default function Layout({ children }: LayoutProps) {
                     <p className="text-xs text-muted-foreground">{user.email}</p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => router.push('/settings')}>
                     <Settings className="mr-2 h-4 w-4" />
-                    Profile Settings
+                    {t('settings')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout} className="text-destructive">
@@ -346,7 +324,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex items-center justify-between h-16 px-6">
             <div className="flex items-center gap-4">
               <h1 className="text-lg font-semibold">
-                {navigation.find(item => item.href === pathname)?.name || 'Dashboard'}
+                {allItems.find(item => item.href === pathname)?.name || t('dashboard')}
               </h1>
             </div>
             
