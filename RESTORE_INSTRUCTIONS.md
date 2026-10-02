@@ -50,13 +50,13 @@ pkill -f "node src/index.js"
 #### Step 4: Backup Current Database (Safety)
 ```bash
 # Create safety backup of current database
-mongodump --uri="mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/" --out ./current_db_backup_$(date +%Y%m%d_%H%M%S)
+mongodump --uri="mongodb+srv://<username>:<password>@<cluster-host>/" --out ./current_db_backup_$(date +%Y%m%d_%H%M%S)
 ```
 
 #### Step 5: Clear Current Database
 ```bash
 # Connect to MongoDB and drop collections
-mongosh "mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/"
+mongosh "mongodb+srv://<username>:<password>@<cluster-host>/"
 
 # In MongoDB shell:
 use your_database_name
@@ -82,7 +82,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 async function restore() {
-  await mongoose.connect('mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/');
+  await mongoose.connect('mongodb+srv://<username>:<password>@<cluster-host>/');
   
   const collections = ['invoices', 'customers', 'products', 'employees', 'expenses', 'users'];
   
@@ -117,7 +117,7 @@ for file in *_backup.json; do
   jq '.data[]' $file > temp_${collection}.json
   
   # Import to MongoDB
-  mongoimport --uri="mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/" --collection=$collection --file=temp_${collection}.json
+  mongoimport --uri="mongodb+srv://<username>:<password>@<cluster-host>/" --collection=$collection --file=temp_${collection}.json
   
   # Cleanup
   rm temp_${collection}.json
@@ -127,7 +127,7 @@ done
 #### Step 7: Verify Restore
 ```bash
 # Connect to MongoDB and verify data
-mongosh "mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/"
+mongosh "mongodb+srv://<username>:<password>@<cluster-host>/"
 
 # In MongoDB shell:
 use your_database_name
@@ -172,7 +172,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 async function restoreProducts() {
-  await mongoose.connect('mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/');
+  await mongoose.connect('mongodb+srv://<username>:<password>@<cluster-host>/');
   
   const data = JSON.parse(fs.readFileSync('products_backup_2026-01-02T21-00-00-000Z.json', 'utf8'));
   const db = mongoose.connection.db;
@@ -254,7 +254,7 @@ full_backup_2026-01-02T21-00-00-000Z/
 # emergency_restore.sh
 
 BACKUP_DIR="$1"
-DB_URI="mongodb+srv://amit_thai_and_aluminium:ScqNXZelIPaDaBQE@amit-thai-and-aluminum.qc9czvg.mongodb.net/"
+DB_URI="mongodb+srv://<username>:<password>@<cluster-host>/"
 
 if [ -z "$BACKUP_DIR" ]; then
   echo "Usage: ./emergency_restore.sh <backup_directory>"
